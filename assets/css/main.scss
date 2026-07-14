@@ -73,10 +73,11 @@ html {
   font-weight: 600;
 }
 
-/* classes: wide 글에서 본문 상단에 인라인으로 나오는 목차가
-   화면 전체 폭으로 퍼지지 않게 제한 (우측 고정 목차에는 영향 없음) */
+/* 우측 고정 목차: 본문과 목차 사이에 여백을 둬서
+   여백-프로필-여백-본문-여백-목차-여백 의 대칭 리듬을 만듦 */
 .sidebar__right .toc {
   max-width: 40em;
+  margin-left: 3em;
 }
 
 /* 목차(On This Page): 무거운 박스 대신 토스처럼 가는 세로선의 가벼운 목록
@@ -112,6 +113,14 @@ html {
       text-decoration: none;
     }
   }
+}
+
+/* 현재 읽는 섹션: 사이드바 폭 전체를 채우던 회색 박스 대신
+   굵기+진한 색으로만 표시 (토스 스타일) */
+.toc .active a {
+  background: transparent;
+  color: #111;
+  font-weight: 600;
 }
 
 /* 상단 여백: 토스처럼 콘텐츠가 네비게이션에서 한 호흡 떨어져 시작
@@ -298,7 +307,7 @@ html {
     background-color: transparent;
     border-left-color: #2c3140;
     .nav__title { background: transparent; color: #8b93a7; }
-    .active a { background-color: #262a34; color: #f4f6fa; }
+    .active a { background-color: transparent; color: #f4f6fa; font-weight: 600; }
   }
   .toc .nav__list a { color: #b7bec9; }
   .toc__menu a {
