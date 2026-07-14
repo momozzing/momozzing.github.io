@@ -20,7 +20,7 @@ toc_sticky: true
 Llama Guard는 Meta에서 발표한 논문이며, Large Language Model에서 사람과 인공지능 사이의 대화에서 Safeguard를 학습시키는 전략에 대해 설명한 논문이다.
 좀 더 자세히 알아보자.
 
-## instruduction
+## Introduction
 
 LLM이 발전함에 따라 대화형 에이전트 AI가 크게 발전을 하고 있다.
 이러한 발전의 흐름에 따라 이 대화형 에이전트가 욕설, 민감한 정보 등 출력을 낼 수 있는데
