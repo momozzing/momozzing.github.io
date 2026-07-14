@@ -4,6 +4,9 @@
 
 @charset "utf-8";
 
+// 본문/마스트헤드 최대 폭 확장: 1280px(기본값) → 1920px
+$max-width: 1920px;
+
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
 
