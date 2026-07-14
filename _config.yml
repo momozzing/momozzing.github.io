@@ -40,7 +40,7 @@ comments:
     num_posts: # 5 (default)
     colorscheme: # "dark" # "light" (default), "dark"
   utterances:
-    theme: "github-light" # (default), "github-light"
+    theme: "preferred-color-scheme" # (default), "github-light", "github-dark"
     issue_term: "pathname" # (default)
   staticman:
     branch: # "master"
@@ -75,7 +75,7 @@ facebook:
   username:
   app_id:
   publisher:
-og_image: # Open Graph/Twitter default site image
+og_image: /assets/images/yunho-avatar.png # Open Graph/Twitter default site image
 # For specifying social profiles
 # - https://developers.google.com/structured-data/customize/social-profiles
 social:
@@ -201,7 +201,7 @@ sass:
 
 # Outputting
 permalink: /:categories/:title/
-paginate: 5 # amount of posts to show
+paginate: 10 # amount of posts to show
 paginate_path: /page:num/
 timezone: Asia/Seoul
 

@@ -29,10 +29,10 @@ See: https://github.com/mmistakes/minimal-mistakes/issues/1219#issuecomment-3268
   the "Breakpoints" section of "_variables.scss"?
 */
 html {
-    font-size: 12px; // change to whatever
-  
+    font-size: 14px; // change to whatever
+
     @include breakpoint($small) {
-      font-size: 12px; // change to whatever
+      font-size: 14px; // change to whatever
     }
   
     @include breakpoint($medium) {
@@ -47,3 +47,153 @@ html {
       font-size: 18px; // change to whatever
     }
   }
+
+/* ==========================================================================
+   다크모드: OS 설정(prefers-color-scheme)을 따라 자동 전환
+   ========================================================================== */
+@media (prefers-color-scheme: dark) {
+  html, body {
+    background-color: #14161c;
+    color: #d6d9e0;
+  }
+
+  h1, h2, h3, h4, h5, h6,
+  .page__title, .archive__item-title, .archive__subtitle,
+  .site-title, .site-subtitle, .toc .nav__list a {
+    color: #e8eaf0;
+  }
+
+  a { color: #8ab4f8; }
+  a:visited { color: #a58af8; }
+  a:hover { color: #aecbfa; }
+
+  /* 상단 마스트헤드 / 네비게이션 */
+  .masthead {
+    background-color: #14161c;
+    border-bottom-color: #262a35;
+  }
+  .greedy-nav {
+    background: #14161c;
+    a { color: #d6d9e0; }
+    a:hover { color: #aecbfa; }
+    .visible-links a:before { background: #8ab4f8; }
+    button { background-color: #14161c; color: #d6d9e0; }
+    .hidden-links {
+      background: #1c1f27;
+      border-color: #262a35;
+      a { color: #d6d9e0; }
+      &:before { border-color: transparent transparent #262a35 transparent; }
+      &:after { border-color: transparent transparent #1c1f27 transparent; }
+    }
+  }
+
+  /* 사이드바 프로필 */
+  .author__name { color: #e8eaf0; }
+  .author__bio, .author__urls .author__urls-item, .page__meta, .page__date,
+  .archive__item-excerpt, .page__taxonomy-item, .comment__date {
+    color: #a7adba;
+  }
+  .author__urls {
+    background-color: #1c1f27;
+    border-color: #262a35;
+    color: #d6d9e0;
+    a { color: #d6d9e0; }
+    &:before { border-color: transparent transparent #262a35 transparent; }
+    &:after { border-color: transparent transparent #1c1f27 transparent; }
+  }
+  .author__urls-wrapper button { background-color: #3d5296; }
+
+  /* 본문 요소 */
+  .page__content {
+    p, li, dl, figcaption { color: #d6d9e0; }
+    h2 { border-bottom-color: #262a35; }
+  }
+  blockquote {
+    color: #a7adba;
+    border-left-color: #3d5296;
+  }
+  hr { border-top-color: #262a35; }
+
+  /* 표 */
+  table {
+    background-color: #1c1f27;
+    color: #d6d9e0;
+    border-color: #262a35;
+    th, td { border-color: #262a35; }
+    th { background-color: #232732; }
+    tr:nth-child(even) { background-color: #20242e; }
+  }
+
+  /* 인라인 코드 */
+  p > code, li > code, td > code, a > code, figure > code {
+    background-color: #232732;
+    color: #e8eaf0;
+    border: 1px solid #2c313d;
+  }
+
+  /* 코드 블록 (rouge 문법 강조를 다크 팔레트로 재정의) */
+  div.highlighter-rouge, figure.highlight, .highlight {
+    background-color: #1c1f27;
+    color: #d6d9e0;
+  }
+  .highlight {
+    .hll { background-color: #2c313d; }
+    .c, .cm, .c1, .cs, .cp, .cpf { color: #7f8698; font-style: italic; } /* 주석 */
+    .k, .kd, .kn, .kp, .kr, .kc, .kt, .ow { color: #c678dd; }            /* 키워드 */
+    .s, .s1, .s2, .sb, .sc, .sd, .se, .sh, .si, .sx, .sr, .ss { color: #98c379; } /* 문자열 */
+    .m, .mb, .mf, .mh, .mi, .mo, .il { color: #d19a66; }                 /* 숫자 */
+    .na, .nb, .nc, .nd, .ne, .nf, .nl, .nn, .nt, .nv, .no { color: #61afef; } /* 이름류 */
+    .o, .p, .pi { color: #abb2bf; }                                      /* 연산자/구두점 */
+    .err { color: #e06c75; background-color: transparent; }
+    .gd { color: #e06c75; } .gi { color: #98c379; }
+    .lineno, .gl { color: #5c6370; }
+  }
+
+  /* 목차(TOC) */
+  .toc {
+    background-color: #1c1f27;
+    border-color: #262a35;
+    .nav__title { background: #3d5296; }
+    .active a { background-color: #232732; color: #e8eaf0; }
+  }
+  .toc__menu a { border-bottom-color: #262a35; }
+
+  /* 알림 박스 */
+  .notice, .notice--primary, .notice--info, .notice--warning,
+  .notice--success, .notice--danger {
+    background-color: #1c1f27 !important;
+    color: #d6d9e0;
+  }
+
+  /* 페이지네이션 / 버튼 */
+  .pagination {
+    a, .disabled {
+      background-color: #1c1f27;
+      border-color: #262a35;
+      color: #d6d9e0;
+    }
+    a:hover { background-color: #232732; }
+    .current, a.current { background-color: #3d5296; color: #fff; }
+  }
+  .btn--inverse { background-color: #232732; color: #d6d9e0; }
+
+  /* 검색 */
+  .search-content {
+    background-color: #14161c;
+    .search-input { background-color: transparent; color: #e8eaf0; }
+  }
+  .search-content__form { background-color: #14161c; }
+
+  /* 푸터 */
+  .page__footer {
+    background-color: #1c1f27;
+    color: #a7adba;
+    footer, a { color: #a7adba; }
+  }
+  .page__footer-copyright { color: #7f8698; }
+
+  /* 아바타(밝은 배경 일러스트) 경계 처리 */
+  .author__avatar img {
+    border: 2px solid #262a35;
+  }
+}
