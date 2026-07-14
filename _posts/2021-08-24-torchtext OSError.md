@@ -12,7 +12,6 @@ tags:
   - OSError
 last_modified_at: 2021-08-24T08:06:00-05:00
 mathjax: true
-classes: wide
 ---
 
 ![image](https://user-images.githubusercontent.com/60643542/130584545-afcd71da-fbe3-4f96-88fa-1a406bff0b97.png)

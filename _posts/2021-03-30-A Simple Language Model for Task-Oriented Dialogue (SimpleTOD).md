@@ -13,7 +13,6 @@ tags:
 
 last_modified_at: 2021-03-30T08:06:00-05:00
 mathjax: true
-classes: wide
 ---
 
 - [논문 링크](https://arxiv.org/abs/2005.00796)

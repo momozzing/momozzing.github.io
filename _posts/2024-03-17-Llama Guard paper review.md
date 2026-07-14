@@ -12,7 +12,6 @@ tags:
 
 last_modified_at: 2024-03-17T08:06:00-05:00
 mathjax: true
-classes: wide
 toc: true
 toc_sticky: true
 ---

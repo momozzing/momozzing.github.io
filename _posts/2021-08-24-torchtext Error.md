@@ -12,7 +12,6 @@ tags:
   - OSError
 last_modified_at: 2021-08-24T08:06:00-05:00
 mathjax: true
-classes: wide
 ---
 
 터미널에서 pip install torchtext 설치하면 가장 최신버전인 0.9.0이 설치가 된다.

@@ -14,7 +14,6 @@ tags:
   - GPU
 last_modified_at: 2021-08-24T08:06:00-05:00
 mathjax: true
-classes: wide
 ---
 [참고](https://teddylee777.github.io/colab/tensorflow-gpu-install-windows)
 

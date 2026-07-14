@@ -79,6 +79,41 @@ html {
   max-width: 40em;
 }
 
+/* 목차(On This Page): 무거운 박스 대신 토스처럼 가는 세로선의 가벼운 목록
+   좌측 프로필 사이드바와 시각적 무게를 맞춤 */
+.toc {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  border-left: 2px solid #e3e5e8;
+
+  .nav__title {
+    padding: 0 0 0.4em 0.9em;
+    background: transparent;
+    color: #8a919c;
+    font-size: 0.72em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+
+    i { display: none; } // 문서 아이콘 제거
+  }
+}
+.toc__menu {
+  a {
+    padding: 0.4em 0.9em;
+    border-bottom: 0;
+    font-weight: normal;
+    color: #6b7280;
+
+    &:hover {
+      color: #111;
+      text-decoration: none;
+    }
+  }
+}
+
 /* 본문 행간: 토스 블로그 수준(1.7)으로 여유 있게 */
 .page__content {
   p, li, dl {
@@ -252,20 +287,19 @@ html {
     .lineno, .gl { color: #6b7280; }
   }
 
-  /* 목차(TOC) */
+  /* 목차(TOC): 라이트와 동일한 세로선 스타일의 다크 버전 */
   .toc {
-    background-color: #1d2027;
-    border-color: #2c3140;
-    .nav__title { background: #262a34; color: #f4f6fa; }
+    background-color: transparent;
+    border-left-color: #2c3140;
+    .nav__title { background: transparent; color: #8b93a7; }
     .active a { background-color: #262a34; color: #f4f6fa; }
   }
-  .toc .nav__list a { color: #e4e7ee; }
+  .toc .nav__list a { color: #b7bec9; }
   .toc__menu a {
-    color: #e4e7ee;
-    border-bottom-color: #2c3140;
-    &:hover { color: #c4d9ff; }
+    color: #b7bec9;
+    &:hover { color: #f4f6fa; }
   }
-  .toc__menu li ul > li a { color: #cdd3de; } /* 하위 목차는 살짝 연하게 */
+  .toc__menu li ul > li a { color: #8b93a7; } /* 하위 목차는 살짝 연하게 */
 
   /* 알림 박스 (스킨이 .page__content .notice 텍스트를 검정으로 고정하므로 재정의) */
   .page__content .notice,

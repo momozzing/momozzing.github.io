@@ -14,7 +14,6 @@ tags:
   - GPU
 last_modified_at: 2021-08-24T08:06:00-05:00
 mathjax: true
-classes: wide
 ---
 ```
 from tensorflow.python.client import device_lib
