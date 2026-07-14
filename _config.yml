@@ -15,11 +15,11 @@ minimal_mistakes_skin: "contrast" #"default" # "air", "aqua", "contrast", "dark"
 
 # Site Settings
 locale: "ko-KR"
-title: "momo's NLP Lab"
+title: "밑바닥 챗봇연구소"
 title_separator: "-"
 # subtitle                 : ""
 name: "momo"
-description: "NLP Paper review & Error resolution & NLP Study"
+description: "챗봇을 밑바닥부터 — RAG, Agent, 대화시스템을 직접 만들며 배우는 기록"
 url: https://momozzing.github.io
 baseurl: # the subpath of your site, e.g. "/blog"
 repository: "momozzing/momozzing.github.io" # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
@@ -94,7 +94,7 @@ analytics:
 author:
   name: "momo"
   avatar: "assets/images/momo.jpeg" #path of avatar image, e.g.
-  bio: "Paper review & Study & Error resolution"
+  bio: "챗봇을 밑바닥부터 만드는 기록"
   location: "Gachon University NLP Lab"
   email:
   links:
