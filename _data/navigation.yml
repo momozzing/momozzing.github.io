@@ -1,12 +1,12 @@
 # main links
 main:
-  - title: "Home"
+  - title: "🏠 홈"
     url: https://momozzing.github.io/
-  - title: "Paper review"
+  - title: "📄 논문리뷰"
     url: https://momozzing.github.io/categories/Paper_review/
-  - title: "Error resolution"
+  - title: "🚧 삽질기록"
     url: https://momozzing.github.io/categories/Error_resolution/
-  - title: "Study"
+  - title: "📚 스터디"
     url: https://momozzing.github.io/categories/Study/
-  - title: "Dev Setup"
+  - title: "⚙️ 개발환경"
     url: https://momozzing.github.io/categories/Dev_Setup/

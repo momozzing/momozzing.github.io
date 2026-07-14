@@ -1,5 +1,5 @@
 ---
-title: "Dev Setup"
+title: "⚙️ 개발환경"
 permalink: /categories/Dev_Setup/
 layout: category
 author_profile: true
