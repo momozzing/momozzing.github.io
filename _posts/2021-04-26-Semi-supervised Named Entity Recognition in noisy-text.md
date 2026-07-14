@@ -96,7 +96,7 @@ ST는 한가지 단점이 있었는데 이는 overfitting 이다.
 
 unlabeled data → train, dev, test병합해서 만든 레이블링되지 않은 데이터 
 
-unlabeled data를 word embeding후 클러스터링 해서 기존의 데이터에 추가 학습
+unlabeled data를 word embedding 후 클러스터링 해서 기존의 데이터에 추가 학습
 
 → 트윗에 있는 토큰이 증가 →레이블이 지정되지 않은 새로운 테스트 데이터를 사용하여 단어 표현과 클러스터를 개선
 
@@ -110,7 +110,7 @@ unlabeled data를 word embeding후 클러스터링 해서 기존의 데이터에
 
 →gazetteer [GZ] 기능을 추가하면 분류 정확도가 크게 향상
 
-[WCBTP] → brown clustesrs 
+[WCBTP] → brown clusters 
 
 [WRFTC] → fine-tuned word representations based clusters
 

@@ -61,13 +61,13 @@ ISO standard for dialogue act annotation
 
 2. direct
 - 명령을 나타내는 명령형 응답을 출력하는 것. 
-- ex) you need to open the light before going to bad
+- ex) you need to open the light before going to bed
 
 ## **Information Seeking**
 요청에 대한 작업을 수행하는 Dialog act
 
 1. request
-- 특정한 vlaue에 대해 사용자에게 묻는 것
+- 특정한 value에 대해 사용자에게 묻는 것
 - ex) what area do you like?
 
 2. select
@@ -77,7 +77,7 @@ ISO standard for dialogue act annotation
 - 사용자에게 추가 정보를 요청하는 것
 - ex) what else information do you want. 
 
-## **Information Seeking**
+## **Information Providing**
 사용자에게 특정 답변을 제공하는 Dialog act
 
 1. affirm
@@ -89,7 +89,7 @@ ISO standard for dialogue act annotation
 
 3. negate 
 - 부정적인 답변을 요청하는 것. 
-- ex) Noe, it is not
+- ex) No, it is not
 
 4. inform 
 - 사용자가 요구하는 정보를 제공하는 것. 
@@ -117,4 +117,4 @@ ISO standard for dialogue act annotation
 
 2. impl-confirm 
 - 사용자가 말한 것을 반복하는 문장에서 종종 암시적으로 무언가를 확인하는 것을 의미
-- ex) You want a cheap restaurant, OKay 
+- ex) You want a cheap restaurant, Okay 

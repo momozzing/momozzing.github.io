@@ -16,7 +16,7 @@ toc: true
 toc_sticky: true
 ---
 
-Proxy tuning은 Allen AI에서 발표한 논문이며, 계속 커져나가는 Large Lanaguage model에서 모델 튜닝을
+Proxy tuning은 Allen AI에서 발표한 논문이며, 계속 커져나가는 Large Language model에서 모델 튜닝을
 효율적으로 하는 방법을 새롭게 제시한 논문이다. 
 
 좀 더 자세히 알아보자. 
@@ -30,7 +30,7 @@ Proxy tuning은 Allen AI에서 발표한 논문이며, 계속 커져나가는 La
 
 또한 기존의 PEFT처럼 새로운 파라미터를 삽입하는 것이 아니다.
 
-예로 들면, Target으로 튜닝하고 싶은 모델은 LLAMA2 70B 모델이다. 이 70B 모델을 Proxy tuning 하기 위해 LLAMA2 7B를 사용해 원하는 데이터로 fine-tuning을 진행한다. 그리고 학습된 7B모델과 학습이 안된 7B모델의 output logit값을 뺀다. 빼고 난 logit값을, baseline에 더해, 7B에서 학습된 모델의 logit값을 70B에 적용하는, 아주 간단한 메커니증을 가진 방법이다.
+예로 들면, Target으로 튜닝하고 싶은 모델은 LLAMA2 70B 모델이다. 이 70B 모델을 Proxy tuning 하기 위해 LLAMA2 7B를 사용해 원하는 데이터로 fine-tuning을 진행한다. 그리고 학습된 7B모델과 학습이 안된 7B모델의 output logit값을 뺀다. 빼고 난 logit값을, baseline에 더해, 7B에서 학습된 모델의 logit값을 70B에 적용하는, 아주 간단한 메커니즘을 가진 방법이다.
 
 이렇게 했을 때, 전반적인 task내에서 fine-tuning과 비교해서 88퍼 정도의 성능을 달성하며, TruthfulQA에서 fine-tuning 대비 성능이 좋았다고 한다. 
 
@@ -43,7 +43,7 @@ tuned small language model (chat-llama-7B) = $S_(M^+)$
 
 untuned small model (llama-7B) = $S_(M^-)$
 
-target language model의 logit값= softmax(($S_(M^+) $의 logit값) + ($S_(M^+)$의 logit값 - $S_(M^-)$의 logit값))
+target language model의 logit값= softmax(($S_M$의 logit값) + ($S_{M^+}$의 logit값 - $S_{M^-}$의 logit값))
 
 ![image](https://github.com/momozzing/KLUE-TOD/assets/60643542/4d177af6-4f50-4b97-bcae-7c4748ed154e)
 
@@ -51,14 +51,14 @@ target language model의 logit값= softmax(($S_(M^+) $의 logit값) + ($S_(M^+)$
 
 # **Results**
 ![image](https://github.com/momozzing/KLUE-TOD/assets/60643542/7562a708-9840-4648-99cb-b861fa819b3b)
-전체적인 경향을 보았을떄, fine-tuning과 비교해서 88퍼 정도의 성능을 달성한다.
+전체적인 경향을 보았을 때, fine-tuning과 비교해서 88퍼 정도의 성능을 달성한다.
 
 ![image](https://github.com/momozzing/KLUE-TOD/assets/60643542/3cbcea70-b53c-4fd4-8818-3abc71f97c9c)
 TruthfulQA에서는 full-fine-tuning대비 좋은 성능이 나온다.
 
 ![image](https://github.com/momozzing/KLUE-TOD/assets/60643542/c5a8ba38-4e3b-4307-a089-b864e0b5a095)
 
-table6에서 보면 TruthfulQA에서는 Proxt-tuning을 하면, 최다 빈출 Token에 대해서 4-gram을 뽑게 되면, 확률적으로 추론에 대한 context가 많이 추출 된다. 
+table6에서 보면 TruthfulQA에서는 Proxy-tuning을 하면, 최다 빈출 Token에 대해서 4-gram을 뽑게 되면, 확률적으로 추론에 대한 context가 많이 추출 된다. 
 
 따라서 figure 2 를 봤을 때, 
 $S_(M^+)$의 logit값 - $S_(M^-)$의 logit값에 대해 $Alpha$라는 하이퍼 파라미터를 달았을 때, (튜닝한 모델과 그 베이스라인의 차이에 대한 비율)
@@ -68,10 +68,10 @@ $S_(M^+)$의 logit값 - $S_(M^-)$의 logit값에 대해 $Alpha$라는 하이퍼 
 그 이유는, 알파값이 크면, 추론에 대한 context가 추출 될 때, 이 정보에 대한 답변을 예 아니요 라고만 이야기 하고, 다른 추가적인 정보성이 있는 context에 대해서는 답변을 거부하는 경향이 있다고 한다. 
 
 # **Conclusion**
-본 논문은 Large Lanaguage model에서 모델 튜닝을
+본 논문은 Large Language model에서 모델 튜닝을
 효율적으로 하는 방법을 새롭게 제시한 논문이다. 
 
-여태까지 나온 논문들은 파인튜닝을 할때, 다른 파라미터를 프리징하고, 파라미터를 새롭게 추가해 학습해서 리소스에 부담을 줄이거나, 인퍼런스 시에, 프롬프트 튜닝을 해 성능을 올리는 방법론들이 대부분이였다면,
+여태까지 나온 논문들은 파인튜닝을 할때, 다른 파라미터를 프리징하고, 파라미터를 새롭게 추가해 학습해서 리소스에 부담을 줄이거나, 인퍼런스 시에, 프롬프트 튜닝을 해 성능을 올리는 방법론들이 대부분이었다면,
 
 이 방법은 디코딩 시에, 로짓값의 차이를 변경해 Target language model이 튜닝 한것 처럼 사용하는 방법이다. 
 

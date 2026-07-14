@@ -26,7 +26,7 @@ toc_sticky: true
 
 단어 시퀀스에서 다음 단어를 예측하는 분야인 언어 모델링(LM)은 4개의 발전 단계로 나뉨
 
-1. Statisical Language Modeling (SLM): 통계적 언어모델 
+1. Statistical Language Modeling (SLM): 통계적 언어모델 
     
     methods from the 1990s where a simple n-gram model predicts the next word based on recent context (Markov assumption)
     
@@ -74,9 +74,9 @@ LLM의 불확실성
 이 챕터에는 LLM의 배경에 대한 설명과 함께 GPT 시리즈 모델의 기술적 발전 서술
 
 ### Background for LLM
-이 섹션에는 Scaling Low, Emergent Ability 및 핵심 기술을 소개
-Scaling Low는 LLM을 효율적으로 학습시키기 위해 모델 아키텍쳐의 크기, 데이터셋의 크기, 컴퓨팅 연산량에 대한 관계를 정립한것.
-Scaling Low는 대표적으로 KM scaling law과 Chinchilla scaling law가 있음. 
+이 섹션에는 Scaling Law, Emergent Ability 및 핵심 기술을 소개
+Scaling Law는 LLM을 효율적으로 학습시키기 위해 모델 아키텍쳐의 크기, 데이터셋의 크기, 컴퓨팅 연산량에 대한 관계를 정립한것.
+Scaling Law는 대표적으로 KM scaling law과 Chinchilla scaling law가 있음. 
 
 **KM scaling law (Scaling Laws for Neural Language Models (Kaplan et al., 2020))**
 
@@ -103,7 +103,7 @@ Compute Budget(FLOPs)를 증가시키면 모델 사이즈와 학습 데이터의
 ![image](https://github.com/momozzing/KLUE-TOD/assets/60643542/01fc42ef-e7b2-47bd-8c92-682c4beae076)
 
 2. Instruction Following(instruct tuning): LLM 모델을 Instruction 형태의 데이터셋을 fine-tuning을 하고 이를 통해 zero-shot 성능을 높이는 방법
-Instruction 형태의 데이터셋은 instuct와 answer의 pair로 된 data
+Instruction 형태의 데이터셋은 instruct와 answer의 pair로 된 data
 
 ![image](https://github.com/momozzing/KLUE-TOD/assets/60643542/3d80a983-cbd1-4e8d-a54e-e35787ce0070)
 
@@ -176,13 +176,13 @@ Hugging Face **Transformers** lets you easily access, train, and use hundreds of
 
 PyTorch **DeepSpeed** developed by Microsoft is a DL optimization library
 
-**Megatron-LM** developed by NVIDIA provides an array of optimization techniques for training LLMss
+**Megatron-LM** developed by NVIDIA provides an array of optimization techniques for training LLMs
 
 **JAX** is a relatively new ML library developed by Google Brain
 
-**Colossal-AI** developed by EleutherAI is for training LLMs
+**Colossal-AI** developed by HPC-AI Tech is for training LLMs
 
-**etc** BMTrain, FastMoE, PyTorch, TensorFlow, MXNet, PaddlePaddle, MindSpore andOneFlow
+**etc** BMTrain, FastMoE, PyTorch, TensorFlow, MXNet, PaddlePaddle, MindSpore and OneFlow
 
 
 
@@ -191,4 +191,4 @@ PyTorch **DeepSpeed** developed by Microsoft is a DL optimization library
 
 
 **참고**
-https://wandb.ai/vincenttu/blog_posts/reports/A-Survey-of-Large-Language-Models--VmlldzozOTY2MDM1?galleryTag=ml-news
+[A Survey of Large Language Models - W&B 리뷰](https://wandb.ai/vincenttu/blog_posts/reports/A-Survey-of-Large-Language-Models--VmlldzozOTY2MDM1?galleryTag=ml-news)

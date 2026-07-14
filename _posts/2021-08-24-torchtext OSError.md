@@ -17,7 +17,7 @@ mathjax: true
 ![image](https://user-images.githubusercontent.com/60643542/130584545-afcd71da-fbe3-4f96-88fa-1a406bff0b97.png)
 이런 문제가 발생 하였다. 
 
-```
+```text
 OSError: /home/nlplab/anaconda3/envs/momo/lib/python3.7/site-packages/torchtext/_torchtext.so: undefined symbol: _ZNK3c104Type14isSubtypeOfExtESt10shared_ptrIS0_EPSo 
 ```
 
@@ -28,7 +28,7 @@ OSError: /home/nlplab/anaconda3/envs/momo/lib/python3.7/site-packages/torchtext/
 
 
  
-```
+```bash
 conda install pytorch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2 cudatoolkit=10.1 -c pytorch
 ```
 

@@ -17,7 +17,7 @@ mathjax: true
 
 - [논문 링크](https://arxiv.org/abs/2005.00796)
 - TOD, DST의 Background를 보고 오시면 도움이 됩니다.
-  [링크](https://momozzing.github.io/momo.github.io/TOD,-DST/)
+  [링크](https://momozzing.github.io/study/TOD,-DST/)
 
 ## **introduction**
 
@@ -26,7 +26,7 @@ mathjax: true
 - SimpleTOD는 dialogue state tracking, action decisions, response generation을 함께 수행하는
    최초의 End to End방식 모델 - SOTA
 
-- SimpleTOD는 nosiy-labeled annotation 에서도 강인하다
+- SimpleTOD는 noisy-labeled annotation 에서도 강인하다
 
 - END토큰의 중요성을 보여준다. 
 
@@ -40,8 +40,8 @@ mathjax: true
 
 1. User의 발화가 들어감
 2. 비어있는 slot의 value값을 User의 발화를 보고 생성
-3. 완성된 Belief값을 DB Quary에 입력한다.
-4. DB는 입력된 Quary를 가지고 Result값을 출력 후 입력으로 사용
+3. 완성된 Belief값을 DB Query에 입력한다.
+4. DB는 입력된 Query를 가지고 Result값을 출력 후 입력으로 사용
 5. Result값으로 Action값 생성
 6. 이 Action값으로 System 발화 생성
 
@@ -80,7 +80,7 @@ MultiWOZ2.1
 
 ![image](https://user-images.githubusercontent.com/60643542/112974136-142f6a00-918d-11eb-8465-3e47bc7f20b1.png)
 
-- (O) MultiWOZ 2.1 그대로 넣음 nosiy-labeled annotation 에도 강인한 걸 보여줌   
+- (O) MultiWOZ 2.1 그대로 넣음 noisy-labeled annotation 에도 강인한 걸 보여줌   
 - (*) MultiWOZ 2.1 라벨 청소   
 - (+) MultiWOZ 2.1 라벨 정규화 
 
@@ -101,4 +101,4 @@ MultiWOZ2.1
 
 - 다른 sub-task를 분류하는 end토큰을 사용하니 성능이 높아졌다. 
 
-- nosiy-labeled annotation에서도 강인했다
+- noisy-labeled annotation에서도 강인했다

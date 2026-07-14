@@ -34,7 +34,7 @@ toc_sticky: true
 
 - Downstream task들을 해결 할 수 있음으로 부분적으로 labeling된 데이터에서도 학습을 진행할 수 있다. 
 
-- Downstram task들의 출력이 병렬로 생성됨으로 오류 누적 문제를 완화하고 inference time을 줄인다.  
+- Downstream task들의 출력이 병렬로 생성됨으로 오류 누적 문제를 완화하고 inference time을 줄인다.  
 
 ![image](https://user-images.githubusercontent.com/60643542/148384777-eda183bf-4e2e-4a4b-8483-4c54ae67dc4b.png)
 
@@ -82,7 +82,7 @@ Y 는 out dialog context
 
 ![image](https://user-images.githubusercontent.com/60643542/148397449-766cc1a1-449f-4654-a8d8-f4015928c1ae.png)
 
-디코더의 Auto regresive 형태로 인해 
+디코더의 Auto regressive 형태로 인해 
 
 이전 토큰이 입력으로 들어가게 됨으로 현재 토큰과 이전 토큰이 같을 확률로 Loss를 최소화. 
 

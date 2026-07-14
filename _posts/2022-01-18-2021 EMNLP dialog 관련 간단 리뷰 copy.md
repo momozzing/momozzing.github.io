@@ -131,7 +131,7 @@ EMNLP
 
 **Uncertainty Measures in Neural Belief Tracking and the Effects on Dialogue Policy Performance**
 
-→ diakig state traking의 점수가 Dialog policy의 점수에 미치는 영향
+→ dialog state tracking의 점수가 Dialog policy의 점수에 미치는 영향
 
 **Generation and Extraction Combined Dialogue State Tracking with Hierarchical Ontology Integration**
 
@@ -151,15 +151,15 @@ EMNLP
 
 **Task-Oriented Clustering for Dialogues**
 
-→ Graph based feture extract 사용 
+→ Graph based feature extract 사용 
 
 **Probing Commonsense Explanation in Dialogue Response Generation**
 
-→ open domain chatbot 에서 Reaponse Generation 단계 건드려서 성능 높인 paper 
+→ open domain chatbot 에서 Response Generation 단계 건드려서 성능 높인 paper 
 
 **Constructing Emotion Consensus and Utilizing Unpaired Data for Empathetic Dialogue Generation**
 
-→ 두 문장에 한 단어가 곂쳤는데 그게 감정, 공감인 데이터일때 활용 방법 
+→ 두 문장에 한 단어가 겹쳤는데 그게 감정, 공감인 데이터일때 활용 방법 
 
 **Give the Truth: Incorporate Semantic Slot into Abstractive Dialogue Summarization**
 
@@ -172,11 +172,11 @@ EMNLP
 
 **Combining Curriculum Learning and Knowledge Distillation for Dialogue Generation**
 
-→ Curriculum Learning과 Knowledge Distillation를 사용해 Responese Generation의 성능을 높임
+→ Curriculum Learning과 Knowledge Distillation를 사용해 Response Generation의 성능을 높임
 
 **Simulated Chats for Building Dialog Systems: Learning to Generate Conversations from Instructions**
 
-→ Simulater를 사용해 Woz의 대화를 지침(안내서)로 만들어 input에 넣어서 좀더 좋은 성능 도출 
+→ Simulator를 사용해 Woz의 대화를 지침(안내서)로 만들어 input에 넣어서 좀더 좋은 성능 도출 
 
 **A Model of Cross-Lingual Knowledge-Grounded Response Generation for Open-Domain Dialogue Systems** 
 

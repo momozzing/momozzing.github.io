@@ -100,7 +100,7 @@ In-domain performance, Adaptability에 대해 실험을 진행.
 
 1. Llama Guard는 모두에서 매우 높은 점수를 보여 이 방법이 효과적이라는걸 알림.
 
-2. Llama Guard는 학습 예제 없이 OpenAI Mod 데이터에서 OpenAI의 API에 비슷한 성능 도출.
+2. Llama Guard는 학습 예제 없이 OpenAI Mod 데이터에서 OpenAI의 API와 비슷한 성능 도출.
    또한 ToxicChat (아무 모델도 학습에 쓰지 않음)에서 다른 모든 방법보다 뛰어난 성능 도출.
 
 ### Adaptability

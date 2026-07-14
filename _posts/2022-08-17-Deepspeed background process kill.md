@@ -30,7 +30,7 @@ Deepspeed를 사용해서 여러 대의 GPU를 병렬로 사용할 때
 
 이를 해결하는 법은 간단하다. 
 
-```
+```bash
 pgrep python | xargs kill
 ```
 

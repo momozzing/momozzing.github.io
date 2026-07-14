@@ -24,7 +24,7 @@ SOLAR는 업스테이지에서 만든 오픈소스 LLM이다.
 이 모델이 어떻게 구성이 되어있는지 알아보자.
 
 # **Introduction**
-본 논문은 10.7B의 크기를 가진 Large lanaguage model(LLM)인 SOLAR 10.7B를 소개한다.
+본 논문은 10.7B의 크기를 가진 Large language model(LLM)인 SOLAR 10.7B를 소개한다.
 
 SOLAR는 depthwise scaling, continued pretraining 방법을 적용한 depth up-scaling(DUS)이라는 방법을 제시한다.
 
@@ -43,9 +43,9 @@ LLAMA2와 호환이 되는 Mistral 7B를 baseline 모델로 선정.
 
 ## **Depthwise scaling**
 
-1. Figure 1에 따르면, Mistral 7B모델 두개를 가져온다.(36개의 Layer를 가지고 있음.) 
-2. 하나는 아래 24개 Layar, 다른 하나는 위의 24개 Layer를 가져와 머지해 48개의 Layer를 가진 Mistral model(10.7B)을 만든다. 
-3. 합친 모델을 continuel learning 한다. 
+1. Figure 1에 따르면, Mistral 7B모델 두개를 가져온다.(32개의 Layer를 가지고 있음.) 
+2. 하나는 아래 24개 Layer, 다른 하나는 위의 24개 Layer를 가져와 머지해 48개의 Layer를 가진 Mistral model(10.7B)을 만든다. 
+3. 합친 모델을 continual learning 한다. 
 
 ## **Continued pretraining**
 맨 처음에 그냥 합친 모델은 성능이 기존 7B보다 떨어진다.
@@ -81,7 +81,7 @@ MetaMath (Yu et al., 2023) 이 방식을 사용해 만든것이 chosen
 학습데이터는 대부분 오픈소스 데이터.
 
 instruct tuning data 
-Alpaca 스타일의 템플릿을 사용해 데이터를 다시 포멧.
+Alpaca 스타일의 템플릿을 사용해 데이터를 다시 포맷.
 FLAN(Longpre et al., 2023)에서 파생된 OpenOrca와 같은 데이터는 벤치마크 데이터셋과 겹치는 부분을 필터링 했다.
 
 alignment datasets는 {prompt, chosen, rejected}로 구성. Zephyr(Tunstall et al., 2023)에 따라 전처리 진행.
@@ -93,7 +93,7 @@ HuggingFace Open LLM Leaderboard
 ![image](https://github.com/momozzing/KLUE-TOD/assets/60643542/b1359781-24ad-488c-8f3d-325ba4a6a590)
 Solar가 1등을 찍었다
 
-## **Ablation Studiess**
+## **Ablation Studies**
 
 ### **Instruction Tuning**
 **Ablation on the training datasets**
@@ -130,4 +130,4 @@ merge를 하기 위해 후보들을 선택함(Cand. 1, Cand. 2).
 첫번째가 제일 좋아서 첫번째를 사용하고, 그중 Merge v1이 가장 좋아서 SOLAR 10.7B-Instruct model이 됨.
 
 # **Conclusion**
-Solar가 짱이다. Depth Up-Scaling 는 효과적이였다. 
+Solar가 짱이다. Depth Up-Scaling 는 효과적이었다. 

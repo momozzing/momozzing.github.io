@@ -8,7 +8,7 @@ tags:
   - Paper review
   - NLP
   - Deep learning
-  - Relationa Extraction
+  - Relation Extraction
 last_modified_at: 2021-05-07T08:06:00-05:00
 mathjax: true
 ---  
@@ -18,7 +18,7 @@ mathjax: true
 ## introduction
 Knowledge base 를 구축하기 위해 관계추출을 위한 KBP slot filling을 사용   
 관계 추출을 위한 패턴을 학습하기 위해 RDN을 사용하는 파이프라인을 제시   
-weak supervision, word2vec, joint learning, humn advice 를 사용   
+weak supervision, word2vec, joint learning, human advice 를 사용   
 
 ![image](https://user-images.githubusercontent.com/60643542/117434558-c82fcc00-af67-11eb-924b-13cdf7baa20e.png)
 
@@ -81,7 +81,7 @@ RDN안에서 관계가 도출이 되었을때 독립적으로 학습 VS 관계�
 ![image](https://user-images.githubusercontent.com/60643542/117435769-2f9a4b80-af69-11eb-99f8-e5eb045dd5aa.png)
 ## Experiments - Word2vec
 ![image](https://user-images.githubusercontent.com/60643542/117435802-3759f000-af69-11eb-9b82-0a47ee75946f.png)
-## Experiments - human advise
+## Experiments - human advice
 ![image](https://user-images.githubusercontent.com/60643542/117435831-3fb22b00-af69-11eb-8de8-eb30c665d6a3.png)
 ## Experiments
 ![image](https://user-images.githubusercontent.com/60643542/117435886-4ccf1a00-af69-11eb-9e3a-961dd18bee72.png)
@@ -91,5 +91,5 @@ RDN안에서 관계가 도출이 되었을때 독립적으로 학습 VS 관계�
 - 관계 추출을 위한 패턴을 학습하기 위해 RDN을 사용하는 파이프라인을 제시하였다. 
 - weak supervision, word2vec, joint learning, human advice 을 각각 적용해 실험하였다. 
 - Weak supervision, Word2vec은 큰 효과를 얻지 못함. joint learning도 절반 정도의 성능향상    
-  그러나 human advise 에는 큰 효과를 보았다.
+  그러나 human advice 에는 큰 효과를 보았다.
 - 나중에는 더 깊은 네트워크를 쌓으면 성능이 오를 것 같다고 함.

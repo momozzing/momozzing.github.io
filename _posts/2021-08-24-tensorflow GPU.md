@@ -6,8 +6,6 @@ categories:
   - Dev Setup
 tags:
   - Dev Setup
-  - pytorch
-  - torchtext
   - 윈도우
   - window
   - tensorflow
@@ -15,7 +13,7 @@ tags:
 last_modified_at: 2021-08-24T08:06:00-05:00
 mathjax: true
 ---
-```
+```python
 from tensorflow.python.client import device_lib
 
 device_lib.list_local_devices()

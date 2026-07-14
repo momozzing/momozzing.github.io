@@ -1,13 +1,11 @@
 ---
-title:  "How to use tensorflow GPU "
+title: "tensorflow GPU 사용법"
 excerpt: "텐서플로우 GPU 사용법"
 
 categories:
   - Dev Setup
 tags:
   - Dev Setup
-  - pytorch
-  - torchtext
   - window
   - 윈도우
   - tensorflow

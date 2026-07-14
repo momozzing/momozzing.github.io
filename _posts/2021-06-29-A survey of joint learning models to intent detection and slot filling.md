@@ -47,7 +47,7 @@ joint learning for Intent detection and slot filling의 첫 모델
 Multi-Layer Context Model 을 제안 여기서 Multi-layer는 HMM
 
 -  **Convolutional neural network based triangular crf for joint intent detection and slot filling, IEEE 2013, Microsoft Corporation**  
-  2013년에 최초의 신경망 CNN이 사용되었지만 위의 3개의 CRF 모델에 input으로 Feature extractio만함
+  2013년에 최초의 신경망 CNN이 사용되었지만 위의 3개의 CRF 모델에 input으로 Feature extraction만 함
 
 ## **Recursive neural networks**
 
@@ -67,7 +67,7 @@ RecNN은 트리(단어 벡터)에 해당하는 leaf 를 사용하여 발화의 �
 
 - **A Hierarchical LSTM Model for Joint Tasks , Zhou et al, 2016**
 
-  총 2계층의 NSTM layer을 사용 1층의 NSTM layer의 hidden state로 intent detection, 2층의 NSTM layer의 hidden state로 slot filling을 진행
+  총 2계층의 LSTM layer을 사용 1층의 LSTM layer의 hidden state로 intent detection, 2층의 LSTM layer의 hidden state로 slot filling을 진행
 
 
 - **Multi-Domain Joint Semantic Frame Parsing using Bi-directional RNN-LSTM, Hakkani-Tür et al, Interspeech 2016, Microsoft Redmond**
