@@ -95,7 +95,7 @@ author:
   name: "yunho"
   avatar: "assets/images/yunho-avatar.png" #path of avatar image, e.g.
   bio: "챗봇을 밑바닥부터 만드는 기록"
-  location: "Gachon University NLP Lab"
+  location: "NCSOFT"
   email:
   links:
     - label: "Email"
