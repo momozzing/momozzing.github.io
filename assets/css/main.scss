@@ -136,6 +136,43 @@ html {
   }
 }
 
+/* 라이트 모드 본문 링크: 스킨 기본(검정)은 일반 텍스트와 구분 불가 →
+   브랜드 인디고로 (다크모드 색은 다크 블록에서 별도 지정) */
+.page__content a:not(.btn) {
+  color: #3d5aa8;
+
+  &:visited { color: #6a52a8; }
+  &:hover { color: #2c4487; }
+}
+
+/* 라이트 모드 코드블록: 스킨의 순검정 터미널 대신 밝은 배경(GitHub light 계열)
+   다크모드의 차분한 코드블록과 톤 통일 */
+div.highlighter-rouge, figure.highlight, .highlight {
+  background-color: #f6f8fa;
+  color: #24292f;
+}
+.highlight {
+  pre, table, td { background-color: transparent; color: inherit; border: 0; }
+  .hll { background-color: #eaeef2; }
+  .c, .cm, .c1, .cs, .cp, .cpf { color: #9199a8; font-style: italic; } /* 주석 */
+  .k, .kd, .kn, .kp, .kr, .kc, .kt, .ow { color: #a626a4; }            /* 키워드 */
+  .s, .s1, .s2, .sb, .sc, .sd, .se, .sh, .si, .sx, .sr, .ss { color: #50a14f; } /* 문자열 */
+  .m, .mb, .mf, .mh, .mi, .mo, .il { color: #986801; }                 /* 숫자 */
+  .na, .nb, .nc, .nd, .ne, .nf, .nl, .nn, .nt, .nv, .no { color: #4078f2; } /* 이름류 */
+  .o, .p, .pi { color: #383a42; }                                      /* 연산자/구두점 */
+  .err { color: #ca1243; background-color: transparent; }
+  .gd { color: #ca1243; } .gi { color: #50a14f; }
+  .lineno, .gl { color: #a0a1a7; }
+}
+
+/* 라이트 모드 푸터: 스킨의 순검정 대신 옅은 회색 (스킨이 !important를 써서 동일하게 대응) */
+.page__footer {
+  background-color: #f6f8fa;
+  color: #57606a !important;
+  footer, a { color: #57606a; }
+}
+.page__footer-copyright { color: #8b949e; }
+
 /* 홈/카테고리 목록: 토스 블로그형 계층
    - 섹션 라벨(Recent posts)은 또렷하게
    - 글 제목은 h2 기본값(1.5em) 대신 리스트에 맞는 크기로 */
@@ -193,6 +230,13 @@ html {
   a { color: #9ac1ff; }
   a:visited { color: #b7a4ff; }
   a:hover { color: #c4d9ff; }
+
+  /* 라이트용 본문 링크 규칙(.page__content a:not(.btn))보다 명시도를 맞춰 재정의 */
+  .page__content a:not(.btn) {
+    color: #9ac1ff;
+    &:visited { color: #b7a4ff; }
+    &:hover { color: #c4d9ff; }
+  }
 
   /* 상단 마스트헤드 / 네비게이션 */
   .masthead {
@@ -367,10 +411,11 @@ html {
     border-color: #2c3140;
   }
 
-  /* 푸터 (스킨이 color를 !important로 고정하므로 배경만 조정) */
+  /* 푸터 (라이트용 !important 규칙에 대응해 동일하게 !important 사용) */
   .page__footer {
     background-color: #1d2027;
-    a { color: #cdd3de; }
+    color: #a7adba !important;
+    footer, a { color: #a7adba; }
   }
   .page__footer-copyright { color: #8b93a7; }
 
