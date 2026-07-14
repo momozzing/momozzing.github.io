@@ -6,4 +6,4 @@ author_profile: true
 taxonomy: Paper review
 ---
 
-챗봇·NLP·LLM 논문을 읽고 핵심만 정리하는 공간입니다.
+챗봇·NLP·LLM·Agent 관련 논문을 읽고 핵심만 정리하는 공간입니다.

@@ -1,9 +1,9 @@
 ---
-title: "📚 스터디"
+title: "📚 자기개발"
 permalink: /categories/Study/
 layout: category
 author_profile: true
 taxonomy: Study
 ---
 
-공부한 것들을 차곡차곡 쌓아두는 공간입니다.
+꾸준히 공부하고 성장한 기록을 차곡차곡 쌓아두는 공간입니다.
