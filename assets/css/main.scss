@@ -58,6 +58,23 @@ html {
   font-weight: 600;
 }
 
+/* 홈/카테고리 목록: 테마가 우측에 예약해두는 사이드바 폭(300px) 제거
+   목록 페이지에는 우측 사이드바가 없어서 빈 공간으로만 남음 */
+.archive {
+  @include breakpoint($large) {
+    padding-right: 0;
+  }
+  @include breakpoint($x-large) {
+    padding-right: 0;
+  }
+}
+
+/* classes: wide 글에서 본문 상단에 인라인으로 나오는 목차가
+   화면 전체 폭으로 퍼지지 않게 제한 (우측 고정 목차에는 영향 없음) */
+.sidebar__right .toc {
+  max-width: 40em;
+}
+
 /* ==========================================================================
    다크/라이트 토글 버튼 (마스트헤드의 사이트 제목 오른쪽)
    ========================================================================== */
@@ -143,6 +160,14 @@ html {
     a { color: #e4e7ee; }
     &:before { border-color: transparent transparent #2c3140 transparent; }
     &:after { border-color: transparent transparent #1d2027 transparent; }
+
+    // 데스크톱에서는 드롭다운이 아니라 사이드바에 그대로 노출되므로
+    // 패널 배경을 빼서 회색 박스가 보이지 않게 (테마의 리셋과 동일)
+    @include breakpoint($large) {
+      background-color: transparent;
+      border: 0;
+      box-shadow: none;
+    }
   }
   .author__urls-wrapper button { background-color: #4a63b8; color: #fff; }
   .sidebar,
