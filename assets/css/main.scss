@@ -4,8 +4,10 @@
 
 @charset "utf-8";
 
-// 본문/마스트헤드 최대 폭 확장: 1280px(기본값) → 1920px
-$max-width: 1920px;
+// 본문/마스트헤드 최대 폭 확장: 1280px(기본값) → 1600px
+// 1920px 화면 기준 약 83%를 차지해 여백과 가독성의 균형을 맞춤
+$max-width: 1600px;
+
 
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
