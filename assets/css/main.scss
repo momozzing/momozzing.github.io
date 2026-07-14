@@ -4,21 +4,22 @@
 
 @charset "utf-8";
 
-// 본문/마스트헤드 최대 폭 확장: 1280px(기본값) → 1800px
-// 1920px 화면 기준 약 94%를 차지
-$max-width: 1800px;
+// 토스 블로그형 레이아웃: 컨테이너 1550px
+// = 좌 사이드바 400 + 본문 ~750(토스 본문 ~700px과 유사) + 우 목차 400
+// 1920px 화면에서 양쪽에 ~185px씩 여백이 남아 본문에 시선이 모임
+$max-width: 1550px;
 
 // 사이드바 폭 300px(기본값) → 400px
 // 좌측 프로필 사이드바와 우측 목차(On This Page)가 같은 변수를 쓰므로
 // 양쪽이 대칭(400/본문 1000/400)이 되고, 목차 항목 줄바꿈도 줄어듦
 $right-sidebar-width: 400px;
 
-// 마크다운 헤더 크기 계층 강화 (기존 포크는 h3=본문, h4~h6<본문으로 축소돼 있었음)
-// 본문(1em, 20px) 기준: h1 44px / h2 33px / h3 26px / h4 22px
-$h-size-1: 2.2em;
-$h-size-2: 1.65em;
-$h-size-3: 1.3em;
-$h-size-4: 1.1em;
+// 마크다운 헤더 크기 계층 (토스 블로그 스케일)
+// 본문(1em, 17px) 기준: h1 34px / h2 26px / h3 21px / h4 19px
+$h-size-1: 2em;
+$h-size-2: 1.5em;
+$h-size-3: 1.25em;
+$h-size-4: 1.125em;
 $h-size-5: 1em;
 $h-size-6: 0.9em;
 
@@ -55,7 +56,7 @@ html {
     }
 
     @include breakpoint($medium) {
-      font-size: 14px; // change to whatever
+      font-size: 15px; // change to whatever
     }
 
     @include breakpoint($large) {
@@ -63,7 +64,7 @@ html {
     }
 
     @include breakpoint($x-large) {
-      font-size: 20px; // 와이드 레이아웃(1800px)에서 줄당 글자 수를 줄여 가독성 확보
+      font-size: 17px; // 토스 블로그와 동일한 본문 크기
     }
   }
 
@@ -72,21 +73,29 @@ html {
   font-weight: 600;
 }
 
-/* 홈/카테고리 목록: 테마가 우측에 예약해두는 사이드바 폭(300px) 제거
-   목록 페이지에는 우측 사이드바가 없어서 빈 공간으로만 남음 */
-.archive {
-  @include breakpoint($large) {
-    padding-right: 0;
-  }
-  @include breakpoint($x-large) {
-    padding-right: 0;
-  }
-}
-
 /* classes: wide 글에서 본문 상단에 인라인으로 나오는 목차가
    화면 전체 폭으로 퍼지지 않게 제한 (우측 고정 목차에는 영향 없음) */
 .sidebar__right .toc {
   max-width: 40em;
+}
+
+/* 본문 행간: 토스 블로그 수준(1.7)으로 여유 있게 */
+.page__content {
+  p, li, dl {
+    line-height: 1.7;
+  }
+}
+
+/* 홈/카테고리 목록: 토스 블로그형 계층
+   - 섹션 라벨(Recent posts)은 또렷하게
+   - 글 제목은 h2 기본값(1.5em) 대신 리스트에 맞는 크기로 */
+.archive__subtitle {
+  font-size: 1.25em;
+  font-weight: 600;
+  color: inherit;
+}
+.archive__item-title {
+  font-size: 1.3em;
 }
 
 /* ==========================================================================
