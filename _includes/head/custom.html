@@ -1,4 +1,48 @@
 <!-- start custom head snippets -->
+
+<!-- 다크/라이트 테마: 저장된 선택을 페인트 전에 적용해 깜빡임(FOUC) 방지 -->
+<script>
+  (function () {
+    var saved = localStorage.getItem('theme');
+    if (saved === 'dark' || saved === 'light') {
+      document.documentElement.setAttribute('data-theme', saved);
+    }
+  })();
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+
+    var mql = window.matchMedia('(prefers-color-scheme: dark)');
+
+    function currentTheme() {
+      return document.documentElement.getAttribute('data-theme') ||
+        (mql.matches ? 'dark' : 'light');
+    }
+
+    function renderIcon() {
+      btn.textContent = currentTheme() === 'dark' ? '☀️' : '🌙';
+    }
+
+    btn.addEventListener('click', function () {
+      var next = currentTheme() === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      renderIcon();
+
+      // utterances 댓글창 테마도 함께 전환
+      var utterances = document.querySelector('iframe.utterances-frame');
+      if (utterances) {
+        utterances.contentWindow.postMessage(
+          { type: 'set-theme', theme: next === 'dark' ? 'github-dark' : 'github-light' },
+          'https://utteranc.es'
+        );
+      }
+    });
+
+    renderIcon();
+  });
+</script>
 <script data-ad-client="ca-pub-9115820443203140" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- favicons -->
 <link rel="icon" type="image/svg+xml" href="{{ '/assets/images/favicon.svg' | relative_url }}">

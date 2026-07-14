@@ -6,4 +6,4 @@ author_profile: true
 taxonomy: Study
 ---
 
-Study space.
+공부한 것들을 차곡차곡 쌓아두는 공간입니다.

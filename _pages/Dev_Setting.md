@@ -6,4 +6,4 @@ author_profile: true
 taxonomy: Dev Setup
 ---
 
-Development Environment Setup space.
+개발 환경 세팅 방법을 정리합니다. 새 장비를 받아도 당황하지 않도록.

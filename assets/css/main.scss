@@ -8,7 +8,6 @@
 // 1920px 화면 기준 약 83%를 차지해 여백과 가독성의 균형을 맞춤
 $max-width: 1600px;
 
-
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
 
@@ -34,166 +33,248 @@ html {
     @include breakpoint($small) {
       font-size: 14px; // change to whatever
     }
-  
+
     @include breakpoint($medium) {
       font-size: 14px; // change to whatever
     }
-  
+
     @include breakpoint($large) {
       font-size: 16px; // change to whatever
     }
-  
+
     @include breakpoint($x-large) {
       font-size: 18px; // change to whatever
     }
   }
 
 /* ==========================================================================
-   다크모드: OS 설정(prefers-color-scheme)을 따라 자동 전환
+   다크/라이트 토글 버튼 (마스트헤드의 사이트 제목 오른쪽)
    ========================================================================== */
-@media (prefers-color-scheme: dark) {
-  html, body {
+.theme-toggle {
+  background: none;
+  border: 0;
+  padding: 0 0.4em;
+  margin-left: 0.2em;
+  font-size: 1.15em;
+  line-height: 1;
+  cursor: pointer;
+  align-self: center;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+}
+
+/* ==========================================================================
+   다크모드 팔레트
+   - 수동 토글: html[data-theme="dark"]
+   - OS 설정 따름: prefers-color-scheme (수동으로 light를 고르면 무시)
+   ========================================================================== */
+@mixin dark-theme {
+  & {
+    color-scheme: dark; // 스크롤바, 폼 컨트롤 등 브라우저 기본 UI도 다크로
     background-color: #14161c;
-    color: #d6d9e0;
+  }
+
+  body {
+    background-color: #14161c;
+    color: #e4e7ee;
   }
 
   h1, h2, h3, h4, h5, h6,
   .page__title, .archive__item-title, .archive__subtitle,
-  .site-title, .site-subtitle, .toc .nav__list a {
-    color: #e8eaf0;
+  .site-title, .site-subtitle {
+    color: #f4f6fa;
   }
 
-  a { color: #8ab4f8; }
-  a:visited { color: #a58af8; }
-  a:hover { color: #aecbfa; }
+  strong, b { color: #f4f6fa; }
+
+  a { color: #9ac1ff; }
+  a:visited { color: #b7a4ff; }
+  a:hover { color: #c4d9ff; }
 
   /* 상단 마스트헤드 / 네비게이션 */
   .masthead {
     background-color: #14161c;
-    border-bottom-color: #262a35;
+    border-bottom-color: #2c3140;
   }
   .greedy-nav {
     background: #14161c;
-    a { color: #d6d9e0; }
-    a:hover { color: #aecbfa; }
-    .visible-links a:before { background: #8ab4f8; }
-    button { background-color: #14161c; color: #d6d9e0; }
+    a { color: #e4e7ee; }
+    a:hover { color: #c4d9ff; }
+    .visible-links a:before { background: #9ac1ff; }
+    button { background-color: transparent; color: #e4e7ee; }
+    .search__toggle { color: #e4e7ee; }
+    .navicon,
+    .navicon:before,
+    .navicon:after { background: #e4e7ee; }
     .hidden-links {
-      background: #1c1f27;
-      border-color: #262a35;
-      a { color: #d6d9e0; }
-      &:before { border-color: transparent transparent #262a35 transparent; }
-      &:after { border-color: transparent transparent #1c1f27 transparent; }
+      background: #1d2027;
+      border-color: #2c3140;
+      a { color: #e4e7ee; }
+      &:before { border-color: transparent transparent #2c3140 transparent; }
+      &:after { border-color: transparent transparent #1d2027 transparent; }
     }
   }
 
-  /* 사이드바 프로필 */
-  .author__name { color: #e8eaf0; }
-  .author__bio, .author__urls .author__urls-item, .page__meta, .page__date,
-  .archive__item-excerpt, .page__taxonomy-item, .comment__date {
-    color: #a7adba;
+  /* 사이드바 프로필 / 좌측 내비 */
+  .author__name { color: #f4f6fa; }
+  .author__bio { color: #cdd3de; }
+  .author__urls .author__urls-item,
+  .page__meta, .page__date, .comment__date,
+  .page__taxonomy-item, .archive__item-excerpt {
+    color: #b7bec9;
   }
   .author__urls {
-    background-color: #1c1f27;
-    border-color: #262a35;
-    color: #d6d9e0;
-    a { color: #d6d9e0; }
-    &:before { border-color: transparent transparent #262a35 transparent; }
-    &:after { border-color: transparent transparent #1c1f27 transparent; }
+    background-color: #1d2027;
+    border-color: #2c3140;
+    color: #e4e7ee;
+    a { color: #e4e7ee; }
+    &:before { border-color: transparent transparent #2c3140 transparent; }
+    &:after { border-color: transparent transparent #1d2027 transparent; }
   }
-  .author__urls-wrapper button { background-color: #3d5296; }
+  .author__urls-wrapper button { background-color: #4a63b8; color: #fff; }
+  .sidebar,
+  .sidebar p, .sidebar li { color: #cdd3de; }
+  .nav__title { color: #f4f6fa; }
+  .nav__sub-title { color: #b7bec9; }
+  .nav__list .nav__items a { color: #e4e7ee; }
 
-  /* 본문 요소 */
+  /* 본문 */
   .page__content {
-    p, li, dl, figcaption { color: #d6d9e0; }
-    h2 { border-bottom-color: #262a35; }
+    color: #e4e7ee;
+    p, li, dl, figcaption { color: #e4e7ee; }
+    h2 { border-bottom-color: #2c3140; }
   }
+  .archive__item-title a { color: #f4f6fa; }
+  .archive__item-title a:hover { color: #c4d9ff; }
   blockquote {
-    color: #a7adba;
-    border-left-color: #3d5296;
+    color: #b7bec9;
+    border-left-color: #4a63b8;
   }
-  hr { border-top-color: #262a35; }
+  hr { border-top-color: #2c3140; }
+  .page__related-title { color: #b7bec9; }
+  .breadcrumbs a, .breadcrumbs .current { color: #b7bec9; }
 
   /* 표 */
   table {
-    background-color: #1c1f27;
-    color: #d6d9e0;
-    border-color: #262a35;
-    th, td { border-color: #262a35; }
-    th { background-color: #232732; }
-    tr:nth-child(even) { background-color: #20242e; }
+    background-color: #1d2027;
+    color: #e4e7ee;
+    border-color: #2c3140;
+    th, td { border-color: #2c3140; }
+    th { background-color: #262a34; }
+    tr:nth-child(even) { background-color: #21252e; }
   }
 
-  /* 인라인 코드 */
+  /* 인라인 코드 / kbd */
   p > code, li > code, td > code, a > code, figure > code {
-    background-color: #232732;
-    color: #e8eaf0;
-    border: 1px solid #2c313d;
+    background-color: #262a34;
+    color: #f4f6fa;
+    border: 1px solid #323848;
   }
+  kbd { background-color: #262a34; color: #f4f6fa; }
 
   /* 코드 블록 (rouge 문법 강조를 다크 팔레트로 재정의) */
   div.highlighter-rouge, figure.highlight, .highlight {
-    background-color: #1c1f27;
-    color: #d6d9e0;
+    background-color: #1d2027;
+    color: #e4e7ee;
   }
   .highlight {
-    .hll { background-color: #2c313d; }
-    .c, .cm, .c1, .cs, .cp, .cpf { color: #7f8698; font-style: italic; } /* 주석 */
-    .k, .kd, .kn, .kp, .kr, .kc, .kt, .ow { color: #c678dd; }            /* 키워드 */
-    .s, .s1, .s2, .sb, .sc, .sd, .se, .sh, .si, .sx, .sr, .ss { color: #98c379; } /* 문자열 */
-    .m, .mb, .mf, .mh, .mi, .mo, .il { color: #d19a66; }                 /* 숫자 */
-    .na, .nb, .nc, .nd, .ne, .nf, .nl, .nn, .nt, .nv, .no { color: #61afef; } /* 이름류 */
-    .o, .p, .pi { color: #abb2bf; }                                      /* 연산자/구두점 */
-    .err { color: #e06c75; background-color: transparent; }
-    .gd { color: #e06c75; } .gi { color: #98c379; }
-    .lineno, .gl { color: #5c6370; }
+    pre, table, td { background-color: transparent; color: #e4e7ee; border: 0; }
+    .hll { background-color: #2c3140; }
+    .c, .cm, .c1, .cs, .cp, .cpf { color: #8b93a7; font-style: italic; } /* 주석 */
+    .k, .kd, .kn, .kp, .kr, .kc, .kt, .ow { color: #d7a7f0; }            /* 키워드 */
+    .s, .s1, .s2, .sb, .sc, .sd, .se, .sh, .si, .sx, .sr, .ss { color: #a5d6a7; } /* 문자열 */
+    .m, .mb, .mf, .mh, .mi, .mo, .il { color: #e5b567; }                 /* 숫자 */
+    .na, .nb, .nc, .nd, .ne, .nf, .nl, .nn, .nt, .nv, .no { color: #82b7ff; } /* 이름류 */
+    .o, .p, .pi { color: #c3c9d5; }                                      /* 연산자/구두점 */
+    .err { color: #ff8a80; background-color: transparent; }
+    .gd { color: #ff8a80; } .gi { color: #a5d6a7; }
+    .lineno, .gl { color: #6b7280; }
   }
 
   /* 목차(TOC) */
   .toc {
-    background-color: #1c1f27;
-    border-color: #262a35;
-    .nav__title { background: #3d5296; }
-    .active a { background-color: #232732; color: #e8eaf0; }
+    background-color: #1d2027;
+    border-color: #2c3140;
+    .nav__title { background: #4a63b8; color: #fff; }
+    .active a { background-color: #262a34; color: #f4f6fa; }
   }
-  .toc__menu a { border-bottom-color: #262a35; }
+  .toc .nav__list a { color: #e4e7ee; }
+  .toc__menu a { border-bottom-color: #2c3140; }
 
-  /* 알림 박스 */
-  .notice, .notice--primary, .notice--info, .notice--warning,
-  .notice--success, .notice--danger {
-    background-color: #1c1f27 !important;
-    color: #d6d9e0;
+  /* 알림 박스 (스킨이 .page__content .notice 텍스트를 검정으로 고정하므로 재정의) */
+  .page__content .notice,
+  .page__content .notice--primary,
+  .page__content .notice--info,
+  .page__content .notice--warning,
+  .page__content .notice--success,
+  .page__content .notice--danger,
+  .notice {
+    background-color: #1d2027 !important;
+    color: #e4e7ee;
   }
 
   /* 페이지네이션 / 버튼 */
   .pagination {
     a, .disabled {
-      background-color: #1c1f27;
-      border-color: #262a35;
-      color: #d6d9e0;
+      background-color: #1d2027;
+      border-color: #2c3140;
+      color: #e4e7ee;
     }
-    a:hover { background-color: #232732; }
-    .current, a.current { background-color: #3d5296; color: #fff; }
+    a:hover { background-color: #262a34; }
+    .current, a.current { background-color: #4a63b8; color: #fff; }
   }
-  .btn--inverse { background-color: #232732; color: #d6d9e0; }
+  .pagination--pager {
+    background-color: #1d2027;
+    border-color: #2c3140;
+    color: #e4e7ee;
+    &:hover { background-color: #262a34; color: #f4f6fa; }
+    &.disabled { color: #6b7280; }
+  }
+  .btn--inverse { background-color: #262a34; color: #e4e7ee; }
+  .btn--primary { background-color: #4a63b8; color: #fff; }
 
   /* 검색 */
   .search-content {
     background-color: #14161c;
-    .search-input { background-color: transparent; color: #e8eaf0; }
+    .search-input {
+      background-color: transparent;
+      color: #f4f6fa;
+      &::placeholder { color: #6b7280; }
+    }
+    .archive__item-title a { color: #f4f6fa; }
   }
   .search-content__form { background-color: #14161c; }
 
-  /* 푸터 */
-  .page__footer {
-    background-color: #1c1f27;
-    color: #a7adba;
-    footer, a { color: #a7adba; }
+  /* 폼 요소 */
+  input, textarea, select {
+    background-color: #1d2027;
+    color: #e4e7ee;
+    border-color: #2c3140;
   }
-  .page__footer-copyright { color: #7f8698; }
+
+  /* 푸터 (스킨이 color를 !important로 고정하므로 배경만 조정) */
+  .page__footer {
+    background-color: #1d2027;
+    a { color: #cdd3de; }
+  }
+  .page__footer-copyright { color: #8b93a7; }
 
   /* 아바타(밝은 배경 일러스트) 경계 처리 */
   .author__avatar img {
-    border: 2px solid #262a35;
+    border: 2px solid #2c3140;
+  }
+}
+
+/* 수동 토글이 다크일 때 */
+html[data-theme="dark"] {
+  @include dark-theme;
+}
+
+/* OS가 다크일 때 (수동으로 라이트를 고른 경우는 제외) */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    @include dark-theme;
   }
 }
