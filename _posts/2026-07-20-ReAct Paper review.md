@@ -48,7 +48,9 @@ Thought → Action → Observation 루프를 반복한다.
 
 CoT(1b)는 그럴듯하게 추론하다가 환각으로 틀리고, Act-only(1c)는 검색만 하다가 답을 못 찾는다. ReAct(1d)는 검색 결과를 보고 생각을 수정해가며 정답에 도달한다.
 
-few-shot 예시는 사람이 직접 작성한 trajectory 몇 개가 전부다. (HotpotQA 6개, FEVER 3개, ALFWorld 2개, WebShop 1개)
+(2)의 ALFWorld도 같은 패턴이다. Act-only(2a)는 후추통을 찾으려고 서랍과 싱크대를 뒤지다가 안 되는 행동만 반복한다("Nothing happens"). ReAct(2b)는 Think로 "후추통은 캐비닛이나 조리대에 있을 확률이 높다"고 위치부터 추론해서 조리대에서 찾아내고, 찾은 뒤엔 "이제 서랍에 넣어야지"라고 다음 subgoal을 세워서 성공한다. 생각 없이 행동만 하면 같은 곳에서 뱅뱅 돈다는 걸 보여주는 예시.
+
+few-shot 예시는 사람이 직접 작성한 trajectory(궤적 — Thought/Action/Observation으로 문제를 푸는 전체 풀이 과정 기록) 몇 개가 전부다. (HotpotQA 6개, FEVER 3개, ALFWorld 2개, WebShop 1개)
 
 모델은 PaLM-540B 사용. 학습 없이 prompting만으로 동작.
 
