@@ -59,6 +59,15 @@ task 성격에 따라 thought 배치를 다르게 한다.
 - 지식 task(QA): 매 스텝마다 thought-action 교차 (dense)
 - 의사결정 task(ALFWorld): 필요할 때만 thought 생성 (sparse) — 모델이 스스로 언제 생각할지 결정
 
+논문은 이 설계가 주는 특징을 4가지로 정리한다.
+
+- **A) Intuitive and easy to design**: 프롬프트 설계가 쉽다. 어노테이터가 자신이 한 행동 위에 생각을 언어로 적기만 하면 된다. 특별한 포맷 설계나 예시 선정 기법도 쓰지 않았다
+- **B) General and flexible**: thought space가 자유로워서 QA, 사실 검증, 텍스트 게임, 웹 탐색처럼 액션 스페이스가 전혀 다른 태스크에 모두 적용된다
+- **C) Performant and robust**: in-context 예시 1~6개만으로 새로운 태스크 인스턴스에 일반화되고, reasoning만 하거나 acting만 하는 베이스라인을 도메인 불문하고 이긴다
+- **D) Human aligned and controllable**: 추론 과정이 사람이 읽을 수 있는 형태라 reasoning과 사실 여부를 그대로 검사할 수 있고, 중간에 thought를 수정해서(thought editing) 에이전트의 행동을 실시간으로 교정할 수도 있다
+
+특히 D는 지금 관점으로 보면 agent 관측가능성(observability)과 human-in-the-loop의 원형이다. 에이전트가 왜 그 행동을 했는지 로그로 추적할 수 있는 이유가 thought를 언어로 남기기 때문이다.
+
 요즘의 function calling agent가 이 구조를 그대로 사용하고 있다. tool call → result → 다시 생각하는 구조다.
 
 ## **Knowledge-Intensive Reasoning Tasks (HotpotQA, FEVER)**
