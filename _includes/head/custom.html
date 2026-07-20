@@ -45,6 +45,29 @@
 
     renderIcon();
   });
+
+  // 코드블록 복사 버튼
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('div.highlighter-rouge, figure.highlight').forEach(function (block) {
+      var code = block.querySelector('pre');
+      if (!code) return;
+
+      var btn = document.createElement('button');
+      btn.className = 'code-copy-btn';
+      btn.type = 'button';
+      btn.textContent = '복사';
+      btn.setAttribute('aria-label', '코드 복사');
+
+      btn.addEventListener('click', function () {
+        navigator.clipboard.writeText(code.innerText).then(function () {
+          btn.textContent = '복사됨!';
+          setTimeout(function () { btn.textContent = '복사'; }, 1500);
+        });
+      });
+
+      block.appendChild(btn);
+    });
+  });
 </script>
 <script data-ad-client="ca-pub-9115820443203140" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- favicons -->

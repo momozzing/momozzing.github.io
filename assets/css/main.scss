@@ -137,6 +137,36 @@ html {
   p, li, dl {
     line-height: 1.7;
   }
+
+  /* 본문 이미지: 라운딩으로 부드럽게 */
+  img {
+    border-radius: 8px;
+  }
+}
+
+/* 코드블록 복사 버튼 (JS는 head/custom.html) */
+div.highlighter-rouge, figure.highlight {
+  position: relative;
+}
+.code-copy-btn {
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  padding: 0.25em 0.7em;
+  font-size: 0.75em;
+  font-family: inherit;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.05);
+  color: #57606a;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+div.highlighter-rouge:hover .code-copy-btn,
+figure.highlight:hover .code-copy-btn,
+.code-copy-btn:focus {
+  opacity: 1;
 }
 
 /* 라이트 모드 본문 링크: 스킨 기본(검정)은 일반 텍스트와 구분 불가 →
@@ -431,6 +461,18 @@ div.highlighter-rouge, figure.highlight, .highlight {
   /* 아바타(밝은 배경 일러스트) 경계 처리 */
   .author__avatar img {
     border: 2px solid #2c3140;
+  }
+
+  /* 본문 이미지(논문 캡처 등 흰 배경): 눈부심 완화 */
+  .page__content img {
+    filter: brightness(0.87) contrast(1.05);
+  }
+
+  /* 코드블록 복사 버튼 */
+  .code-copy-btn {
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.08);
+    color: #b7bec9;
   }
 }
 

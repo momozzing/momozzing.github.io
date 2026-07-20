@@ -1,6 +1,6 @@
 ---
 title: "ReAct Paper review"
-excerpt: "ReAct: Synergizing Reasoning and Acting in Language Models"
+excerpt: "지금 모든 LLM Agent의 뼈대가 된 논문. Thought → Action → Observation 루프부터 LangChain create_agent까지 뜯어본다."
 categories:
   - Paper review
 tags:
