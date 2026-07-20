@@ -44,7 +44,7 @@ Thought → Action → Observation 루프를 반복한다.
 2. Action: 외부 환경에 액션 실행
 3. Observation: 액션 결과를 context에 추가하고 다시 Thought로
 
-![4가지 프롬프팅 방법 비교 (논문 Figure 1)](/assets/images/react/fig1-react-comparison.png)
+![4가지 프롬프팅 방법 비교 (논문 Figure 1)](https://momozzing.github.io/assets/images/react/fig1-react-comparison.png)
 
 CoT(1b)는 그럴듯하게 추론하다가 환각으로 틀리고, Act-only(1c)는 검색만 하다가 답을 못 찾는다. ReAct(1d)는 검색 결과를 보고 생각을 수정해가며 정답에 도달한다.
 
@@ -71,7 +71,7 @@ task 성격에 따라 thought 배치를 다르게 한다.
 
 HotpotQA EM 기준: Standard 28.7 / CoT 29.4 / Act-only 25.7 / ReAct 27.4
 
-![PaLM-540B 프롬프팅 결과 (논문 Table 1)](/assets/images/react/table1-hotpotqa-fever.png)
+![PaLM-540B 프롬프팅 결과 (논문 Table 1)](https://momozzing.github.io/assets/images/react/table1-hotpotqa-fever.png)
 
 -> ReAct 단독이 CoT보다 오히려 낮다?? 이게 이 논문의 정직한 부분.
 
@@ -80,13 +80,13 @@ HotpotQA EM 기준: Standard 28.7 / CoT 29.4 / Act-only 25.7 / ReAct 27.4
 - CoT 실패의 56%가 hallucination. 대신 reasoning 구조는 유연함
 - ReAct는 사실 기반(hallucination 6% vs CoT 14%)이지만, 검색 결과가 안좋으면 reasoning이 같이 망가지고(실패의 23%가 search error), 같은 thought-action을 반복하는 루프에 빠지기도 함
 
-![ReAct vs CoT 성공/실패 모드 분석 (논문 Table 2)](/assets/images/react/table2-error-analysis.png)
+![ReAct vs CoT 성공/실패 모드 분석 (논문 Table 2)](https://momozzing.github.io/assets/images/react/table2-error-analysis.png)
 
 -> 그래서 둘을 섞는다. ReAct → CoT-SC (ReAct가 N스텝 안에 답 못찾으면 CoT-SC로 fallback), CoT-SC → ReAct (CoT-SC 다수결 confidence 낮으면 ReAct로 전환)
 
 이 조합이 HotpotQA 34.2 / FEVER 64.6으로 prompting 방법 중 최고.
 
-![CoT-SC 샘플 수에 따른 조합 방법 성능 (논문 Figure 2)](/assets/images/react/fig2-cotsc-combo.png)
+![CoT-SC 샘플 수에 따른 조합 방법 성능 (논문 Figure 2)](https://momozzing.github.io/assets/images/react/fig2-cotsc-combo.png)
 
 CoT-SC 샘플 3~5개만 써도 순수 CoT-SC 21개 샘플 성능을 넘는다.
 
@@ -100,7 +100,7 @@ WebShop(쇼핑 사이트 시뮬레이터): ReAct 40% vs IL/RL 기반 ~29%
 
 in-context 예시 1~2개 프롬프팅으로 학습 기반 방법을 이겼다.
 
-![ALFWorld / WebShop 결과 (논문 Table 3, 4)](/assets/images/react/table34-alfworld-webshop.png)
+![ALFWorld / WebShop 결과 (논문 Table 3, 4)](https://momozzing.github.io/assets/images/react/table34-alfworld-webshop.png)
 
 -> 2022년 기준 충격 포인트. thought가 goal을 subgoal로 분해하고 진행상황을 추적해주는 게 결정적이었다. Act-only는 중간에 자기가 뭐하고 있었는지 까먹는다.
 
@@ -112,7 +112,7 @@ HotpotQA에서 ReAct trajectory 3,000개로 작은 모델(PaLM-8B, 62B)을 finet
 - finetuning 하면 역전됨. finetuned PaLM-8B ReAct가 prompted PaLM-62B를 이기고, finetuned 62B가 prompted 540B를 이김
 - Standard/CoT를 finetuning하는 건 지식 암기를 학습하는 거라 효과가 적고, ReAct finetuning은 "지식을 찾는 방법"을 학습하는 거라 일반화가 잘된다
 
-![프롬프팅 vs 파인튜닝 스케일링 (논문 Figure 3)](/assets/images/react/fig3-finetuning-scaling.png)
+![프롬프팅 vs 파인튜닝 스케일링 (논문 Figure 3)](https://momozzing.github.io/assets/images/react/fig3-finetuning-scaling.png)
 
 -> 작은 모델 + agent trajectory SFT 조합의 근거가 여기 있다.
 
