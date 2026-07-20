@@ -8,6 +8,7 @@ tags:
   - NLP
   - Agent
   - Paper review
+mathjax: true
 toc: true
 toc_sticky: true
 ---
@@ -44,6 +45,16 @@ Thought → Action → Observation 루프를 반복한다.
 2. Action: 외부 환경에 액션 실행
 3. Observation: 액션 결과를 context에 추가하고 다시 Thought로
 
+형식적으로 보면 원래 action space $A$에 언어 공간 $L$을 더해 $\hat{A} = A \cup L$로 확장한 것이다. thought $\hat{a} \in L$은 환경에 아무 영향을 주지 않고 context만 갱신한다. 대신 $L$은 무한한 공간이라 이 확장된 space에서의 학습이 어렵고, 강한 언어 prior를 가진 LLM이 있어야 동작한다.
+
+논문이 예시로 드는 thought의 역할은 다양하다.
+
+- 목표를 subgoal로 분해하고 action plan 수립
+- 태스크에 필요한 상식 주입 ("후추통은 캐비닛이나 조리대에 있을 것")
+- observation에서 중요한 부분 추출
+- 진행 상황 추적과 plan 전환
+- 예외 처리와 plan 수정
+
 ![4가지 프롬프팅 방법 비교 (논문 Figure 1)](https://momozzing.github.io/assets/images/react/fig1-react-comparison.png)
 
 CoT(1b)는 그럴듯하게 추론하다가 환각으로 틀리고, Act-only(1c)는 검색만 하다가 답을 못 찾는다. ReAct(1d)는 검색 결과를 보고 생각을 수정해가며 정답에 도달한다.
@@ -72,6 +83,8 @@ task 성격에 따라 thought 배치를 다르게 한다.
 
 ## **Knowledge-Intensive Reasoning Tasks (HotpotQA, FEVER)**
 
+HotpotQA는 위키 문서 두 개 이상을 넘나들어야 답이 나오는 multi-hop QA고, FEVER는 주장에 대해 SUPPORTS / REFUTES / NOT ENOUGH INFO를 판정하는 사실 검증 태스크다. 둘 다 질문(주장)만 주어지는 세팅이라, 모델이 근거를 직접 검색해서 찾아야 한다.
+
 액션은 Wikipedia API 3개가 전부다.
 
 - `search[entity]`: 해당 entity 페이지 첫 5문장 or 유사 페이지 top-5
@@ -82,7 +95,7 @@ HotpotQA EM 기준: Standard 28.7 / CoT 29.4 / Act-only 25.7 / ReAct 27.4
 
 ![PaLM-540B 프롬프팅 결과 (논문 Table 1)](https://momozzing.github.io/assets/images/react/table1-hotpotqa-fever.png)
 
-ReAct 단독은 CoT보다 오히려 낮다. 이 결과를 숨기지 않고 분석한 것이 이 논문의 정직한 부분이다.
+ReAct 단독은 HotpotQA에서 CoT보다 오히려 낮다. 이 결과를 숨기지 않고 분석한 것이 이 논문의 정직한 부분이다. 반대로 FEVER에서는 ReAct(60.9)가 CoT(56.3)를 이기는데, 사실 검증은 최신의 정확한 지식을 가져오는 것이 결정적이기 때문이다.
 
 이유는 error analysis에 나온다.
 
@@ -91,7 +104,7 @@ ReAct 단독은 CoT보다 오히려 낮다. 이 결과를 숨기지 않고 분�
 
 ![ReAct vs CoT 성공/실패 모드 분석 (논문 Table 2)](https://momozzing.github.io/assets/images/react/table2-error-analysis.png)
 
-그래서 둘을 섞는 방법을 제안한다. ReAct → CoT-SC (ReAct가 N스텝 안에 답 못찾으면 CoT-SC로 fallback), CoT-SC → ReAct (CoT-SC 다수결 confidence 낮으면 ReAct로 전환)
+그래서 둘을 섞는 방법을 제안한다. ReAct → CoT-SC (ReAct가 정해진 스텝(HotpotQA 7, FEVER 5) 안에 답을 못 찾으면 CoT-SC로 fallback), CoT-SC → ReAct (CoT-SC 다수결 confidence 낮으면 ReAct로 전환)
 
 이 조합이 HotpotQA 34.2 / FEVER 64.6으로 prompting 방법 중 최고.
 
@@ -124,6 +137,12 @@ in-context 예시 1~2개 프롬프팅으로 학습 기반 방법을 이겼다.
 ![ALFWorld / WebShop 결과 (논문 Table 3, 4)](https://momozzing.github.io/assets/images/react/table34-alfworld-webshop.png)
 
 2022년 기준으로는 충격적인 결과다. thought가 goal을 subgoal로 분해하고 진행 상황을 추적해주는 것이 결정적이었다. Act-only는 중간에 자신이 무엇을 하고 있었는지 잊어버린다.
+
+ablation으로 Inner Monologue 스타일(ReAct-IM)과도 비교한다. IM처럼 "환경 상태 관찰 + 목표 확인" 수준의 생각만 하게 하면 ALFWorld가 71 → 53으로 떨어진다. 목표를 subgoal로 분해하는 것과 물건이 어디 있을지 상식으로 추론하는 것이 사라지기 때문이다. 그냥 생각을 시키는 것이 아니라 어떤 생각을 하게 하느냐가 중요하다는 증거다.
+
+다만 WebShop에서 인간 전문가(점수 82.1 / 성공률 59.6)와는 갭이 크다. 사람은 상품 탐색과 질의 재구성을 훨씬 능동적으로 한다. 2022년의 프롬프팅으로는 아직 못 따라가는 부분이었다.
+
+부록(A.1)에서 GPT-3(text-davinci-002)로도 재현하는데, HotpotQA 30.8 vs PaLM 29.4, ALFWorld 78.4 vs 70.9로 오히려 더 잘 된다. instruction following으로 파인튜닝된 모델이라 그럴 것으로 추정한다. ReAct가 특정 모델에 종속된 방법이 아니라는 근거다.
 
 ## **LangChain의 create_agent는 실제로 어떻게 동작하는가**
 
