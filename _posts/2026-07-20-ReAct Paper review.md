@@ -210,4 +210,6 @@ sparse thought도 자연스럽게 구현된다. 모델이 `content` 없이 `tool
 
 단독으로 만능은 아니고 (HotpotQA에선 CoT한테 지기도 함), 내부지식 fallback이나 finetuning으로 채워야 한다.
 
-ReAct가 짱이다. 그리고 이 논문의 1저자 Shunyu Yao는 이후 Tree of Thoughts도 낸다.
+2022년의 이 단순한 while문이 4년이 지난 지금도 모든 LLM Agent의 뼈대다. 프레임워크가 아무리 화려해져도 결국 Thought → Action → Observation 루프 위에 서 있다. Agent를 만들다 길을 잃으면 이 논문으로 돌아오면 된다.
+
+덧붙이면, 1저자 Shunyu Yao는 이후 Tree of Thoughts를 내고 SWE-bench에도 참여한다. 이 사람 논문은 계속 따라가 볼 가치가 있다.
