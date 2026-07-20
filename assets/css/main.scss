@@ -178,6 +178,16 @@ figure.highlight:hover .code-copy-btn,
   &:hover { color: #2c4487; }
 }
 
+/* 목차는 본문 링크색에서 제외 — 테마가 TOC를 .page__content 안에
+   렌더링해서 위 규칙이 목차 색(#1f2328)을 덮어쓰기 때문 */
+.page__content .toc a,
+.page__content .toc a:visited {
+  color: #1f2328;
+}
+.page__content .toc a:hover {
+  color: #000;
+}
+
 /* 라이트 모드 코드블록: 스킨의 순검정 터미널 대신 밝은 배경(GitHub light 계열)
    다크모드의 차분한 코드블록과 톤 통일 */
 div.highlighter-rouge, figure.highlight, .highlight {
@@ -270,6 +280,11 @@ div.highlighter-rouge, figure.highlight, .highlight {
     &:visited { color: #b7a4ff; }
     &:hover { color: #c4d9ff; }
   }
+
+  /* 목차는 본문 링크색에서 제외 (흰색 유지) */
+  .page__content .toc a,
+  .page__content .toc a:visited { color: #eceef2; }
+  .page__content .toc a:hover { color: #ffffff; }
 
   /* 상단 마스트헤드 / 네비게이션 */
   .masthead {
