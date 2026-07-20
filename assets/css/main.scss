@@ -115,7 +115,7 @@ html {
     }
   }
 
-  li ul > li a { color: #4b5563; } // 하위 목차는 살짝 연하게
+  li ul > li a { color: #1f2328; } // 하위 목차도 동일한 검정
 }
 
 /* 현재 읽는 섹션: 검정 글씨 유지 + 볼드 + 왼쪽 인디고 인디케이터 바 */
@@ -367,7 +367,7 @@ div.highlighter-rouge, figure.highlight, .highlight {
     &:visited { color: #eceef2; }
     &:hover { color: #ffffff; }
   }
-  .toc__menu li ul > li a { color: #c3c9d3; } /* 하위 목차는 살짝 연하게 */
+  .toc__menu li ul > li a { color: #eceef2; } /* 하위 목차도 동일한 흰색 */
 
   /* 알림 박스 (스킨이 .page__content .notice 텍스트를 검정으로 고정하므로 재정의) */
   .page__content .notice,
