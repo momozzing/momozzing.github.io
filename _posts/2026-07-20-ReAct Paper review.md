@@ -36,7 +36,7 @@ Act-only는 계획과 목표 추적 없이 행동만 하니까 복잡한 task를
 
 thought는 환경을 바꾸지 않고 context만 업데이트한다는 것이 포인트다.
 
-## **ReAct**
+## **ReAct: Synergizing Reasoning + Acting**
 
 Thought → Action → Observation 루프를 반복한다.
 
@@ -61,9 +61,7 @@ task 성격에 따라 thought 배치를 다르게 한다.
 
 요즘의 function calling agent가 이 구조를 그대로 사용하고 있다. tool call → result → 다시 생각하는 구조다.
 
-## **Results**
-
-### **Knowledge-intensive tasks (HotpotQA, FEVER)**
+## **Knowledge-Intensive Reasoning Tasks (HotpotQA, FEVER)**
 
 액션은 Wikipedia API 3개가 전부다.
 
@@ -94,18 +92,6 @@ CoT-SC 샘플 3~5개만 써도 순수 CoT-SC 21개 샘플 성능을 넘는다.
 
 내부지식과 외부지식을 상황에 따라 골라 쓰는 것이 답이었다.
 
-### **Decision making tasks (ALFWorld, WebShop)**
-
-ALFWorld(텍스트 기반 집안일 시뮬레이터): ReAct 71% vs Act-only 45% vs BUTLER(IL, 학습 기반) 37%
-
-WebShop(쇼핑 사이트 시뮬레이터): ReAct 40% vs IL/RL 기반 ~29%
-
-in-context 예시 1~2개 프롬프팅으로 학습 기반 방법을 이겼다.
-
-![ALFWorld / WebShop 결과 (논문 Table 3, 4)](https://momozzing.github.io/assets/images/react/table34-alfworld-webshop.png)
-
-2022년 기준으로는 충격적인 결과다. thought가 goal을 subgoal로 분해하고 진행 상황을 추적해주는 것이 결정적이었다. Act-only는 중간에 자신이 무엇을 하고 있었는지 잊어버린다.
-
 ### **Finetuning**
 
 HotpotQA에서 ReAct trajectory 3,000개로 작은 모델(PaLM-8B, 62B)을 finetuning 해봤다.
@@ -117,6 +103,18 @@ HotpotQA에서 ReAct trajectory 3,000개로 작은 모델(PaLM-8B, 62B)을 finet
 ![프롬프팅 vs 파인튜닝 스케일링 (논문 Figure 3)](https://momozzing.github.io/assets/images/react/fig3-finetuning-scaling.png)
 
 요즘 많이 쓰는 작은 모델 + agent trajectory SFT 조합의 근거가 여기에 있다.
+
+## **Decision Making Tasks (ALFWorld, WebShop)**
+
+ALFWorld(텍스트 기반 집안일 시뮬레이터): ReAct 71% vs Act-only 45% vs BUTLER(IL, 학습 기반) 37%
+
+WebShop(쇼핑 사이트 시뮬레이터): ReAct 40% vs IL/RL 기반 ~29%
+
+in-context 예시 1~2개 프롬프팅으로 학습 기반 방법을 이겼다.
+
+![ALFWorld / WebShop 결과 (논문 Table 3, 4)](https://momozzing.github.io/assets/images/react/table34-alfworld-webshop.png)
+
+2022년 기준으로는 충격적인 결과다. thought가 goal을 subgoal로 분해하고 진행 상황을 추적해주는 것이 결정적이었다. Act-only는 중간에 자신이 무엇을 하고 있었는지 잊어버린다.
 
 ## **LangChain의 create_agent는 실제로 어떻게 동작하는가**
 
