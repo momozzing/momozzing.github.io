@@ -99,6 +99,81 @@ HumanEval Rust 최고 난도 50문제로 한 ablation이 이 논문에서 제일
 
 코딩 에이전트가 테스트를 돌리고, 실패하면 에러 로그를 읽고, "아 이 부분에서 타입이 안 맞았구나"라고 정리한 뒤 코드를 고쳐서 다시 시도하는 것. 정확히 Actor(코드 생성) → Evaluator(테스트 실행) → Self-Reflection(에러 분석) → 재시도다.
 
+### **LangGraph로 Reflexion 루프 짜보기**
+
+ReAct 리뷰에서는 `create_agent` 한 줄이면 됐다. Reflexion은 사정이 다르다. agent 루프 **바깥에** 평가와 반성을 한 겹 더 감는 구조라 원버튼 API가 없고, LangGraph의 `StateGraph`로 그래프를 직접 짠다.
+
+논문의 코딩 세팅(Actor 생성 → unit test 실행 → 반성 → 재시도)을 최소 구현하면 이렇다.
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+
+class State(TypedDict):
+    task: str
+    code: str
+    test_result: str
+    reflections: list[str]   # 논문의 mem (장기 기억)
+    trials: int
+
+def actor(state: State):
+    lessons = "\n".join(state["reflections"]) or "없음"
+    prompt = f"""문제: {state['task']}
+지난 시도에서 얻은 교훈:
+{lessons}
+교훈을 반영해서 코드를 작성해라."""
+    return {"code": llm.invoke(prompt).content, "trials": state["trials"] + 1}
+
+def evaluator(state: State):
+    return {"test_result": run_tests(state["code"])}   # 실제 실행 = 단단한 근거
+
+def self_reflection(state: State):
+    prompt = f"""코드:
+{state['code']}
+테스트 결과:
+{state['test_result']}
+무엇이 잘못됐고 다음 시도에서 어떻게 고쳐야 하는지 한 문단으로 정리해라."""
+    return {"reflections": state["reflections"] + [llm.invoke(prompt).content]}
+
+def should_retry(state: State) -> str:
+    if "failed" not in state["test_result"] or state["trials"] >= 3:
+        return "done"
+    return "retry"
+
+builder = StateGraph(State)
+builder.add_node("actor", actor)
+builder.add_node("evaluator", evaluator)
+builder.add_node("self_reflection", self_reflection)
+
+builder.add_edge(START, "actor")
+builder.add_edge("actor", "evaluator")
+builder.add_conditional_edges(
+    "evaluator", should_retry, {"done": END, "retry": "self_reflection"}
+)
+builder.add_edge("self_reflection", "actor")
+
+graph = builder.compile()
+result = graph.invoke({
+    "task": "두 문자열이 애너그램인지 판별하는 함수를 작성해라",
+    "code": "", "test_result": "", "reflections": [], "trials": 0,
+})
+```
+
+### **논문 ↔ 구현 매핑**
+
+| Reflexion 논문 | LangGraph 구현 |
+|---|---|
+| Actor (M_a) | `actor` 노드 — 반성문을 프롬프트에 주입해서 생성 |
+| Evaluator (M_e) | `evaluator` 노드 + `should_retry` 분기 |
+| Self-Reflection (M_sr) | `self_reflection` 노드 |
+| mem (장기 기억) | state의 `reflections` 리스트 |
+| max trials | `trials` 카운터 (그래프 전체로는 `recursion_limit`) |
+| 통과 시 종료 | conditional edge의 `END` |
+
+verbal reinforcement가 코드로는 어디에 있는지 보면, `actor` 프롬프트에 `reflections`를 끼워 넣는 세 줄이 전부다. 가중치 업데이트는 어디에도 없고, 학습된 것은 전부 state에 쌓인 문장들이다.
+
+이 패턴은 [LangGraph 공식 튜토리얼](https://langchain-ai.github.io/langgraph/tutorials/reflexion/reflexion/)에도 Reflexion이라는 이름 그대로 올라가 있다. 논문의 구조가 프레임워크의 표준 레시피가 된 셈이다.
+
 에이전트에 붙는 memory 설계도 마찬가지다. 세션에서 얻은 교훈을 파일로 남겨두고 다음 세션 컨텍스트에 주입하는 패턴은 Reflexion의 장기 기억을 그대로 닮았다. 가중치는 그대로인데 컨텍스트가 학습되는 것, 요즘 말로 하면 in-context learning을 학습 루프로 쓰는 것이다.
 
 Table 3의 교훈도 현재진행형이다. 판정이 부정확하면(멋대로 만든 테스트, 어설픈 LLM-judge) self-correction은 오히려 성능을 깎는다. 에이전트 루프를 설계할 때 "얼마나 잘 반성하느냐"보다 "반성의 근거가 얼마나 단단하냐"를 먼저 챙겨야 하는 이유다.
