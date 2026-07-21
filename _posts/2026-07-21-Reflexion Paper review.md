@@ -99,80 +99,58 @@ HumanEval Rust 최고 난도 50문제로 한 ablation이 이 논문에서 제일
 
 코딩 에이전트가 테스트를 돌리고, 실패하면 에러 로그를 읽고, "아 이 부분에서 타입이 안 맞았구나"라고 정리한 뒤 코드를 고쳐서 다시 시도하는 것. 정확히 Actor(코드 생성) → Evaluator(테스트 실행) → Self-Reflection(에러 분석) → 재시도다.
 
-### **LangGraph로 Reflexion 루프 짜보기**
+### **LangGraph의 Reflexion 에이전트**
 
-ReAct 리뷰에서는 `create_agent` 한 줄이면 됐다. Reflexion은 사정이 다르다. agent 루프 **바깥에** 평가와 반성을 한 겹 더 감는 구조라 원버튼 API가 없고, LangGraph의 `StateGraph`로 그래프를 직접 짠다.
+ReAct 리뷰에서는 `create_agent` 한 줄이면 됐다. Reflexion은 사정이 다르다. agent 루프 **바깥에** 평가와 반성을 한 겹 더 감는 구조라 원버튼 API가 없고, LangGraph로 그래프를 직접 짠다.
 
-논문의 코딩 세팅(Actor 생성 → unit test 실행 → 반성 → 재시도)을 최소 구현하면 이렇다.
+LangChain이 공식 블로그 [Reflection Agents](https://www.langchain.com/blog/reflection-agents)에서 이 계열을 세 단계로 정리해뒀다. 단순한 것부터 Basic Reflection(생성 ↔ 비평 반복), **Reflexion**(비평을 구조화하고 외부 근거로 grounding), LATS(트리 탐색까지 확장, 이것도 Shunyu Yao 계보다) 순서다.
+
+그중 Reflexion 에이전트는 세 노드로 구성된다.
+
+1. **Responder**: 초안 응답과 함께, 자기 응답에 대한 비평(부족한 점/과잉인 점)과 검색 쿼리를 **구조화된 출력으로 강제** 생성
+2. **Execute Tools**: 검색 쿼리를 실제로 실행해서 외부 근거 수집
+3. **Revisor**: 검색 결과와 비평을 반영해 인용을 달아가며 수정
+
+블로그의 그래프 조립 코드는 이렇다.
 
 ```python
-from typing import TypedDict
-from langgraph.graph import StateGraph, START, END
+from langgraph.graph import END, MessageGraph
 
-class State(TypedDict):
-    task: str
-    code: str
-    test_result: str
-    reflections: list[str]   # 논문의 mem (장기 기억)
-    trials: int
+MAX_ITERATIONS = 5
+builder = MessageGraph()
+builder.add_node("draft", first_responder.respond)
+builder.add_node("execute_tools", execute_tools)
+builder.add_node("revise", revisor.respond)
 
-def actor(state: State):
-    lessons = "\n".join(state["reflections"]) or "없음"
-    prompt = f"""문제: {state['task']}
-지난 시도에서 얻은 교훈:
-{lessons}
-교훈을 반영해서 코드를 작성해라."""
-    return {"code": llm.invoke(prompt).content, "trials": state["trials"] + 1}
+builder.add_edge("draft", "execute_tools")
+builder.add_edge("execute_tools", "revise")
 
-def evaluator(state: State):
-    return {"test_result": run_tests(state["code"])}   # 실제 실행 = 단단한 근거
+def event_loop(state: List[BaseMessage]) -> str:
+    num_iterations = _get_num_iterations(state)
+    if num_iterations > MAX_ITERATIONS:
+        return END
+    return "execute_tools"
 
-def self_reflection(state: State):
-    prompt = f"""코드:
-{state['code']}
-테스트 결과:
-{state['test_result']}
-무엇이 잘못됐고 다음 시도에서 어떻게 고쳐야 하는지 한 문단으로 정리해라."""
-    return {"reflections": state["reflections"] + [llm.invoke(prompt).content]}
-
-def should_retry(state: State) -> str:
-    if "failed" not in state["test_result"] or state["trials"] >= 3:
-        return "done"
-    return "retry"
-
-builder = StateGraph(State)
-builder.add_node("actor", actor)
-builder.add_node("evaluator", evaluator)
-builder.add_node("self_reflection", self_reflection)
-
-builder.add_edge(START, "actor")
-builder.add_edge("actor", "evaluator")
-builder.add_conditional_edges(
-    "evaluator", should_retry, {"done": END, "retry": "self_reflection"}
-)
-builder.add_edge("self_reflection", "actor")
-
+builder.add_conditional_edges("revise", event_loop)
+builder.set_entry_point("draft")
 graph = builder.compile()
-result = graph.invoke({
-    "task": "두 문자열이 애너그램인지 판별하는 함수를 작성해라",
-    "code": "", "test_result": "", "reflections": [], "trials": 0,
-})
 ```
+
+draft → 검색 → revise를 MAX_ITERATIONS까지 돌리는, 논문 Algorithm 1의 while문 그대로다.
 
 ### **논문 ↔ 구현 매핑**
 
-| Reflexion 논문 | LangGraph 구현 |
+| Reflexion 논문 | LangGraph Reflexion 에이전트 |
 |---|---|
-| Actor (M_a) | `actor` 노드 — 반성문을 프롬프트에 주입해서 생성 |
-| Evaluator (M_e) | `evaluator` 노드 + `should_retry` 분기 |
-| Self-Reflection (M_sr) | `self_reflection` 노드 |
-| mem (장기 기억) | state의 `reflections` 리스트 |
-| max trials | `trials` 카운터 (그래프 전체로는 `recursion_limit`) |
-| 통과 시 종료 | conditional edge의 `END` |
+| Actor (M_a) | `draft` / `revise` 노드 (Responder, Revisor) |
+| Self-Reflection (M_sr) | Responder가 구조화 출력으로 강제 생성하는 self-critique |
+| 반성의 근거 | `execute_tools`의 웹 검색 (논문 코딩 세팅에서는 unit test) |
+| mem (장기 기억) | 누적되는 메시지 리스트 — 이전 비평과 검색 결과가 다음 revise의 컨텍스트 |
+| max trials | `MAX_ITERATIONS` + `event_loop` 분기 |
 
-verbal reinforcement가 코드로는 어디에 있는지 보면, `actor` 프롬프트에 `reflections`를 끼워 넣는 세 줄이 전부다. 가중치 업데이트는 어디에도 없고, 학습된 것은 전부 state에 쌓인 문장들이다.
+논문과 다른 점도 보인다. 논문은 Evaluator가 별도 모듈인데, 이 구현은 비평을 Actor의 구조화 출력 필드로 합쳐버렸다. 대신 근거를 웹 검색으로 잡는다. Table 3의 교훈("근거 없는 반성은 해롭다")을 여기 대입하면, 이 구현에서 반성의 품질을 지탱하는 것은 검색 결과다.
 
-이 패턴은 [LangGraph 공식 튜토리얼](https://langchain-ai.github.io/langgraph/tutorials/reflexion/reflexion/)에도 Reflexion이라는 이름 그대로 올라가 있다. 논문의 구조가 프레임워크의 표준 레시피가 된 셈이다.
+블로그 코드의 `MessageGraph`는 당시 API고, 지금 LangGraph에서는 `StateGraph`에 메시지 리스트를 담는 방식으로 같은 그래프를 만든다. 구조는 동일하다.
 
 에이전트에 붙는 memory 설계도 마찬가지다. 세션에서 얻은 교훈을 파일로 남겨두고 다음 세션 컨텍스트에 주입하는 패턴은 Reflexion의 장기 기억을 그대로 닮았다. 가중치는 그대로인데 컨텍스트가 학습되는 것, 요즘 말로 하면 in-context learning을 학습 루프로 쓰는 것이다.
 
