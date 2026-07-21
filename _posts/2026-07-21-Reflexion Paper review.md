@@ -105,13 +105,58 @@ ReAct 리뷰에서는 `create_agent` 한 줄이면 됐다. Reflexion은 사정�
 
 LangChain이 공식 블로그 [Reflection Agents](https://www.langchain.com/blog/reflection-agents)에서 이 계열을 세 단계로 정리해뒀다. 단순한 것부터 Basic Reflection(생성 ↔ 비평 반복), **Reflexion**(비평을 구조화하고 외부 근거로 grounding), LATS(트리 탐색까지 확장, 이것도 Shunyu Yao 계보다) 순서다.
 
-그중 Reflexion 에이전트는 세 노드로 구성된다.
+그중 Reflexion 에이전트는 세 노드로 구성된다. 이름만으로는 감이 안 오니 노드별 실제 구현을 보자. (코드는 블로그가 링크한 공식 노트북에서 핵심만 추렸다)
 
-1. **Responder**: 초안 응답과 함께, 자기 응답에 대한 비평(부족한 점/과잉인 점)과 검색 쿼리를 **구조화된 출력으로 강제** 생성
-2. **Execute Tools**: 검색 쿼리를 실제로 실행해서 외부 근거 수집
-3. **Revisor**: 검색 결과와 비평을 반영해 인용을 달아가며 수정
+**1. Responder** — 이 구현의 심장은 프롬프트가 아니라 출력 스키마다. 답변만 생성하는 것이 아니라 자기 비평과 검색 쿼리까지 하나의 구조체로 강제한다.
 
-블로그의 그래프 조립 코드는 이렇다.
+```python
+class Reflection(BaseModel):
+    missing: str = Field(description="Critique of what is missing.")
+    superfluous: str = Field(description="Critique of what is superfluous")
+
+class AnswerQuestion(BaseModel):
+    """답변, 자기 비평, 개선용 검색 쿼리를 한 번에 생성한다."""
+    answer: str = Field(description="~250 word detailed answer to the question.")
+    reflection: Reflection = Field(description="Your reflection on the initial answer.")
+    search_queries: list[str] = Field(
+        description="1-3 search queries for researching improvements "
+        "to address the critique of your current answer."
+    )
+
+first_responder = actor_prompt | llm.bind_tools(tools=[AnswerQuestion])
+```
+
+한 번의 호출에서 "답변 + 뭐가 부족한지(missing) + 뭐가 과한지(superfluous) + 그래서 뭘 검색할지"가 전부 나온다. 반성을 자유 텍스트에 맡기지 않고 스키마로 강제한 것이 포인트다.
+
+**2. Execute Tools** — Responder가 뽑은 쿼리를 실제 검색으로 실행해서 외부 근거를 가져온다.
+
+```python
+def run_queries(search_queries: list[str], **kwargs):
+    """Run the generated queries."""
+    return tavily_tool.batch([{"query": query} for query in search_queries])
+
+tool_node = ToolNode([
+    StructuredTool.from_function(run_queries, name=AnswerQuestion.__name__),
+    StructuredTool.from_function(run_queries, name=ReviseAnswer.__name__),
+])
+```
+
+**3. Revisor** — Responder와 같은 스키마를 상속받되, 인용(references)을 추가로 강제한다.
+
+```python
+class ReviseAnswer(AnswerQuestion):
+    """검색 근거를 인용하며 이전 답변을 수정한다."""
+    references: list[str] = Field(
+        description="Citations motivating your updated answer."
+    )
+
+revisor = actor_prompt.partial(first_instruction=revise_instructions) \
+    | llm.bind_tools(tools=[ReviseAnswer])
+```
+
+수정 지침(`revise_instructions`)의 내용은 "이전 비평을 반영해 부족한 정보를 채우고, 반드시 번호 인용([1], [2])을 달고, 과잉 정보를 걷어내라"다. 인용을 스키마 레벨에서 강제하는 것이 이 구현의 grounding 장치다.
+
+이 세 노드를 그래프로 조립한다.
 
 ```python
 from langgraph.graph import END, MessageGraph
