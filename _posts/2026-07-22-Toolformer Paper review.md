@@ -19,7 +19,7 @@ Toolformer: Language Models Can Teach Themselves to Use Tools
 
 Toolformer는 Meta AI에서 나온 논문이다. (NeurIPS 2023)
 
-[ReAct](https://momozzing.github.io/paper%20review/ReAct-Paper-review/)와 [Reflexion](https://momozzing.github.io/paper%20review/Reflexion-Paper-review/)이 프롬프팅으로 도구를 쓰게 했다면, Toolformer는 접근이 다르다. **파인튜닝으로 도구 사용을 모델의 몸에 새긴다.** 그리고 그 학습 데이터를 사람 어노테이션 없이 모델이 스스로 만든다.
+[ReAct](https://momozzing.github.io/paper%20review/ReAct-Paper-review/)와 [Reflexion](https://momozzing.github.io/paper%20review/Reflexion-Paper-review/)이 프롬프팅으로 도구를 쓰게 했다면, Toolformer는 접근이 다르다. **파인튜닝으로 도구 사용을 모델 스스로 한다.** 그리고 그 학습 데이터를 사람 어노테이션 없이 모델이 스스로 만든다.
 
 어떻게 만드는지 알아보자.
 
@@ -48,7 +48,7 @@ Toolformer가 세운 조건은 두 가지다.
 2. **Execute**: 후보 API 호출을 실제로 실행해서 결과를 받는다
 3. **Filter**: 호출이 쓸모 있었는지 검사해서 쓸모없는 호출을 버린다
 
-필터 기준이 이 논문의 심장이다. **"API 호출과 그 결과를 프리픽스로 줬을 때, 뒤따르는 토큰들의 loss가 충분히 줄어드는가"**를 잰다.
+필터 기준이 이 논문의 핵심이다. **"API 호출과 그 결과를 프리픽스로 줬을 때, 뒤따르는 토큰들의 loss가 충분히 줄어드는가"**를 잰다.
 
 $$L_i^- - L_i^+ \geq \tau_f$$
 
@@ -95,9 +95,9 @@ GPT-2 계열 작은 모델들로 같은 실험을 하면, **775M 미만 모델�
 
 요즘 모델들이 기본으로 갖춘 native function calling은 도구 호출 데이터로 학습된 결과다. Toolformer는 그 학습 데이터를 만드는 파이프라인의 원형이다. 후보 생성 → 실행 → 필터 → 파인튜닝이라는 구조는 지금의 tool-use 학습 데이터 구축과 같은 뼈대다.
 
-필터 기준도 이어지고 있다. "실행해보고 도움이 된 것만 남긴다"는 self-supervised 필터링은 지금의 rejection sampling 기반 데이터 정제와 같은 발상이다. 정답 라벨 대신 모델의 loss를 심판으로 쓴 것이 2023년 초 시점의 기여다.
+필터 기준도 이어지고 있다. "실행해보고 도움이 된 것만 남긴다"는 self-supervised 필터링은 지금의 rejection sampling 기반 데이터 정제와 같은 발상이다. 정답 라벨 대신 모델의 loss를 기준으로 쓴 것이 2023년 초 시점의 기여다.
 
-한계였던 연쇄와 상호작용은 반대편 계열이 채웠다. ReAct가 루프를 만들고 Reflexion이 루프에 학습을 넣었다면, Toolformer는 루프 안에서 실행되는 도구 호출 능력 자체를 모델에 새겼다. 지금의 agent는 이 두 계열의 결합 위에 서 있다. 파인튜닝으로 몸에 새긴 function calling을, 프롬프팅 루프가 굴리는 구조다.
+한계였던 연쇄와 상호작용은 반대편 계열이 채웠다. ReAct가 루프를 만들고 Reflexion이 루프에 학습을 넣었다면, Toolformer는 루프 안에서 실행되는 도구 호출 능력 자체를 모델에 학습시켰다. 지금의 agent는 이 두 계열의 결합 위에 서 있다. 파인튜닝으로 모델에 학습시킨 function calling을, 프롬프팅 루프가 굴리는 구조다.
 
 ## **Conclusion**
 
