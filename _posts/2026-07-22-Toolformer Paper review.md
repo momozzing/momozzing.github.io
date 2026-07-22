@@ -21,8 +21,6 @@ Toolformer는 Meta AI에서 나온 논문이다. (NeurIPS 2023)
 
 [ReAct](https://momozzing.github.io/paper%20review/ReAct-Paper-review/)와 [Reflexion](https://momozzing.github.io/paper%20review/Reflexion-Paper-review/)이 프롬프팅으로 도구를 쓰게 했다면, Toolformer는 접근이 다르다. **파인튜닝으로 도구 사용을 모델 스스로 한다.** 그리고 그 학습 데이터를 사람 어노테이션 없이 모델이 스스로 만든다.
 
-어떻게 만드는지 알아보자.
-
 ## **Introduction**
 
 LLM은 few-shot으로 새로운 태스크를 풀 만큼 똑똑한데, 정작 사칙연산이나 최신 정보 조회 같은 기본 기능에서는 계산기나 검색엔진보다 못하다. 도구를 붙이면 해결되지만, 기존 접근은 대량의 사람 어노테이션이 필요하거나 특정 태스크 전용으로만 동작했다.

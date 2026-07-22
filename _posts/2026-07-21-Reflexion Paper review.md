@@ -22,8 +22,6 @@ Reflexion은 Northeastern + MIT + Princeton에서 나온 논문이다. (NeurIPS 
 
 ReAct가 Thought → Action → Observation 루프를 만들었다면, Reflexion은 그 루프에 **실패에서 배우는 능력**을 넣는다.
 
-어떻게 배우는지 알아보자.
-
 ## **Introduction**
 
 LLM 에이전트도 시행착오로 배우게 하고 싶다. 그런데 전통적인 강화학습(RL)로 하려면 문제가 있다. 샘플이 대량으로 필요하고, 모델 파인튜닝 비용이 비싸다. LLM 에이전트는 보통 API 뒤에 있는 거대 모델이라 가중치 업데이트 자체가 어렵기도 하다.

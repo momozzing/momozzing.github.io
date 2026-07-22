@@ -23,8 +23,6 @@ ReAct는 프린스턴 + Google Brain에서 나온 논문이다. (ICLR 2023)
 
 LangChain, LangGraph의 ReAct agent가 다 여기서 나왔다.
 
-어떻게 동작하는지 알아보자.
-
 ## **Introduction**
 
 LLM은 reasoning(CoT prompting)과 acting(action plan 생성)이 각각 따로 연구가 되어왔다.
