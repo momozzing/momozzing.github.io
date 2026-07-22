@@ -101,11 +101,33 @@ HumanEval Rust 최고 난도 50문제로 한 ablation이 이 논문에서 제일
 
 ### **LangGraph의 Reflexion 에이전트**
 
-ReAct 리뷰에서는 `create_agent` 한 줄이면 됐다. Reflexion은 사정이 다르다. agent 루프 **바깥에** 평가와 반성을 한 겹 더 감는 구조라 원버튼 API가 없고, LangGraph로 그래프를 직접 짠다.
+ReAct는 `create_agent` 한 줄로 구현이 된다. 하지만 Reflexion는 다르다. agent 루프 **바깥에** 평가와 반성을 두는 구조라 LangGraph로 그래프를 직접 짠다.
 
 LangChain이 공식 블로그 [Reflection Agents](https://www.langchain.com/blog/reflection-agents)에서 이 계열을 세 단계로 정리해뒀다. 단순한 것부터 Basic Reflection(생성 ↔ 비평 반복), **Reflexion**(비평을 구조화하고 외부 근거로 grounding), LATS(트리 탐색까지 확장, 이것도 Shunyu Yao 계보다) 순서다.
 
 그중 Reflexion 에이전트는 세 노드로 구성된다. 이름만으로는 감이 안 오니 노드별 실제 구현을 보자. (코드는 블로그가 링크한 공식 노트북에서 핵심만 추렸다)
+
+**0. 준비물** — 모델, 검색 도구, 그리고 세 노드가 공유하는 프롬프트다.
+
+```python
+from datetime import datetime
+from pydantic import BaseModel, Field
+from langchain_anthropic import ChatAnthropic
+from langchain_community.tools.tavily_search import TavilySearchResults
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+
+llm = ChatAnthropic(model="claude-sonnet-4-6")
+tavily_tool = TavilySearchResults(max_results=5)
+
+actor_prompt = ChatPromptTemplate.from_messages([
+    ("system",
+     "You are expert researcher. Current time: {time}\n"
+     "1. {first_instruction}\n"
+     "2. Reflect and critique your answer. Be severe to maximize improvement.\n"
+     "3. Recommend search queries to research information and improve your answer."),
+    MessagesPlaceholder(variable_name="messages"),
+]).partial(time=lambda: datetime.now().isoformat())
+```
 
 **1. Responder** — 이 구현의 심장은 프롬프트가 아니라 출력 스키마다. 답변만 생성하는 것이 아니라 자기 비평과 검색 쿼리까지 하나의 구조체로 강제한다.
 
@@ -123,7 +145,31 @@ class AnswerQuestion(BaseModel):
         "to address the critique of your current answer."
     )
 
-first_responder = actor_prompt | llm.bind_tools(tools=[AnswerQuestion])
+class ResponderWithRetries:
+    """스키마 검증에 실패하면 에러를 보여주고 재시도시키는 래퍼"""
+    def __init__(self, runnable, validator):
+        self.runnable, self.validator = runnable, validator
+
+    def respond(self, state: list):
+        for attempt in range(3):
+            response = self.runnable.invoke({"messages": state})
+            try:
+                self.validator.invoke(response)
+                return response
+            except ValidationError as e:
+                state = state + [response, ToolMessage(
+                    content=f"{repr(e)}\n\nPay close attention to the function schema.",
+                    tool_call_id=response.tool_calls[0]["id"])]
+        return response
+
+initial_chain = actor_prompt.partial(
+    first_instruction="Provide a detailed ~250 word answer."
+) | llm.bind_tools(tools=[AnswerQuestion])
+
+first_responder = ResponderWithRetries(
+    runnable=initial_chain,
+    validator=PydanticToolsParser(tools=[AnswerQuestion]),
+)
 ```
 
 한 번의 호출에서 "답변 + 뭐가 부족한지(missing) + 뭐가 과한지(superfluous) + 그래서 뭘 검색할지"가 전부 나온다. 반성을 자유 텍스트에 맡기지 않고 스키마로 강제한 것이 포인트다.
@@ -135,7 +181,7 @@ def run_queries(search_queries: list[str], **kwargs):
     """Run the generated queries."""
     return tavily_tool.batch([{"query": query} for query in search_queries])
 
-tool_node = ToolNode([
+execute_tools = ToolNode([
     StructuredTool.from_function(run_queries, name=AnswerQuestion.__name__),
     StructuredTool.from_function(run_queries, name=ReviseAnswer.__name__),
 ])
@@ -150,11 +196,22 @@ class ReviseAnswer(AnswerQuestion):
         description="Citations motivating your updated answer."
     )
 
-revisor = actor_prompt.partial(first_instruction=revise_instructions) \
-    | llm.bind_tools(tools=[ReviseAnswer])
+revise_instructions = """Revise your previous answer using the new information.
+- 이전 비평을 반영해 부족한 정보를 채워라
+- 반드시 번호 인용([1], [2])을 달아 검증 가능하게 하라
+- 과잉 정보를 걷어내고 250단어를 넘지 마라"""
+
+revision_chain = actor_prompt.partial(
+    first_instruction=revise_instructions
+) | llm.bind_tools(tools=[ReviseAnswer])
+
+revisor = ResponderWithRetries(
+    runnable=revision_chain,
+    validator=PydanticToolsParser(tools=[ReviseAnswer]),
+)
 ```
 
-수정 지침(`revise_instructions`)의 내용은 "이전 비평을 반영해 부족한 정보를 채우고, 반드시 번호 인용([1], [2])을 달고, 과잉 정보를 걷어내라"다. 인용을 스키마 레벨에서 강제하는 것이 이 구현의 grounding 장치다.
+인용을 스키마 레벨에서 강제하는 것이 이 구현의 grounding 장치다.
 
 이 세 노드를 그래프로 조립한다.
 
@@ -170,8 +227,9 @@ builder.add_node("revise", revisor.respond)
 builder.add_edge("draft", "execute_tools")
 builder.add_edge("execute_tools", "revise")
 
-def event_loop(state: List[BaseMessage]) -> str:
-    num_iterations = _get_num_iterations(state)
+def event_loop(state: list) -> str:
+    # 도구 실행 횟수 = 지금까지의 반복 수
+    num_iterations = sum(isinstance(m, ToolMessage) for m in state)
     if num_iterations > MAX_ITERATIONS:
         return END
     return "execute_tools"
@@ -195,7 +253,7 @@ draft → 검색 → revise를 MAX_ITERATIONS까지 돌리는, 논문 Algorithm 
 
 논문과 다른 점도 보인다. 논문은 Evaluator가 별도 모듈인데, 이 구현은 비평을 Actor의 구조화 출력 필드로 합쳐버렸다. 대신 근거를 웹 검색으로 잡는다. Table 3의 교훈("근거 없는 반성은 해롭다")을 여기 대입하면, 이 구현에서 반성의 품질을 지탱하는 것은 검색 결과다.
 
-블로그 코드의 `MessageGraph`는 당시 API고, 지금 LangGraph에서는 `StateGraph`에 메시지 리스트를 담는 방식으로 같은 그래프를 만든다. 구조는 동일하다.
+위 코드는 [공식 노트북](https://github.com/langchain-ai/langgraph/blob/23961cff61a42b52525f3b20b4094d8d2fba1744/docs/docs/tutorials/reflexion/reflexion.ipynb)을 블로그 분량에 맞게 정리한 것이다. 임포트 일부를 생략했으니 전체 실행 코드는 노트북을 참고하자. 한 가지 주의할 점은 `MessageGraph`가 블로그 당시의 API라는 것 — 지금 LangGraph에서는 `StateGraph`에 메시지 리스트를 담는 방식으로 같은 그래프를 만든다. 구조는 동일하다.
 
 에이전트에 붙는 memory 설계도 마찬가지다. 세션에서 얻은 교훈을 파일로 남겨두고 다음 세션 컨텍스트에 주입하는 패턴은 Reflexion의 장기 기억을 그대로 닮았다. 가중치는 그대로인데 컨텍스트가 학습되는 것, 요즘 말로 하면 in-context learning을 학습 루프로 쓰는 것이다.
 
