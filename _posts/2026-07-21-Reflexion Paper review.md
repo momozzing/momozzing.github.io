@@ -254,7 +254,7 @@ draft → 검색 → revise를 MAX_ITERATIONS까지 돌리는, 논문 Algorithm 
 
 위 코드는 [공식 노트북](https://github.com/langchain-ai/langgraph/blob/23961cff61a42b52525f3b20b4094d8d2fba1744/docs/docs/tutorials/reflexion/reflexion.ipynb)을 블로그 분량에 맞게 정리한 것이다. 임포트 일부를 생략했으니 전체 실행 코드는 노트북을 참고하자. 한 가지 주의할 점은 `MessageGraph`가 블로그 당시의 API라는 것 — 지금 LangGraph에서는 `StateGraph`에 메시지 리스트를 담는 방식으로 같은 그래프를 만든다. 구조는 동일하다.
 
-에이전트에 붙는 memory 설계도 마찬가지다. 세션에서 얻은 교훈을 파일로 남겨두고 다음 세션 컨텍스트에 주입하는 패턴은 Reflexion의 장기 기억을 그대로 닮았다. 가중치는 그대로인데 컨텍스트가 학습되는 것, 요즘 말로 하면 in-context learning을 학습 루프로 쓰는 것이다.
+에이전트에 붙는 memory 설계도 마찬가지다. 세션에서 얻은 교훈을 파일로 남겨두고 다음 세션 컨텍스트에 주입하는 패턴이 Reflexion의 장기 기억 부분이다. 가중치는 그대로인데 컨텍스트가 학습되는 것, in-context learning을 학습 루프로 쓰는 것이다.
 
 Table 3의 교훈도 현재진행형이다. 판정이 부정확하면(멋대로 만든 테스트, 어설픈 LLM-judge) self-correction은 오히려 성능을 깎는다. 에이전트 루프를 설계할 때 "얼마나 잘 반성하느냐"보다 "반성의 근거가 얼마나 단단하냐"를 먼저 챙겨야 하는 이유다.
 
@@ -271,5 +271,3 @@ ReAct가 행동하면서 생각하는 법을 만들었다면, Reflexion은 실�
 가중치를 하나도 안 바꾸고, 실패 경험을 반성문으로 바꿔 메모리에 쌓는 것만으로 시도할수록 잘해지는 에이전트가 된다. 스칼라 reward 대신 언어를 학습 신호로 쓰는 verbal RL이라는 프레임이 이 논문의 기여다.
 
 단, 반성은 근거가 있을 때만 힘을 쓴다. 근거 없는 반성은 안 하느니만 못하다는 Table 3의 결과는 에이전트를 만드는 사람이라면 기억해둘 만하다.
-
-Shunyu Yao 추적은 계속된다.
