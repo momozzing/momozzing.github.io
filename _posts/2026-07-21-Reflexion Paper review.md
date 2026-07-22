@@ -121,10 +121,10 @@ tavily_tool = TavilySearchResults(max_results=5)
 
 actor_prompt = ChatPromptTemplate.from_messages([
     ("system",
-     "You are expert researcher. Current time: {time}\n"
+     "너는 전문 리서처다. 현재 시각: {time}\n"
      "1. {first_instruction}\n"
-     "2. Reflect and critique your answer. Be severe to maximize improvement.\n"
-     "3. Recommend search queries to research information and improve your answer."),
+     "2. 네 답변을 스스로 비평해라. 개선 폭을 최대화하도록 냉정하게.\n"
+     "3. 답변을 개선하는 데 필요한 검색 쿼리를 제안해라."),
     MessagesPlaceholder(variable_name="messages"),
 ]).partial(time=lambda: datetime.now().isoformat())
 ```
@@ -133,16 +133,15 @@ actor_prompt = ChatPromptTemplate.from_messages([
 
 ```python
 class Reflection(BaseModel):
-    missing: str = Field(description="Critique of what is missing.")
-    superfluous: str = Field(description="Critique of what is superfluous")
+    missing: str = Field(description="답변에서 부족한 점에 대한 비평")
+    superfluous: str = Field(description="답변에서 불필요하게 과한 점에 대한 비평")
 
 class AnswerQuestion(BaseModel):
     """답변, 자기 비평, 개선용 검색 쿼리를 한 번에 생성한다."""
-    answer: str = Field(description="~250 word detailed answer to the question.")
-    reflection: Reflection = Field(description="Your reflection on the initial answer.")
+    answer: str = Field(description="질문에 대한 250단어 내외의 상세한 답변")
+    reflection: Reflection = Field(description="초안 답변에 대한 자기 비평")
     search_queries: list[str] = Field(
-        description="1-3 search queries for researching improvements "
-        "to address the critique of your current answer."
+        description="비평을 해소하기 위해 조사할 검색 쿼리 1~3개"
     )
 
 class ResponderWithRetries:
@@ -158,12 +157,12 @@ class ResponderWithRetries:
                 return response
             except ValidationError as e:
                 state = state + [response, ToolMessage(
-                    content=f"{repr(e)}\n\nPay close attention to the function schema.",
+                    content=f"{repr(e)}\n\n함수 스키마를 다시 확인하고 검증 오류를 고쳐서 응답해라.",
                     tool_call_id=response.tool_calls[0]["id"])]
         return response
 
 initial_chain = actor_prompt.partial(
-    first_instruction="Provide a detailed ~250 word answer."
+    first_instruction="250단어 내외의 상세한 답변을 작성해라."
 ) | llm.bind_tools(tools=[AnswerQuestion])
 
 first_responder = ResponderWithRetries(
@@ -178,7 +177,7 @@ first_responder = ResponderWithRetries(
 
 ```python
 def run_queries(search_queries: list[str], **kwargs):
-    """Run the generated queries."""
+    """생성된 검색 쿼리를 실행한다."""
     return tavily_tool.batch([{"query": query} for query in search_queries])
 
 execute_tools = ToolNode([
@@ -193,10 +192,10 @@ execute_tools = ToolNode([
 class ReviseAnswer(AnswerQuestion):
     """검색 근거를 인용하며 이전 답변을 수정한다."""
     references: list[str] = Field(
-        description="Citations motivating your updated answer."
+        description="수정된 답변의 근거가 되는 인용 출처들"
     )
 
-revise_instructions = """Revise your previous answer using the new information.
+revise_instructions = """새로 얻은 정보를 사용해 이전 답변을 수정해라.
 - 이전 비평을 반영해 부족한 정보를 채워라
 - 반드시 번호 인용([1], [2])을 달아 검증 가능하게 하라
 - 과잉 정보를 걷어내고 250단어를 넘지 마라"""
