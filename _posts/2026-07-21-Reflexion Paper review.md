@@ -149,17 +149,18 @@ class ResponderWithRetries:
     def __init__(self, runnable, validator):
         self.runnable, self.validator = runnable, validator
 
-    def respond(self, state: list):
+    def respond(self, state: dict):
+        messages = state["messages"]
         for attempt in range(3):
-            response = self.runnable.invoke({"messages": state})
+            response = self.runnable.invoke({"messages": messages})
             try:
                 self.validator.invoke(response)
-                return response
+                break
             except ValidationError as e:
-                state = state + [response, ToolMessage(
+                messages = messages + [response, ToolMessage(
                     content=f"{repr(e)}\n\n함수 스키마를 다시 확인하고 검증 오류를 고쳐서 응답해라.",
                     tool_call_id=response.tool_calls[0]["id"])]
-        return response
+        return {"messages": [response]}
 
 initial_chain = actor_prompt.partial(
     first_instruction="250단어 내외의 상세한 답변을 작성해라."
@@ -215,27 +216,37 @@ revisor = ResponderWithRetries(
 이 세 노드를 그래프로 조립한다.
 
 ```python
-from langgraph.graph import END, MessageGraph
+from typing import Annotated
+from typing_extensions import TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.graph.message import add_messages
+
+class State(TypedDict):
+    messages: Annotated[list, add_messages]
 
 MAX_ITERATIONS = 5
-builder = MessageGraph()
+builder = StateGraph(State)
 builder.add_node("draft", first_responder.respond)
 builder.add_node("execute_tools", execute_tools)
 builder.add_node("revise", revisor.respond)
 
+builder.add_edge(START, "draft")
 builder.add_edge("draft", "execute_tools")
 builder.add_edge("execute_tools", "revise")
 
-def event_loop(state: list) -> str:
+def event_loop(state: State):
     # 도구 실행 횟수 = 지금까지의 반복 수
-    num_iterations = sum(isinstance(m, ToolMessage) for m in state)
+    num_iterations = sum(m.type == "tool" for m in state["messages"])
     if num_iterations > MAX_ITERATIONS:
         return END
     return "execute_tools"
 
-builder.add_conditional_edges("revise", event_loop)
-builder.set_entry_point("draft")
+builder.add_conditional_edges("revise", event_loop, ["execute_tools", END])
 graph = builder.compile()
+
+result = graph.invoke(
+    {"messages": [("user", "LLM 에이전트의 자기 개선 기법을 정리해줘")]}
+)
 ```
 
 draft → 검색 → revise를 MAX_ITERATIONS까지 돌리는, 논문 Algorithm 1의 while문 그대로다.
@@ -252,7 +263,7 @@ draft → 검색 → revise를 MAX_ITERATIONS까지 돌리는, 논문 Algorithm 
 
 논문과 다른 점도 보인다. 논문은 Evaluator가 별도 모듈인데, 이 구현은 비평을 Actor의 구조화 출력 필드로 합쳐버렸다. 대신 근거를 웹 검색으로 잡는다. Table 3의 교훈("근거 없는 반성은 해롭다")을 여기 대입하면, 이 구현에서 반성의 품질을 지탱하는 것은 검색 결과다.
 
-위 코드는 [공식 노트북](https://github.com/langchain-ai/langgraph/blob/23961cff61a42b52525f3b20b4094d8d2fba1744/docs/docs/tutorials/reflexion/reflexion.ipynb)을 블로그 분량에 맞게 정리한 것이다. 임포트 일부를 생략했으니 전체 실행 코드는 노트북을 참고하자. 한 가지 주의할 점은 `MessageGraph`가 블로그 당시의 API라는 것 — 지금 LangGraph에서는 `StateGraph`에 메시지 리스트를 담는 방식으로 같은 그래프를 만든다. 구조는 동일하다.
+블로그(2024)의 원본 코드는 지금은 사라진 `MessageGraph` 기반이라, 위 코드는 현재의 LangGraph API(`StateGraph` + `add_messages`)로 리팩토링한 것이다. 상태가 "메시지 리스트 하나"라는 본질은 그대로고, state 스키마를 명시하는 형태로 바뀌었다. 원본과 전체 실행 코드는 [공식 노트북](https://github.com/langchain-ai/langgraph/blob/23961cff61a42b52525f3b20b4094d8d2fba1744/docs/docs/tutorials/reflexion/reflexion.ipynb)을 참고하자.
 
 에이전트에 붙는 memory 설계도 마찬가지다. 세션에서 얻은 교훈을 파일로 남겨두고 다음 세션 컨텍스트에 주입하는 패턴이 Reflexion의 장기 기억 부분이다. 가중치는 그대로인데 컨텍스트가 학습되는 것, in-context learning을 학습 루프로 쓰는 것이다.
 
