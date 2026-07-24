@@ -30,6 +30,10 @@ Generative Agents는 Stanford + Google에서 나온 논문이다. (UIST 2023)
 ![스몰빌 마을 전경 (논문 Figure 1)](https://momozzing.github.io/assets/images/generative-agents/fig1-smallville.png)
 
 25명의 에이전트는 심즈 게임 스타일의 샌드박스 마을에서 각자의 직업과 관계 설정(자연어 한 문단)만 가진 채 시작한다. 이후의 모든 행동은 아키텍처가 만들어낸다. 모델은 gpt-3.5-turbo를 썼다.
+![구역이 표시된 스몰빌 (논문 Figure 2)](https://momozzing.github.io/assets/images/generative-agents/fig2-smallville-areas.png)
+
+마을에는 카페, 바, 상점, 학교, 기숙사가 있다. 세계는 트리로 표현된다. 루트가 마을 전체, 그 아래가 구역(집, 카페), 리프가 사물(테이블, 책장)이다. 에이전트는 이 트리 전체를 아는 것이 아니라 **자신이 직접 본 부분의 subgraph만 기억한다.** 냉장고가 비었다는 것도 마지막으로 봤을 때의 상태로 기억한다. 세계 지식도 기억과 같은 원칙으로 다루는 것이다.
+
 문제는 LLM을 그대로 쓰면 이게 안 된다는 것이다. 에이전트의 경험 전체는 컨텍스트 윈도우에 들어가지 않고, 요약해서 넣으면 구체성이 사라진다. 과거 경험에 근거해 반응하고, 장기적으로 일관된 행동을 유지하는 것이 이 논문이 푸는 문제다.
 
 ## **Generative Agent Architecture**
@@ -86,6 +90,10 @@ $$score = \alpha_{recency} \cdot recency + \alpha_{importance} \cdot importance 
 
 계획도 memory stream에 저장되므로 회상 대상이다. "지금 뭐 할 거야?"라는 질문에 계획을 근거로 답할 수 있다.
 
+![John Lin의 아침 (논문 Figure 3)](https://momozzing.github.io/assets/images/generative-agents/fig3-morning-routine.png)
+
+이 계획이 실행되면 이런 하루가 된다. 약사 John Lin은 6시에 일어나 양치와 샤워를 하고 아침을 만들어 먹는다. 출근 전에 아내 Mei, 아들 Eddy와 짧게 대화하고 8시에 가게 문을 연다. 누가 시킨 스케줄이 아니라 에이전트가 스스로 세운 계획이 행동으로 나타난 것이다.
+
 계획은 고정이 아니다. 에이전트는 매 타임스텝 주변을 관찰하고, 그 관찰을 보고 계획을 계속할지 반응할지를 모델에게 묻는다. 이젤 앞에서 그림을 그리다 이젤을 관찰하는 것은 반응거리가 아니지만, 아빠 John이 아들 Eddy가 정원을 산책하는 것을 보면 말을 걸지 판단하게 된다. 반응하기로 하면 그 시점부터의 계획을 다시 생성하고, 반응이 에이전트 간 상호작용이면 대화를 생성한다. 대화 발화는 상대에 대한 기억 요약을 조건으로 만들어진다.
 
 ## **Evaluation: 개별 에이전트의 believability**
@@ -107,6 +115,10 @@ $$score = \alpha_{recency} \cdot recency + \alpha_{importance} \cdot importance 
 - **정보 확산**: Sam의 시장 출마 소식을 아는 에이전트가 1명(4%) → 8명(32%), Isabella의 발렌타인 파티 소식은 1명(4%) → 13명(52%)으로 퍼졌다. 사용자 개입은 없었다
 - **관계 형성**: 에이전트 간 상호 인지 네트워크 밀도가 0.167 → 0.74로 올랐다. 서로를 안다고 주장한 응답 453개 중 환각은 1.3%(6개)였다
 - **협동**: Isabella는 파티 전날 손님을 초대하고 장식을 준비했다. 초대받은 12명 중 5명이 실제로 제시간에 카페에 나타났다
+
+![실제로 열린 발렌타인 파티 (논문 Figure 4)](https://momozzing.github.io/assets/images/generative-agents/fig4-valentine-party.png)
+
+사용자가 심어준 것은 두 가지뿐이다. Isabella의 "파티를 열고 싶다"는 의도와, Maria의 캐릭터 설명에 있는 "Klaus를 짝사랑한다" 한 줄. 그 사이의 모든 일은 에이전트들이 만들었다. Isabella가 소문을 내고, 단골 Maria에게 장식을 부탁하고, Maria가 짝사랑 Klaus를 파티에 초대하고, Klaus가 승낙해서 파티에 나타난다. 의도를 실행하지 않거나, 전달을 잊거나, 참석을 잊을 실패 지점이 많았는데도 파티는 실제로 열렸다.
 
 ![파티 초대 확산 경로 (논문 Figure 9)](https://momozzing.github.io/assets/images/generative-agents/fig9-diffusion.png)
 
