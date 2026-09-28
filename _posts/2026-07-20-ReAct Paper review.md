@@ -13,6 +13,7 @@ toc: true
 toc_sticky: true
 ---
 
+
 ReAct: Synergizing Reasoning and Acting in Language Models
 
 [https://arxiv.org/abs/2210.03629](https://arxiv.org/abs/2210.03629)
@@ -23,19 +24,23 @@ ReAct는 프린스턴 + Google Brain에서 나온 논문이다. (ICLR 2023)
 
 LangChain, LangGraph의 ReAct agent가 다 여기서 나왔다.
 
-## **Introduction**
+좀 더 자세히 알아보자.
+
+## **1. Introduction**
 
 LLM은 reasoning(CoT prompting)과 acting(action plan 생성)이 각각 따로 연구가 되어왔다.
 
-CoT는 모델 내부 지식만으로 생각한다. 외부와 단절된(closed) 상태라 hallucination이 생기고, 초반 reasoning이 틀리면 계속 틀린 방향으로 간다. (error propagation)
+CoT는 모델 내부 지식만으로 생각한다.
+
+외부와 단절된(closed) 상태라 hallucination이 생기고, 초반 reasoning이 틀리면 계속 틀린 방향으로 간다. (error propagation)
 
 Act-only는 계획과 목표 추적 없이 행동만 하니까 복잡한 task를 못 푼다.
 
-본 논문은 action space를 확장해서 언어로 된 "thought"도 하나의 action처럼 생성하게 한다.
+그래서 이 논문은 action space를 확장해서 언어로 된 "thought"도 하나의 action처럼 생성하게 한다.
 
-thought는 환경을 바꾸지 않고 context만 업데이트한다는 것이 포인트다.
+thought는 환경을 바꾸지 않고 context만 업데이트한다.
 
-## **ReAct: Synergizing Reasoning + Acting**
+## **2. ReAct: Synergizing Reasoning + Acting**
 
 Thought → Action → Observation 루프를 반복한다.
 
@@ -43,13 +48,23 @@ Thought → Action → Observation 루프를 반복한다.
 2. Action: 외부 환경에 액션 실행
 3. Observation: 액션 결과를 context에 추가하고 다시 Thought로
 
-논문은 이걸 action space 확장($\hat{A} = A \cup L$)이라고 표현하는데, 풀어보면 간단하다.
+논문은 이걸 action space 확장($\hat{A} = A \cup L$)이라고 표현한다.
 
-원래 에이전트가 고를 수 있는 행동은 `search[...]`, `finish[...]`처럼 정해진 목록($A$)뿐이었다. 여기에 "아무 문장이나 혼잣말하기"($L$)를 행동 목록에 추가한 것이다. 생각하기도 행동의 한 종류로 취급하겠다는 뜻이다. 차이가 있다면 혼잣말은 환경을 바꾸지 않고, 다음 판단에 쓸 context에만 쌓인다.
+풀어보면 간단하다.
 
-여기서 어려운 점이 하나 생긴다. 정해진 행동은 몇 개 안 되지만 할 수 있는 혼잣말은 무한하다. 이 무한한 선택지 중에서 지금 도움이 되는 문장을 골라내는 건 처음부터 학습시키기엔 너무 어렵고, 이미 언어를 잘 아는 LLM(강한 언어 prior)을 가져다 쓰기 때문에 가능한 일이다. LLM 이전 시대에 RL로 이 구조를 만들려 했다면 성립하지 않았을 방법이다.
+원래 에이전트가 고를 수 있는 행동은 `search[...]`, `finish[...]`처럼 정해진 목록($A$)뿐이었다.
 
-논문이 예시로 드는 thought의 역할은 다양하다.
+여기에 "아무 문장이나 혼잣말하기"($L$)를 행동 목록에 추가했다. 생각하기도 행동의 한 종류로 치겠다는 것이다.
+
+차이는 혼잣말은 환경을 바꾸지 않고, 다음 판단에 쓸 context에만 쌓인다는 점이다.
+
+그런데 정해진 행동은 몇 개 안 되지만 할 수 있는 혼잣말은 무한하다.
+
+이 중에서 지금 도움이 되는 문장을 골라내는 건 처음부터 학습시키기엔 너무 어렵고, 이미 언어를 잘 아는 LLM(강한 언어 prior)을 가져다 쓰니까 가능하다고 한다.
+
+-> LLM 이전에 RL로 이 구조를 만들려 했으면 안 됐을 것 같다.
+
+논문이 예시로 드는 thought의 역할은 이렇다.
 
 - 목표를 subgoal로 분해하고 action plan 수립
 - 태스크에 필요한 상식 주입 ("후추통은 캐비닛이나 조리대에 있을 것")
@@ -59,33 +74,53 @@ Thought → Action → Observation 루프를 반복한다.
 
 ![4가지 프롬프팅 방법 비교 (논문 Figure 1)](https://momozzing.github.io/assets/images/react/fig1-react-comparison.png)
 
-CoT(1b)는 그럴듯하게 추론하다가 환각으로 틀리고, Act-only(1c)는 검색만 하다가 답을 못 찾는다. ReAct(1d)는 검색 결과를 보고 생각을 수정해가며 정답에 도달한다.
+CoT(1b)는 그럴듯하게 추론하다가 환각으로 틀린다.
 
-(2)의 ALFWorld도 같은 패턴이다. Act-only(2a)는 후추통을 찾으려고 서랍과 싱크대를 뒤지다가 안 되는 행동만 반복한다("Nothing happens"). ReAct(2b)는 Think로 "후추통은 캐비닛이나 조리대에 있을 확률이 높다"고 위치부터 추론해서 조리대에서 찾아내고, 찾은 뒤엔 "이제 서랍에 넣어야지"라고 다음 subgoal을 세워서 성공한다. 생각 없이 행동만 하면 같은 곳을 계속 맴돈다는 것을 보여주는 예시다.
+Act-only(1c)는 검색만 하다가 답을 못 찾는다.
 
-few-shot 예시는 사람이 직접 작성한 trajectory(궤적 — Thought/Action/Observation으로 문제를 푸는 전체 풀이 과정 기록) 몇 개가 전부다. (HotpotQA 6개, FEVER 3개, ALFWorld 2개, WebShop 1개)
+ReAct(1d)는 검색 결과를 보고 생각을 고쳐가며 정답에 도달한다.
+
+(2)의 ALFWorld도 같은 패턴이다.
+
+Act-only(2a)는 후추통을 찾으려고 서랍과 싱크대를 뒤지다가 안 되는 행동만 반복한다("Nothing happens").
+
+ReAct(2b)는 Think로 "후추통은 캐비닛이나 조리대에 있을 확률이 높다"고 위치부터 추론해서 조리대에서 찾는다. 찾은 뒤엔 "이제 서랍에 넣어야지"라고 다음 subgoal을 세워서 성공한다.
+
+-> 생각 없이 행동만 하면 같은 곳을 계속 맴도는 것 같다.
+
+few-shot 예시는 사람이 직접 작성한 trajectory 몇 개가 전부다. (HotpotQA 6개, FEVER 3개, ALFWorld 2개, WebShop 1개)
+
+trajectory는 Thought/Action/Observation으로 문제를 푸는 전체 풀이 과정 기록이다.
 
 모델은 PaLM-540B 사용. 학습 없이 prompting만으로 동작.
 
 task 성격에 따라 thought 배치를 다르게 한다.
 
 - 지식 task(QA): 매 스텝마다 thought-action 교차 (dense)
-- 의사결정 task(ALFWorld): 필요할 때만 thought 생성 (sparse) — 모델이 스스로 언제 생각할지 결정
+- 의사결정 task(ALFWorld): 필요할 때만 thought 생성 (sparse). 언제 생각할지는 모델이 스스로 정한다
 
-논문은 이 설계가 주는 특징을 4가지로 정리한다.
+논문은 이 설계의 특징을 4가지로 정리한다.
 
-- **A) Intuitive and easy to design**: 프롬프트 설계가 쉽다. 어노테이터가 자신이 한 행동 위에 생각을 언어로 적기만 하면 된다. 특별한 포맷 설계나 예시 선정 기법도 쓰지 않았다
-- **B) General and flexible**: thought space가 자유로워서 QA, 사실 검증, 텍스트 게임, 웹 탐색처럼 액션 스페이스가 전혀 다른 태스크에 모두 적용된다
-- **C) Performant and robust**: in-context 예시 1~6개만으로 새로운 태스크 인스턴스에 일반화되고, reasoning만 하거나 acting만 하는 베이스라인을 도메인 불문하고 이긴다
-- **D) Human aligned and controllable**: 추론 과정이 사람이 읽을 수 있는 형태라 reasoning과 사실 여부를 그대로 검사할 수 있고, 중간에 thought를 수정해서(thought editing) 에이전트의 행동을 실시간으로 교정할 수도 있다
+1. Intuitive and easy to design : 프롬프트 설계가 쉽다. 어노테이터가 자기가 한 행동 위에 생각을 언어로 적기만 하면 된다. 특별한 포맷 설계나 예시 선정 기법도 쓰지 않았다고 한다
+2. General and flexible : thought space가 자유로워서 QA, 사실 검증, 텍스트 게임, 웹 탐색처럼 액션 스페이스가 전혀 다른 태스크에 모두 적용된다
+3. Performant and robust : in-context 예시 1~6개만으로 새로운 태스크 인스턴스에 일반화되고, reasoning만 하거나 acting만 하는 베이스라인을 도메인 상관없이 이긴다고 한다
+4. Human aligned and controllable : 추론 과정을 사람이 읽을 수 있어서 reasoning과 사실 여부를 그대로 검사할 수 있다. 중간에 thought를 수정해서(thought editing) 에이전트 행동을 실시간으로 고칠 수도 있다
 
-특히 D는 지금 관점으로 보면 agent 관측가능성(observability)과 human-in-the-loop의 원형이다. 에이전트가 왜 그 행동을 했는지 로그로 추적할 수 있는 이유가 thought를 언어로 남기기 때문이다.
+-> 4번은 지금으로 치면 agent 관측가능성(observability)과 human-in-the-loop이다. 에이전트가 왜 그 행동을 했는지 로그로 추적할 수 있는 것도 thought를 언어로 남기기 때문이다.
 
-요즘의 function calling agent가 이 구조를 그대로 사용하고 있다. tool call → result → 다시 생각하는 구조다.
+요즘 function calling agent도 이 구조 그대로다. tool call → result → 다시 생각하는 구조다.
 
-## **Knowledge-Intensive Reasoning Tasks (HotpotQA, FEVER)**
+## **3. Knowledge-Intensive Reasoning Tasks**
 
-HotpotQA는 위키 문서 두 개 이상을 넘나들어야 답이 나오는 multi-hop QA고, FEVER는 주장에 대해 SUPPORTS / REFUTES / NOT ENOUGH INFO를 판정하는 사실 검증 태스크다. 둘 다 질문(주장)만 주어지는 세팅이라, 모델이 근거를 직접 검색해서 찾아야 한다.
+HotpotQA랑 FEVER 두 가지로 실험한다.
+
+### **3.1 Setup**
+
+HotpotQA는 위키 문서 두 개 이상을 넘나들어야 답이 나오는 multi-hop QA다.
+
+FEVER는 주장에 대해 SUPPORTS / REFUTES / NOT ENOUGH INFO를 판정하는 사실 검증 태스크다.
+
+둘 다 질문(주장)만 주어지는 세팅이라, 모델이 근거를 직접 검색해서 찾아야 한다.
 
 액션은 Wikipedia API 3개가 전부다.
 
@@ -93,42 +128,58 @@ HotpotQA는 위키 문서 두 개 이상을 넘나들어야 답이 나오는 mul
 - `lookup[string]`: 페이지 내 문자열 검색 (Ctrl+F 같은거)
 - `finish[answer]`: 답 제출
 
+### **3.2 Methods**
+
+ReAct 말고 ReAct랑 CoT-SC를 섞는 방법도 두 가지 넣었다.
+
+1. ReAct → CoT-SC : ReAct가 정해진 스텝(HotpotQA 7, FEVER 5) 안에 답을 못 찾으면 CoT-SC로 fallback
+2. CoT-SC → ReAct : CoT-SC 다수결 confidence가 낮으면 ReAct로 전환
+
+왜 섞는지는 아래 결과를 보면 나온다.
+
+finetuning도 해본다. HotpotQA에서 ReAct trajectory 3,000개로 작은 모델(PaLM-8B, 62B)을 finetuning 했다.
+
+### **3.3 Results and Observations**
+
 HotpotQA EM 기준: Standard 28.7 / CoT 29.4 / Act-only 25.7 / ReAct 27.4
 
 ![PaLM-540B 프롬프팅 결과 (논문 Table 1)](https://momozzing.github.io/assets/images/react/table1-hotpotqa-fever.png)
 
-ReAct 단독은 HotpotQA에서 CoT보다 오히려 낮다. 이 결과를 숨기지 않고 분석한 것이 이 논문의 정직한 부분이다. 반대로 FEVER에서는 ReAct(60.9)가 CoT(56.3)를 이기는데, 사실 검증은 최신의 정확한 지식을 가져오는 것이 결정적이기 때문이다.
+ReAct 단독은 HotpotQA에서 CoT보다 오히려 낮다.
 
-이유는 error analysis에 나온다.
+논문은 이 결과도 그대로 두고 분석한다.
 
-- CoT 실패의 56%가 hallucination. 대신 reasoning 구조는 유연함
-- ReAct는 사실 기반(hallucination 6% vs CoT 14%)이지만, 검색 결과가 안좋으면 reasoning이 같이 망가지고(실패의 23%가 search error), 같은 thought-action을 반복하는 루프에 빠지기도 함
+반대로 FEVER에서는 ReAct(60.9)가 CoT(56.3)를 이긴다. 사실 검증은 최신의 정확한 지식을 가져오는 게 중요해서라고 한다.
+
+HotpotQA에서 진 이유는 error analysis에 나온다.
+
+- CoT 실패의 56%가 hallucination이다. 대신 reasoning 구조는 유연하다
+- ReAct는 사실 기반이다. 맞힌 것 중에 hallucination이 섞인 비율이 ReAct 6%, CoT 14%다
+- 대신 ReAct는 검색 결과가 안좋으면 reasoning이 같이 망가진다(실패의 23%가 search error). 같은 thought-action을 반복하는 루프에 빠지기도 한다
 
 ![ReAct vs CoT 성공/실패 모드 분석 (논문 Table 2)](https://momozzing.github.io/assets/images/react/table2-error-analysis.png)
 
-그래서 둘을 섞는 방법을 제안한다. ReAct → CoT-SC (ReAct가 정해진 스텝(HotpotQA 7, FEVER 5) 안에 답을 못 찾으면 CoT-SC로 fallback), CoT-SC → ReAct (CoT-SC 다수결 confidence 낮으면 ReAct로 전환)
+-> 그러면 HotpotQA에서 ReAct가 진 건 검색 도구가 Wikipedia API 3개뿐이라서 그런 건가??
 
-이 조합이 HotpotQA 34.2 / FEVER 64.6으로 prompting 방법 중 최고.
+그래서 둘을 섞은 방법이 prompting 방법 중 제일 높다. HotpotQA는 ReAct → CoT-SC가 35.1, FEVER는 CoT-SC → ReAct가 64.6이다.
 
 ![CoT-SC 샘플 수에 따른 조합 방법 성능 (논문 Figure 2)](https://momozzing.github.io/assets/images/react/fig2-cotsc-combo.png)
 
-CoT-SC 샘플 3~5개만 써도 순수 CoT-SC 21개 샘플 성능을 넘는다.
+CoT-SC 샘플 3~5개만 써도 순수 CoT-SC 21개 샘플 성능을 넘는다고 한다.
 
-내부지식과 외부지식을 상황에 따라 골라 쓰는 것이 답이었다.
+-> 내부지식과 외부지식을 상황에 따라 골라 쓰면 되는 것 같다.
 
-### **Finetuning**
+finetuning 결과는 이렇다.
 
-HotpotQA에서 ReAct trajectory 3,000개로 작은 모델(PaLM-8B, 62B)을 finetuning 해봤다.
-
-- prompting에서는 작은 모델일수록 ReAct가 4가지 방법 중 최하위 (형식 따라하기가 어려움)
-- finetuning 하면 역전됨. finetuned PaLM-8B ReAct가 prompted PaLM-62B를 이기고, finetuned 62B가 prompted 540B를 이김
-- Standard/CoT를 finetuning하는 건 지식 암기를 학습하는 거라 효과가 적고, ReAct finetuning은 "지식을 찾는 방법"을 학습하는 거라 일반화가 잘된다
+1. prompting에서는 작은 모델일수록 ReAct가 4가지 방법 중 최하위다. 형식을 따라하기가 어렵다
+2. finetuning 하면 역전된다. finetuned PaLM-8B ReAct가 prompted PaLM-62B를 이기고, finetuned 62B가 prompted 540B를 이긴다
+3. Standard/CoT를 finetuning하는 건 지식 암기를 배우는 거라 효과가 적고, ReAct finetuning은 "지식을 찾는 방법"을 배우는 거라 일반화가 잘된다고 한다
 
 ![프롬프팅 vs 파인튜닝 스케일링 (논문 Figure 3)](https://momozzing.github.io/assets/images/react/fig3-finetuning-scaling.png)
 
-요즘 많이 쓰는 작은 모델 + agent trajectory SFT 조합의 근거가 여기에 있다.
+-> 요즘 많이 쓰는 작은 모델 + agent trajectory SFT 조합도 여기서 나온 것 같다.
 
-## **Decision Making Tasks (ALFWorld, WebShop)**
+## **4. Decision Making Tasks**
 
 ALFWorld(텍스트 기반 집안일 시뮬레이터): ReAct 71% vs Act-only 45% vs BUTLER(IL, 학습 기반) 37%
 
@@ -138,17 +189,31 @@ in-context 예시 1~2개 프롬프팅으로 학습 기반 방법을 이겼다.
 
 ![ALFWorld / WebShop 결과 (논문 Table 3, 4)](https://momozzing.github.io/assets/images/react/table34-alfworld-webshop.png)
 
-2022년 기준으로는 충격적인 결과다. thought가 goal을 subgoal로 분해하고 진행 상황을 추적해주는 것이 결정적이었다. Act-only는 중간에 자신이 무엇을 하고 있었는지 잊어버린다.
+2022년 기준으로는 꽤 큰 결과다.
 
-ablation으로 Inner Monologue 스타일(ReAct-IM)과도 비교한다. IM처럼 "환경 상태 관찰 + 목표 확인" 수준의 생각만 하게 하면 ALFWorld가 71 → 53으로 떨어진다. 목표를 subgoal로 분해하는 것과 물건이 어디 있을지 상식으로 추론하는 것이 사라지기 때문이다. 그냥 생각을 시키는 것이 아니라 어떤 생각을 하게 하느냐가 중요하다는 증거다.
+thought가 goal을 subgoal로 분해하고 진행 상황을 추적해준 덕분이라고 한다. Act-only는 중간에 자기가 뭘 하고 있었는지 잊어버린다.
 
-다만 WebShop에서 인간 전문가(점수 82.1 / 성공률 59.6)와는 갭이 크다. 사람은 상품 탐색과 질의 재구성을 훨씬 능동적으로 한다. 2022년의 프롬프팅으로는 아직 못 따라가는 부분이었다.
+ablation으로 Inner Monologue 스타일(ReAct-IM)과도 비교한다.
 
-부록(A.1)에서 GPT-3(text-davinci-002)로도 재현하는데, HotpotQA 30.8 vs PaLM 29.4, ALFWorld 78.4 vs 70.9로 오히려 더 잘 된다. instruction following으로 파인튜닝된 모델이라 그럴 것으로 추정한다. ReAct가 특정 모델에 종속된 방법이 아니라는 근거다.
+IM처럼 "환경 상태 관찰 + 목표 확인" 수준의 생각만 하게 하면 ALFWorld가 71 → 53으로 떨어진다.
 
-## **LangChain의 create_agent는 실제로 어떻게 동작하는가**
+목표를 subgoal로 분해하는 것과 물건이 어디 있을지 상식으로 추론하는 게 빠지기 때문이라고 한다.
 
-논문의 Thought → Action → Observation 루프가 코드로는 어떻게 구현되는지 보자.
+-> 생각을 시키기만 하면 되는 게 아니라 어떤 생각을 시키느냐가 중요한 것 같다.
+
+다만 WebShop에서 인간 전문가(점수 82.1 / 성공률 59.6)와는 차이가 크다.
+
+사람은 상품 탐색과 질의 재구성을 훨씬 능동적으로 한다. 2022년의 프롬프팅으로는 아직 못 따라가는 부분이었다.
+
+부록(A.1)에서 GPT-3(text-davinci-002)로도 재현한다.
+
+HotpotQA 30.8 vs PaLM 29.4, ALFWorld 78.4 vs 70.9로 오히려 더 잘 된다. instruction following으로 파인튜닝된 모델이라 그럴 것으로 추정한다고 한다.
+
+-> 특정 모델에만 되는 방법은 아닌 것 같다.
+
+## **5. LangChain의 create_agent는 실제로 어떻게 동작하는가**
+
+논문의 Thought → Action → Observation 루프가 코드로는 어떻게 되어 있는지 보자.
 
 LangChain v1의 `create_agent`로 논문의 HotpotQA 세팅을 흉내내면 이렇다.
 
@@ -177,17 +242,19 @@ result = agent.invoke(
 )
 ```
 
-논문의 `finish[answer]`는 tool로 만들지 않아도 된다. 이유는 뒤에서 설명한다.
+논문의 `finish[answer]`는 tool로 안 만들어도 된다. 이유는 뒤에 나온다.
 
-### **내부 루프**
+### **5.1 내부 루프**
 
 create_agent는 model 노드와 tools 노드를 가진 graph를 만든다.
 
-model 노드가 메시지 리스트로 LLM을 호출하고, 응답 AIMessage에 tool_calls가 있으면 tools 노드가 실행되어 결과를 ToolMessage로 메시지 리스트에 추가한다. 그리고 다시 model 노드 호출.
+model 노드가 메시지 리스트로 LLM을 호출한다.
+
+응답 AIMessage에 tool_calls가 있으면 tools 노드가 실행되고, 결과를 ToolMessage로 메시지 리스트에 추가한다. 그리고 다시 model 노드 호출.
 
 tool_calls가 없는 응답이 나올 때까지 반복한다.
 
-의사코드로 표현하면 이게 전부다.
+의사코드로 쓰면 이게 전부다.
 
 ```python
 def agent_loop(messages):
@@ -204,17 +271,15 @@ def agent_loop(messages):
                                              # Observation 추가
 ```
 
-### **논문 ↔ 구현 매핑**
+### **5.2 논문 ↔ 구현 매핑**
 
-| ReAct 논문 | create_agent |
-|---|---|
-| Thought | AIMessage의 `content` (tool_calls와 같이 생성됨) |
-| Action | AIMessage의 `tool_calls` |
-| Observation | `ToolMessage` |
-| `finish[answer]` | tool_calls 없는 AIMessage = 루프 종료 조건 |
-| trajectory (context 누적) | `messages` 리스트 |
+- Thought : AIMessage의 `content` (tool_calls와 같이 생성됨)
+- Action : AIMessage의 `tool_calls`
+- Observation : `ToolMessage`
+- `finish[answer]` : tool_calls 없는 AIMessage = 루프 종료 조건
+- trajectory (context 누적) : `messages` 리스트
 
-### **논문과 달라진 점**
+### **5.3 논문과 달라진 점**
 
 원논문(2022)은 function calling이 없던 시절이라 순수 텍스트로 동작했다.
 
@@ -224,20 +289,30 @@ Act 1: Search[Apple Remote]
 Obs 1: The Apple Remote is a remote control ...
 ```
 
-이 텍스트를 정규식으로 파싱해서 `Search[...]`를 뽑아 실행했다. 그래서 모델이 형식을 조금만 틀리면 파싱이 깨졌다. (finetuning 섹션에서 작은 모델이 ReAct 형식을 못 따라했던 이유)
+이 텍스트를 정규식으로 파싱해서 `Search[...]`를 뽑아 실행했다.
+
+그래서 모델이 형식을 조금만 틀려도 파싱이 깨졌다.
+
+-> finetuning 부분에서 작은 모델이 ReAct 형식을 못 따라했던 것도 이것 때문인 것 같다.
 
 지금은 모델의 native function calling으로 Action이 구조화된 JSON(`tool_calls`)으로 나오니 파싱이 필요없다.
 
-sparse thought도 자연스럽게 구현된다. 모델이 `content` 없이 `tool_calls`만 뱉으면 Act-only 스텝이고, `content`를 채우면 Thought가 있는 스텝이다. 논문에서 "모델이 스스로 언제 생각할지 결정한다"고 했던 그 부분.
+sparse thought도 그냥 된다.
 
-결국 create_agent는 ReAct 루프에서 텍스트 파싱을 function calling으로 교체하고 graph로 감싼 것이다. 우리가 만드는 agent들도 본질은 2022년 이 논문의 while문이다.
+모델이 `content` 없이 `tool_calls`만 뱉으면 Act-only 스텝이고, `content`를 채우면 Thought가 있는 스텝이다. 논문에서 "모델이 스스로 언제 생각할지 결정한다"고 했던 부분이다.
 
-## **Conclusion**
+결국 create_agent는 ReAct 루프에서 텍스트 파싱을 function calling으로 바꾸고 graph로 감싼 것이다.
 
-생각만 하면 환각이 생기고, 행동만 하면 계획이 없다. 둘을 섞으니 서로 보완이 된다.
+-> 지금 만드는 agent들도 결국 2022년 이 논문의 while문이다.
 
-단독으로 만능은 아니며(HotpotQA에서는 CoT에 지기도 한다), 내부지식 fallback이나 finetuning으로 보완해야 한다.
+## **6. Conclusion**
 
-2022년의 이 단순한 while문이 4년이 지난 지금도 모든 LLM Agent의 뼈대다. 프레임워크가 아무리 화려해져도 결국 Thought → Action → Observation 루프 위에 서 있다. Agent를 만들다 길을 잃으면 이 논문으로 돌아오면 된다.
+생각만 하면 환각이 생기고, 행동만 하면 계획이 없다. 둘을 섞으니 서로 보완이 된다고 한다.
+
+단독으로 만능은 아니다. HotpotQA에서는 CoT에 지기도 해서, 내부지식 fallback이나 finetuning으로 보완해야 한다.
+
+여태까지 reasoning과 acting을 따로 연구했다면, 이 방법은 thought를 action의 하나로 넣어서 한 루프 안에서 같이 돌린다.
+
+2022년의 이 단순한 while문이 4년이 지난 지금도 LLM Agent의 뼈대다. 프레임워크가 많이 바뀌었어도 결국 Thought → Action → Observation 루프 위에 있다.
 
 덧붙이면 1저자 Shunyu Yao는 이후 Tree of Thoughts를 내고 SWE-bench에도 참여한다. 이 사람의 논문은 계속 따라가 볼 가치가 있다.
