@@ -54,6 +54,14 @@ Atkinson-Shiffrin 다중저장 모델로 단기와 장기를 나눈다.
 
 ### **2.2 Memory of LLM-driven AI Systems**
 
+논문은 먼저 사람 기억 범주를 AI 메모리에 하나씩 짝지어 그림으로 보여준다.
+
+![사람 기억과 AI 메모리의 대응 (논문 Figure 1)](https://momozzing.github.io/assets/images/human-to-ai-memory/fig1-human-ai-memory-parallels.png)
+
+왼쪽이 사람 기억, 오른쪽이 LLM 기반 AI 메모리다. 감각 기억은 텍스트·이미지·오디오·비디오 입력으로, 작업 기억은 대화·CoT·프롬프트 캐시로 이어진다.
+
+장기 기억 쪽은 일화 기억이 비파라미터 검색으로, 의미 기억이 파라미터 주입으로, 절차 기억이 태스크와 스킬 학습으로 대응된다.
+
 #### **2.2.1 3D-8Q Memory Taxonomy**
 
 세 축으로 나눈다.

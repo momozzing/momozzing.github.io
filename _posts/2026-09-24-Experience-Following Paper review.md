@@ -35,6 +35,12 @@ Experience-Following은 Harvard, University of Georgia, Michigan State, Universi
 
 memory addition(추가)이랑 memory deletion(삭제) 두 가지 연산만 본다. 많은 에이전트 프레임워크가 쓰는 제일 기본적인 조작이다.
 
+![실행 뒤 메모리 추가·삭제 흐름 (논문 Figure 1)](https://momozzing.github.io/assets/images/experience-following/fig1-memory-management-workflow.png)
+
+실행이 끝날 때마다 (질의, 실행) 쌍을 메모리에 넣을지, 기존 레코드를 지울지 정하는 흐름이다.
+
+다음 질의는 이렇게 바뀐 메모리에서 비슷한 레코드를 꺼내 데모로 쓴다.
+
 논문이 찾은 현상이 하나 있고, 거기서 문제가 두 개 나온다고 한다.
 
 현상은 Experience-following property다. 태스크 입력이 검색된 메모리 레코드의 입력이랑 비슷하면, 에이전트 출력도 그 레코드랑 매우 비슷해진다.
@@ -97,6 +103,12 @@ RegAgent는 입력 벡터 `x`랑 근처 입력에 대한 과거 추측들을 받
 
 고정 메모리 베이스라인은 입력 유사도도 출력 유사도도 둘 다 낮다. 반면 추가하는 방법들은 입력 유사도가 커질수록 출력 유사도도 높아진다고 한다.
 
+![평가기별 입력 유사도와 출력 유사도 (논문 Figure 3)](https://momozzing.github.io/assets/images/experience-following/fig3-input-output-similarity.png)
+
+왼쪽이 RegAgent, 오른쪽이 AgentDriver다. 점 하나가 누적 평균 한 지점이다.
+
+Fixed만 왼쪽 아래에 몰려 있고, 나머지는 오른쪽 위로 뻗는다.
+
 이 상관관계를 experience-following이라고 부른다. GPT-4o나 DeepSeek-V3처럼 백본을 바꿔도 같은 패턴이 나온다고 한다.
 
 해석은 이렇다. 지금 질의가 과거 예시랑 비슷할수록 에이전트는 검색된 경험을 더 그대로 따라 한다. 메모리가 커져서 경험이 다양해질수록, 새 질의랑 아주 비슷한 레코드가 검색될 확률도 커진다.
@@ -108,6 +120,12 @@ RegAgent는 입력 벡터 `x`랑 근처 입력에 대한 과거 추측들을 받
 잘못됐거나 노이즈가 섞인 레코드가 데모로 검색되면 지금 실행에 영향을 준다. 그 실행이 다시 메모리에 저장되면 오류가 다음 태스크로 넘어간다.
 
 이걸 보려고, 추가 전략마다 검색 예시는 똑같이 쓰고 LLM 실행만 정답 출력으로 바꾼 "오류 없는 버전"이랑 비교한다.
+
+![실제 출력을 쓸 때와 정답 출력을 쓸 때의 성능 (논문 Figure 4)](https://momozzing.github.io/assets/images/experience-following/fig4-error-free-comparison.png)
+
+실선이 에이전트 출력을 그대로 메모리에 쓴 경우, 점선(EF)이 정답 출력으로 바꾼 경우다. 여기서 Coarse는 C1 평가기라고 한다.
+
+-> 같은 색 실선과 점선 사이 간격이 오류 때문에 잃은 만큼으로 보면 될 것 같다.
 
 두 에이전트 모두 오류 없는 버전보다 바로 성능이 벌어진다고 한다. 그리고 실행이 계속될수록 add-all이랑 coarse selective addition은 그 차이가 더 커진다.
 
@@ -155,6 +173,12 @@ RegAgent는 입력 벡터 `x`랑 근처 입력에 대한 과거 추측들을 받
 
 RegAgent에서는 이걸 직접 볼 수 있다. 예측값이랑 정답값 차이로 레코드 품질을 잴 수 있기 때문이다. 삭제된 레코드랑 남은 레코드의 KDE 곡선을 그리면 품질 차이가 뚜렷하게 난다고 한다.
 
+![삭제된 레코드와 남은 레코드의 오차 분포 (논문 Figure 6)](https://momozzing.github.io/assets/images/experience-following/fig6-deleted-retained-kde.png)
+
+왼쪽은 C1 평가기, 오른쪽은 strict 평가기로 history-based 삭제를 했을 때다. 5번 넘게 검색된 레코드만 그렸다고 한다.
+
+두 경우 모두 남은 레코드가 삭제된 레코드보다 오차가 낮은 쪽에 몰려 있다.
+
 그래서 논문은 미래 태스크의 평가 결과가 저장된 메모리의 품질 라벨이 될 수 있다고 한다. 추가 비용 없이.
 
 -> 넣을 때는 좋은 레코드인지 모르지만, 나중에 그 레코드가 검색됐을 때 결과가 어땠는지 기록해두면 라벨이 저절로 쌓인다는 것 같다.
@@ -167,7 +191,13 @@ RegAgent에서는 이걸 직접 볼 수 있다. 예측값이랑 정답값 차이
 
 EHRAgent랑 AgentDriver의 테스트셋 순서를 바꿔서 중간에 분포가 바뀌게 만든다.
 
-결과가 갈린다. AgentDriver에서는 history-based가 분포 변화가 없는 버전보다도 좋았는데, EHRAgent에서는 history-based가 combined보다 못했다.
+결과가 갈린다. 그래도 분포 변화가 없는 버전과의 차이는 대체로 작다고 한다.
+
+AgentDriver에서는 엄격한 평가로 추가만 한 버전(strict addition)이 분포 변화가 없는 버전보다도 좋았고, EHRAgent에서는 history-based가 combined보다 못했다.
+
+![분포 변화 아래 성능 추이 (논문 Figure 7)](https://momozzing.github.io/assets/images/experience-following/fig7-distribution-shift.png)
+
+세로 점선이 태스크 분포가 바뀌는 지점이고, 가로 점선은 분포 변화 없이 combined 삭제를 돌렸을 때 성능이라고 한다.
 
 분포가 바뀌는 실제 상황에서는 단순한 주기적 삭제가 성능을 안정시키는 데 도움이 될 수 있다고 한다.
 

@@ -65,6 +65,14 @@ RAG는 이력을 벡터 DB에 넣고 의미 유사도로 꺼낸다. 사실 하�
 
 -> 벡터 유사도로는 "Mark"랑 "스키 여행"이 안 붙는다. 같은 시간대에 나왔다는 것만으로 잇는 것이다.
 
+전체 구조는 논문 그림 하나에 다 들어 있다.
+
+![SYNAPSE 전체 구조 (논문 Figure 1)](https://momozzing.github.io/assets/images/synapse/fig1-synapse-overview.png)
+
+왼쪽은 질의가 어휘·의미 두 트리거로 그래프에 에너지를 넣는 부분, 가운데는 활성 확산, 오른쪽은 세 신호로 순위를 다시 매기는 부분이다.
+
+질의에 없는 "Mark" 노드가 다리 역할로 활성화돼서 "스키 여행"과 "연애"를 잇는다고 한다.
+
 ### **2.2 Cognitive Dynamics: Spreading Activation**
 
 Collins와 Loftus(1975)의 사람 의미기억 모델에서 가져왔다고 한다.
@@ -186,6 +194,10 @@ LoCoMo 벤치마크, GPT-4o-mini 기준이다.
 
 측면 억제가 불확실성 게이트 앞에서 전처리 역할을 한다고 한다. 게이트를 빼면(`τ_gate = 0`) Adversarial F1이 67.2로 떨어지고, 억제까지 빼면 더 떨어진다.
 
+![장치별 제거 실험 (논문 Table 3)](https://momozzing.github.io/assets/images/synapse/table3-mechanism-ablation.png)
+
+위쪽 묶음은 장치를 하나씩 끈 결과, 아래쪽 묶음은 활성 확산이나 그래프 구조 자체를 뺀 결과다.
+
 -> 게이트만으로는 안 되는 것이다. 억제가 먼저 경쟁 노드를 눌러줘야 "최상위 노드의 활성 에너지"를 신뢰도로 쓸 수 있다.
 
 ### **3.3 Efficiency Analysis**
@@ -223,6 +235,12 @@ PageRank를 전역 사전확률로 쓰는 것도 떼어낼 수 있다. 자주 �
 
 1. Cold Start : 활성 확산은 그래프가 충분히 연결돼 있어야 효과가 있다. 이력이 적은 초기 대화에서는 그래프를 유지하는 비용에 비해 단순한 선형 버퍼보다 얻는 게 적다고 한다
 2. Cognitive Tunneling : 측면 억제 때문에, 꼼꼼히 다 찾는 게 나은 단순한 질의에서는 성능이 떨어질 때가 있다고 한다
+
+부록에 실패 사례가 하나 있다.
+
+![Cognitive Tunneling 실패 사례 (논문 Figure 4)](https://momozzing.github.io/assets/images/synapse/fig4-cognitive-tunneling.png)
+
+연결이 많은 "Airport" 허브가 활성을 몰아 받으면서, 연결이 적은 "초록 재킷" 에피소드가 억제로 잘려 나간다.
 
 -> 앞 리뷰에서도 나온 모양이다. 구조를 정교하게 만들면 단순한 질의에서 손해를 본다. Mem0g가 multi-hop에서 Mem0에 졌던 것과 비슷하다. 뒤에서 볼 ReFind 표에서도 구조화 메모리가 BM25-RAG에 진다.
 

@@ -89,6 +89,12 @@ full-context 베이스라인이랑 비교를 안 해서, Anatomy 논문에서 �
 - Adaptive retrieval gating : 계층마다 검색 중요도를 조절하는 가중치
 - Retention regularization : 세션을 넘어가면서 의미가 드리프트하는 걸 막는 손실항
 
+![MLMF 전체 구조 (논문 Figure 1)](https://momozzing.github.io/assets/images/mlmf/fig1-mlmf-overview.png)
+
+가운데 세로로 working, episodic, semantic 계층이 쌓이고, 그 아래 retention regularization이 붙어 있다.
+
+세 계층이 오른쪽의 adaptive layer-weighted retrieval로 모인 뒤 fusion을 거쳐 응답 생성으로 간다고 한다.
+
 [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)의 Forms 분류로 보면 Token-level의 Hierarchical(3D)이고, Functions로는 Working + Factual 조합이다.
 
 Experiential은 없다. CoALA의 procedural에 해당하는 계층도 없다.
@@ -106,6 +112,14 @@ Experiential은 없다. CoALA의 procedural에 해당하는 계층도 없다.
 | −L_ret 보존 손실 제거 | 0.608 | 53.27% | 6.9% |
 | adaptive gating 제거 | 0.604 | 52.98% | 6.5% |
 | 전체 MLMF | 0.618 | 56.90% | 5.1% |
+
+논문은 같은 결과를 막대그래프로도 보여준다.
+
+![구성 요소별 ablation (논문 Figure 4)](https://momozzing.github.io/assets/images/mlmf/fig4-ablation.png)
+
+변형마다 F1, 보존율, FMR 막대를 나란히 놓고, 전체 모델이 모든 축에서 축소 변형보다 낫다고 한다.
+
+-> F1은 0~1 값이라 같은 축에서는 막대가 거의 안 보인다. F1 차이는 위 표로 보는 게 낫다.
 
 표를 보면,
 

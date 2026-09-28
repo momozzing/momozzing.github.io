@@ -66,14 +66,14 @@ Generative Agents는 Stanford + Google에서 만든, 가상 마을에서 사람�
 
 ## **2. Generative Agent Architecture**
 
-![에이전트 아키텍처 (논문 Figure 5)](https://momozzing.github.io/assets/images/generative-agents/fig5-architecture.png)
-
 구조는 4단계다.
 
 1. 기억(memory stream) : 보고 들은 걸 전부 쌓는다
 2. 회상(retrieval) : 행동할 때 필요한 것만 꺼낸다
 3. 반성(reflection) : 주기적으로 추상화한다
 4. 계획(planning) : 계획을 세워서 움직인다
+
+![에이전트 아키텍처 (논문 Figure 5)](https://momozzing.github.io/assets/images/generative-agents/fig5-architecture.png)
 
 전부 자연어로 기록하고 자연어로 처리한다. 반성이랑 계획도 기억의 한 종류라서 다시 회상 대상이 된다.
 

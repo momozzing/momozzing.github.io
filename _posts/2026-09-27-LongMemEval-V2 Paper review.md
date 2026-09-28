@@ -70,11 +70,25 @@ V1과 V2를 표로 비교하면 이렇다.
 
 V1의 다섯 가지(정보 추출, 다중 세션 추론, 지식 갱신, 시간 추론, 회피)랑 겹치는 게 거의 없다. V1은 사실을 묻고 V2는 절차와 함정을 묻는다.
 
+![LongMemEval-V2 질문 예시 (논문 Figure 1)](https://momozzing.github.io/assets/images/longmemeval-v2/fig1-question-examples.png)
+
+위는 WorkArena 궤적 이력이고, 아래는 그 궤적에서 만든 평가 질문이다.
+
+왼쪽 행들이 static, dynamic, workflow, gotchas 질문이고, 오른쪽 열이 premise awareness 질문이라고 한다.
+
+-> 오른쪽 질문의 답이 "No such button", "No such field"다. 다른 환경에서 온 사람이 할 법한 잘못된 전제를 짚어내는지 본다.
+
 [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)의 Functions 분류로 보면 V1은 factual memory를, V2는 experiential memory를 잰다. 앞에서 본 메모리 논문들은 거의 다 factual 쪽이었다.
 
 -> Gotchas랑 Premise Awareness는 처음 보는 축이다. "이 환경에서 자주 깨지는 것", "다른 데서는 됐는데 여기선 안 되는 것"을 묻는 벤치마크는 못 봤다.
 
 문항은 WorkArena-ServiceNow(46.8%), WebArena-CMS(20.2%), WebArena-OneStopShop(18.4%), WebArena-Reddit(14.6%)에서 나온다. 형식은 단답(50.1%), 자유형(34.6%), 객관식(15.3%)이다.
+
+![LME-V2 질문의 도메인·유형·형식 분포 (논문 Figure 2)](https://momozzing.github.io/assets/images/longmemeval-v2/fig2-question-distribution.png)
+
+전체 451문항을 출처 도메인, 질문 유형, 형식별로 나눈 그림이다.
+
+가운데 질문 유형에는 static, dynamic, workflow마다 abstention 문항이 따로 있다.
 
 ### **2.2 Evaluation Formulation**
 
@@ -109,9 +123,21 @@ Query(q)    — 최종 메모리에 질의
 
 -> 25M~115M 토큰이니 그럴 만하다. 컨텍스트를 늘려서 풀 수 있는 벤치마크는 아닌 것 같다.
 
+![파일럿 스터디 결과 (논문 Figure 4)](https://momozzing.github.io/assets/images/longmemeval-v2/fig4-pilot-studies.png)
+
+왼쪽이 질문만 준 프런티어 LLM 정확도이고, 오른쪽이 오라클 궤적을 준 direct QA 결과다.
+
+오라클 궤적을 통째로 주는 것보다 slice + notes로 줄이거나 코딩 에이전트 하네스를 쓰면 더 오른다고 한다.
+
 ## **3. AgentRunbook**
 
 논문이 같이 내놓은 메모리 방법 두 개다.
+
+![AgentRunbook 메모리 모듈 구조 (논문 Figure 5)](https://momozzing.github.io/assets/images/longmemeval-v2/fig5-agentrunbook-overview.png)
+
+(a) AgentRunbook-R은 넣을 때 궤적을 raw state, event, note 풀로 나눠 담고, 질의할 때 LLM 컨트롤러가 풀마다 질의를 만든다.
+
+(b) AgentRunbook-C는 궤적을 파일로 저장하고, 질의마다 지시문과 manifest를 넣은 샌드박스를 만들어 코딩 에이전트가 증거를 모으게 한다.
 
 ### **3.1 AgentRunbook-R**
 
@@ -175,6 +201,12 @@ ablation을 보면 풀마다 역할이 다르다고 한다.
 
 - AgentRunbook-R : 정확도는 중간, 지연은 낮음. 약 26초이고 thinking을 끄면 훨씬 낮아짐. 질의 효율이 중요하면 이쪽
 - AgentRunbook-C : 정확도를 더 올리지만 지연이 큼
+
+![정확도-지연 트레이드오프 (논문 Figure 6)](https://momozzing.github.io/assets/images/longmemeval-v2/fig6-accuracy-latency.png)
+
+가로축이 질의 지연, 세로축이 정확도다. 점마다 컨트롤러의 reasoning effort 설정이 다르다.
+
+같은 reasoning effort에서 AgentRunbook-C(주황)가 vanilla Codex(초록)보다 위에 있다.
 
 코딩 에이전트는 워크플로 안내, manifest, 궤적 검사 도구랑 같이 줄 때 메모리 컨트롤러로 더 잘 동작한다고 한다.
 

@@ -41,6 +41,12 @@ Janus는 University of Virginia, Princeton, UCF에서 만든 메모리 갱신 �
 
 Figure 1 그래프를 보면 태스크가 진행되면서 테스트 정확도가 오르다가 정체하거나 떨어진다.
 
+![순차 메모리 갱신과 GPQA 중간 스냅샷 정확도 (논문 Figure 1)](https://momozzing.github.io/assets/images/janus/fig1-nonmonotonic-updates.png)
+
+위쪽은 태스크마다 메모리를 M1, M2, ..., MT로 갱신하는 흐름이다.
+
+아래쪽은 Qwen3-8B GPQA에서 DC-RS, ExpeL의 중간 메모리 스냅샷으로 잰 테스트 정확도라고 한다.
+
 갱신을 많이 한다고 앞으로의 행동이 항상 나아지는 건 아니라고 한다.
 
 여기서 다루는 메모리는 앞의 리뷰들처럼 대화를 회상하는 게 아니다. 과거 기록이 아니라, 다음 태스크에서 LLM이 어떻게 행동할지를 바꾸는 test-time 적응 수단으로 본다고 한다.
@@ -54,6 +60,12 @@ Figure 1 그래프를 보면 태스크가 진행되면서 테스트 정확도가
 ExpeL, DC-RS 같은 기존 갱신기를 감싸는 플러그인이다. 갱신 규칙 자체는 안 바꾼다.
 
 태스크 `t`에서 기존 갱신기가 후보 메모리 `M̂_t`를 내놓으면, Janus가 이걸 쓸지 이전 메모리 `M_{t-1}`을 유지할지 정한다.
+
+![Janus 전체 구조 (논문 Figure 2)](https://momozzing.github.io/assets/images/janus/fig2-janus-overview.png)
+
+후보 갱신이 Momentum Trigger에 걸리지 않으면 그대로 배포된다.
+
+걸리면 Hybrid Evaluation Set으로 `M_{t-1}`과 `M̂_t`를 비교해서 더 나은 쪽을 배포한다고 한다.
 
 정해야 할 게 두 가지다.
 
@@ -126,9 +138,17 @@ MMT를 네 가지 방식이랑 비교했다.
 - Random : Janus와 같은 트리거 확률로 무작위 비교
 - Periodic : N단계마다 비교. N은 Janus의 트리거 횟수에 맞춤
 
+![MMT 트리거 ablation (논문 Table 2)](https://momozzing.github.io/assets/images/janus/table2-mmt-ablation.png)
+
+Qwen3-8B로 GPQA와 HumanEval에서 쟀다고 한다.
+
+Trig. Rate는 옛 메모리와 새 메모리를 비교한 비율이다. Random과 Periodic은 Janus와 비슷한 트리거 예산으로 맞췄다.
+
 무작위나 주기적으로 비교하는 것보다 MMT가 낫다고 한다. 비교 횟수가 같아도 언제 비교하느냐에 따라 달라진다는 것이다.
 
-그리고 평가 집합이 작고 잡음이 있을 수 있어서, 많이 비교한다고 꼭 좋은 건 아니라고 한다. Always가 제일 좋은 게 아니다.
+Always랑은 비교 횟수가 훨씬 적은데도 비슷하게 나온다. GPQA의 DC-RS에서는 Janus가 Always보다 오히려 높았다고 한다.
+
+평가 집합이 작고 잡음이 있을 수 있어서, 많이 비교한다고 꼭 좋은 건 아니라는 것이다.
 
 ### **3.4 Support Set Composition Ablation**
 
@@ -139,6 +159,12 @@ MMT를 네 가지 방식이랑 비교했다.
 - coverage 제거 : 일관되게 성능 하락
 - boundary 제거 : 일관되게 성능 하락
 - fresh 제거 : 가장 크게 하락 (GPQA·HumanEval 둘 다)
+
+![평가 집합 구성요소 ablation (논문 Figure 3)](https://momozzing.github.io/assets/images/janus/fig3-evalset-ablation.png)
+
+Qwen3-8B와 DC-RS 갱신기로 GPQA, HumanEval의 최종 테스트 정확도를 쟀다고 한다.
+
+세 막대 중 w/o Fresh가 제일 짧다.
 
 본 태스크로만 평가하면 메모리 선택이 치우친다고 한다.
 
@@ -151,6 +177,12 @@ coverage는 본 분포를 넓게 대표하는 역할을, boundary는 메모리 �
 갱신을 다 받으면 중간에 정체한다는 실험이다.
 
 스트림의 20%, 40%, 60%, 80%, 100% 시점마다 중간 메모리로 정확도를 쟀다.
+
+![옛 메모리 대 새 메모리 배포 결정 ablation (논문 Figure 4)](https://momozzing.github.io/assets/images/janus/fig4-deployment-ablation.png)
+
+Qwen3-8B로 GPQA와 MMLU-Pro (Eng.)에서 쟀다고 한다.
+
+빨간 선이 갱신을 다 받는 기존 갱신기, 파란 선이 Janus를 붙인 경우다.
 
 DC-RS와 ExpeL 둘 다 갱신을 전부 받으면 초중반에는 좋아지다가, 그 뒤로는 정체하거나 떨어진다고 한다.
 

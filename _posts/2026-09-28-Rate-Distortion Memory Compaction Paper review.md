@@ -52,6 +52,12 @@ introduction 부분을 보면 출발점이 구체적이다.
 
 어떤 정보를 어느 충실도로, 어떤 예산 안에서, 다운스트림 태스크 성능을 지키면서 남기고 버릴 거냐. 이걸 하나의 rate–distortion 결정으로 본다.
 
+![서베이 지도 (논문 Figure 1)](https://momozzing.github.io/assets/images/rate-distortion/fig1-survey-map.png)
+
+네 영역이 다루는 대상과 시점은 달라도 같은 rate–distortion 선택을 한다는 그림이다.
+
+trainable sparse attention이랑 멀티모달·멀티에이전트는 네 영역에 걸치는 cross-cutting으로 따로 뒀다.
+
 -> KV 캐시 축출이랑 에이전트 대화 요약을 같은 문제로 본다는 게 처음엔 좀 억지 같았는데, 뒤에 실험을 보니 이해가 됐다.
 
 ## **2. A Unified Formalism for Compaction**
@@ -61,6 +67,14 @@ introduction 부분을 보면 출발점이 구체적이다.
 - P-rev (되돌릴 수 있는가) : 버린 내용을 나중 질의가 필요로 할 때 다시 꺼낼 수 있는가. 검색·아카이브 방식은 되고, 축출과 요약은 안 된다
 - P-q (질의를 보는가) : 뭘 남길지 정할 때 질의(또는 질의 분포)를 보는가. 오프라인 gisting은 못 보고, LongLLMLingua와 Quest는 본다
 - P-fid (충실도) : 무손실, 준무손실, 균일 손실, 아니면 다중 충실도(작은 정확 계층 + 큰 손실 계층)
+
+![rate-distortion 관점 (논문 Figure 2)](https://momozzing.github.io/assets/images/rate-distortion/fig2-rate-distortion.png)
+
+P-q를 그림으로 보면 이렇다. 파란 선이 질의를 보는 방식, 빨간 선이 질의를 안 보는 방식이다.
+
+`I★(Q)` 아래 예산에서는 어떤 방식도 오류를 피할 수 없다고 한다.
+
+두 곡선 사이 가로 간격이 질의 엔트로피 `H(Q)`다. 질의를 미리 모르는 대가로 그만큼 예산을 더 써야 같은 성능이 나온다는 것이다.
 
 그리고 서베이 전체에서 보이는 패턴 두 개를 말한다.
 
@@ -82,6 +96,12 @@ introduction 부분을 보면 출발점이 구체적이다.
 층을 가르는 건 이 중 세 축뿐이라고 한다. 단위, 생애주기, 적응성. 나머지 넷은 층끼리 차이가 훨씬 작다.
 
 그래서 KV 축출이랑 에이전트 요약이 생각보다 가깝다는 것이다.
+
+![생애주기 축 (논문 Figure 3)](https://momozzing.github.io/assets/images/rate-distortion/fig3-lifecycle.png)
+
+2번 축인 생애주기를 그린 그림이다. 단계마다 대상과 시간 규모는 다르지만 남길지 버릴지는 똑같이 정한다고 한다.
+
+-> 맨 왼쪽 Mamba, RMT부터 맨 오른쪽 Mem0, RAPTOR까지 한 줄에 놓여 있다.
 
 ## **4. The Inference ↔ Agent-Memory Bridge**
 

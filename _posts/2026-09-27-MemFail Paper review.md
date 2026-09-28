@@ -157,12 +157,26 @@ get_all_memories()
 
 MEMFAIL은 최신 시스템에도 어렵고, k를 늘려도 성능이 잘 안 오른다고 한다. Coexisting-Facts만 예외인데, 많이 꺼내면 같이 있는 사실이 우연히라도 걸릴 확률이 커지기 때문이다.
 
+![k에 따른 성공률 (논문 Figure 1)](https://momozzing.github.io/assets/images/memfail/fig1-success-vs-k.png)
+
+메모리 시스템 내부 모델을 GPT-4.1-mini로 두고 k를 바꿔가며 잰 그림이다.
+
+칸이 과제별이고 선 색이 시스템이다. 오차 막대는 95% Wilson 구간이라고 한다.
+
+-> StructMem은 대부분 과제에서 잘하는데 Coexisting-Facts에서 크게 무너지고, Mem0은 반대 패턴이라고 한다.
+
 과제별로 실패가 갈린다.
 
 - Coexisting-Facts : 검색 실패. 대부분 시스템이 관련 사실을 전부 질문과 연결하지 못한다
 - Conditional-Facts (Hard) : 요약 실패. 모든 시스템이 너무 많이 압축한다. 원래 메시지를 바꾸거나 세부를 빼버린다
 - Persona-Retrieval : 요약 실패(긴 페르소나를 과하게 압축). Mem0만 예외인데, LLM 도구 호출로 갱신하는 방식이라 처음부터 세부를 다 저장하지 못한다
 - Long-Hop : 검색 실패. 멀어 보이는 엔티티 사이의 인과 관계를 못 잡는다
+
+![과제·시스템별 오류 유형 (논문 Figure 8)](https://momozzing.github.io/assets/images/memfail/fig8-error-breakdown.png)
+
+부록에 있는 오류 분류 그림이다. 줄이 과제, 칸이 시스템이고, 선 색이 storage·summary·retrieval·reasoning 오류 비율이다.
+
+Coexisting-Facts와 Long-Hop은 Mem0을 빼면 파란 retrieval이 제일 위에 있고, Conditional-Facts (Hard)는 보라 summary가 제일 위에 있다.
 
 Mem0 말고는 저장 실패가 거의 없었다고 한다. 실패는 거의 다 요약이나 검색에서 나왔다.
 
@@ -176,6 +190,12 @@ Mem0 말고는 저장 실패가 거의 없었다고 한다. 실패는 거의 다
 
 더 강한 모델을 써도 정확도가 안 오르고, 대부분 과제에서 오히려 떨어지기도 한다고 한다. 더 똑똑한 추론 모델이 메모리를 너무 길게 만들어서 컨텍스트를 오염시킬 수 있다는 것이다.
 
+![내부 모델에 따른 성공률 (논문 Figure 2)](https://momozzing.github.io/assets/images/memfail/fig2-internal-model.png)
+
+SimpleMem(위)과 StructMem(아래)의 내부 모델을 바꿔가며 잰 그림이다. 선 색이 내부 모델이다.
+
+Mem0과 A-MEM도 같은 경향이라 부록으로 뺐다고 한다.
+
 다른 LLM 에이전트 분야는 모델이 좋아지면 벤치마크 성능도 오르는데, 메모리 시스템은 모델 성능이 아니라 구조에 묶여 있다고 한다.
 
 앞에서 본 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 백본 민감도, [NEMORI 리뷰](https://momozzing.github.io/paper%20review/NEMORI-Paper-review/)의 "휴리스틱이 문제"와 이어진다. 모델을 바꿔서 풀리는 문제가 아니다.
@@ -187,6 +207,12 @@ Mem0 말고는 저장 실패가 거의 없었다고 한다. 실패는 거의 다
 요약 실패가 병목인 과제(Persona-Retrieval, Conditional-Facts Hard)에서는 토큰을 늘리면 성능이 오른다. 반대로 검색 과제는 토큰을 더 쓰면 떨어질 수도 있다고 한다.
 
 Coexisting-Facts에서 특히 그런데, 메모리를 크게 저장하면 의미 임베딩이 "오염"돼서 검색이 나빠진다는 것이다.
+
+![메모리당 토큰 수와 성공률 (논문 Figure 3)](https://momozzing.github.io/assets/images/memfail/fig3-tokens-per-memory.png)
+
+가로축이 검색된 메모리 하나당 평균 토큰 수, 세로축이 성공률이다(k=5). 색이 과제, 모양이 시스템이다.
+
+-> 주황(Persona-Retrieval)을 보면 haiku-4.5, gpt-5.4-mini에서 토큰을 제일 많이 쓰는 A-MEM(세모)이 제일 높다.
 
 토큰을 더 쓰면 성능이 오른다는 게 여기서는 안 맞는다.
 

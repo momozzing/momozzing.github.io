@@ -52,6 +52,12 @@ Does Your Agent's Memory Survive a Model Upgrade? A Controlled Study of Memory P
 
 LC-RAW와 RAG는 쓰는 모델이 없어서 대조군으로 쓴다.
 
+![네 가지 메모리 형식 비교 (논문 Figure 1)](https://momozzing.github.io/assets/images/memory-portability/fig1-memory-formats.png)
+
+형식마다 무엇을 저장하고, 추론 때 어떻게 쓰고, 업그레이드할 때 어디가 위험한지 정리한 그림이다.
+
+RAG는 검색 실패와 임베딩 버전 불일치, NOTES는 쓰는 모델에 따른 누락·왜곡이 주된 위험이라고 한다.
+
 ## **3. Testing memory migrations**
 
 실험 설정은 이렇다.
@@ -61,7 +67,21 @@ LC-RAW와 RAG는 쓰는 모델이 없어서 대조군으로 쓴다.
 - 컨텍스트 예산을 맞춤
 - 결과를 보기 전에 가설과 분석 계획을 서명된 Git 태그로 고정
 
+![실험 설계 개요 (논문 Figure 2)](https://momozzing.github.io/assets/images/memory-portability/fig2-study-overview.png)
+
+고정된 합성 이력을 네 형식으로 바꾼 다음, 모델·임베딩 인덱스·복구 소스·진단용 증거 중 하나씩만 바꿔가며 잰다.
+
+오른쪽 아래처럼 쓰기·저장 단계 손실과 검색 단계 손실을 따로 떼어 보는 것도 설계에 들어가 있다.
+
 ## **4. Results and analysis**
+
+논문은 주요 결과 네 개를 그림 한 장에 모아뒀다.
+
+![주요 실험 결과 (논문 Figure 3)](https://momozzing.github.io/assets/images/memory-portability/fig3-key-results.png)
+
+①은 쓰는 모델 교체, ②는 임베딩 마이그레이션, ③은 복구, ④는 손실이 어느 단계에서 생기는지다. 아래 4.1~4.4가 이 순서를 따른다.
+
+-> ④를 보면 NOTES랑 RAG가 손실이 나는 단계가 서로 다르다.
 
 ### **4.1 A fixed schema transfers better than free-form notes**
 

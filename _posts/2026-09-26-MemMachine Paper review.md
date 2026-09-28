@@ -42,6 +42,14 @@ MemMachine은 MemVerge, Inc.에서 만든 오픈소스 메모리 시스템이다
 
 ## **2. MemMachine Architecture**
 
+전체 구조는 이렇다.
+
+![MemMachine 시스템 구조 (논문 Figure 1)](https://momozzing.github.io/assets/images/memmachine/fig1-architecture.png)
+
+에이전트, Python SDK, MCP 서버가 REST API·SDK로 붙는다.
+
+일화 메모리는 working memory(단기)와 persistent memory(장기)로 나뉘고, 프로필 메모리는 semantic memory 쪽에 있다.
+
 ### **2.1 Contextualization**
 
 대화 메모리 검색이 어려운 이유를 이렇게 설명한다.
@@ -56,6 +64,10 @@ MemMachine은 MemVerge, Inc.에서 만든 오픈소스 메모리 시스템이다
 2. 바로 옆 에피소드를 앞 1개, 뒤 2개 가져와서 클러스터를 만든다
 3. 클러스터를 cross-encoder 등으로 재랭킹한다
 4. 상위 k개 클러스터를 LLM에 준다
+
+![메모리 recall 흐름 (논문 Figure 2)](https://momozzing.github.io/assets/images/memmachine/fig2-recall-workflow.png)
+
+전체 recall 흐름으로 보면 STM 검색, LTM 벡터 검색 다음에 contextualization이 들어가고, 중복 제거, 재랭킹, 시간순 정렬을 거쳐 결과를 돌려준다고 한다.
 
 뒤에서 볼 [ReFind 리뷰](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)의 컨텍스트 창 확장(히트 ±2턴을 블록으로)도 거의 같은 장치다. ReFind ablation에서는 이걸 빼면 S에서 −9.2점이다.
 
@@ -99,6 +111,12 @@ LLM 추출은 여기서만 쓴다. 원문은 일화 메모리에 남아 있으�
 1. MemMachine Agent : 직접 검색
 2. SplitQuery Agent : 질의를 병렬로 쪼갬(fan-out)
 3. ChainOfQuery Agent : 증거를 반복해서 모음(다중홉)
+
+![Retrieval Agent 도구 트리 (논문 Figure 3)](https://momozzing.github.io/assets/images/memmachine/fig3-retrieval-agent-tree.png)
+
+세 전략 모두 결국 같은 DeclarativeMemory 검색(벡터 검색 + 재랭커)을 부른다.
+
+-> 그래서 인덱스나 재랭커를 개선하면 세 경로에 다 반영된다고 한다.
 
 ### **3.3 Benchmark Results**
 

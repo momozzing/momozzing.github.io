@@ -106,11 +106,11 @@ production이 문자열을 조건에 따라 다른 문자열로 바꾸는 규칙
 
 ### **3.3 Towards cognitive language agents**
 
-![LLM 호출에서 에이전트까지 (논문 Figure 3)](https://momozzing.github.io/assets/images/coala/fig3-lm-to-agents.png)
-
 1. LLM 호출 하나(A)는 프롬프트 구성 → 호출 → 출력 파싱 → 실행이다.
 2. 이걸 미리 정한 순서로 엮으면 프롬프트 체이닝(B)이 된다. 여기까지는 흐름이 고정이다.
 3. 환경의 피드백이 다음 호출에 들어오는 루프(C)가 생기면 에이전트가 된다.
+
+![LLM 호출에서 에이전트까지 (논문 Figure 3)](https://momozzing.github.io/assets/images/coala/fig3-lm-to-agents.png)
 
 ReAct가 딱 3번이었다.
 
@@ -143,11 +143,11 @@ LLM은 stateless다. 호출 사이에 아무것도 기억하지 않는다.
 
 ### **4.2–4.5 Grounding, Retrieval, Reasoning, Learning actions**
 
-![행동 공간의 구분 (논문 Figure 5)](https://momozzing.github.io/assets/images/coala/fig5-action-space.png)
-
 3분류의 Tool Use에 해당하는 축이고, CoALA가 제일 많이 넓힌 곳이다.
 
 3분류에서 도구 사용이라고 부르는 건 외부 행동뿐이다. CoALA는 그 옆에 내부 행동 3종을 같이 둔다.
+
+![행동 공간의 구분 (논문 Figure 5)](https://momozzing.github.io/assets/images/coala/fig5-action-space.png)
 
 - 외부 행동 = grounding : 물리 환경 제어, 사람과의 대화, 디지털 환경(API, 웹, 코드 실행) 조작
 - 내부 행동 3종 : retrieval(장기 기억 읽기), reasoning(LLM으로 working memory 갱신), learning(장기 기억에 쓰기)
@@ -189,9 +189,9 @@ learning은 쓰는 대상에 따라 넷이다.
 
 ## **5. Case Studies**
 
-![CoALA로 분류한 에이전트들 (논문 Table 2)](https://momozzing.github.io/assets/images/coala/table2-casestudies.png)
-
 앞에서 리뷰해온 논문들이 이 표에 행으로 정리돼 있다.
+
+![CoALA로 분류한 에이전트들 (논문 Table 2)](https://momozzing.github.io/assets/images/coala/table2-casestudies.png)
 
 1. SayCan : 로봇 grounding만 있는 극단이다. 내부 행동이 하나도 없고, 고정된 스킬 551개를 LLM+가치 함수로 평가만 해서 고른다.
 2. ReAct : 장기 기억이 없다. 내부 행동은 reasoning뿐이고, 의사결정은 제안 하나를 바로 실행한다. 가장 단순한 형태고, 이후 에이전트들은 여기에 기억과 학습을 더해왔다.

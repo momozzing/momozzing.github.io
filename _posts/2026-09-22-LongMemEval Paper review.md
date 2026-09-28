@@ -69,11 +69,23 @@ ABS가 따로 있는 게 좋았다. 기존 벤치마크는 맞히는 것만 쟀�
 
 abstention은 따로 모으지 않고 기존 질문을 틀린 전제로 바꿔서 만들었다. 그래서 같은 이력에서 답이 있는 질문이랑 없는 질문을 짝으로 만들 수 있다.
 
+![일곱 질문 유형 예시 (논문 Figure 1)](https://momozzing.github.io/assets/images/longmemeval/fig1-question-types.png)
+
+왼쪽이 증거 문장이고 오른쪽이 질문과 정답이다.
+
+-> abstention 예시는 10-gallon, 20-gallon 탱크만 말했는데 30-gallon 탱크를 묻는다.
+
 데이터는 이렇게 만든다.
 
 사용자 속성 164개를 다섯 범주(생활양식, 소유물, 생애 사건, 상황 맥락, 인구통계)로 나눠 정리했다.
 
 속성마다 LLM(Llama 3 70B Instruct)으로 사용자 배경 문단을 만들고, 그걸 증거 문장과 대화 세션으로 늘린다. 문항은 500개를 직접 골라 다듬었다고 한다.
+
+![LongMemEval 데이터 생성 파이프라인 (논문 Figure 2)](https://momozzing.github.io/assets/images/longmemeval/fig2-data-pipeline.png)
+
+(a) 질문과 증거 문장은 사람이 만들고, (b) 증거 세션은 LLM으로 시뮬레이션한 뒤 사람이 고친다고 한다.
+
+(c) 전체 대화 이력은 테스트할 때 조립해서 길이를 자유롭게 정할 수 있다.
 
 크기는 두 가지다.
 
@@ -111,6 +123,12 @@ abstract를 보면 이걸 한 줄로 요약한다. 대화가 이어지면서 정
 
 기존 메모리 시스템 아홉 개가 전부 이 틀로 표현된다는 걸 표로 보여준다.
 
+![아홉 개 메모리 프레임워크 비교 (논문 Table 2)](https://momozzing.github.io/assets/images/longmemeval/table2-nine-frameworks.png)
+
+ChatGPT와 Coze는 알 수 없는 설계 항목을 비워뒀다고 한다.
+
+-> 맨 아래 Our Design이 뒤 실험에서 나온 선택을 모은 것이다.
+
 ### **3.2 Long-Term Memory System: Design Choices**
 
 여기서 설계할 때 정해야 하는 제어점(CP) 네 개를 뽑는다.
@@ -143,6 +161,12 @@ CP 4: Reading Strategy, 가져온 걸 어떻게 읽나.
 
 잘게 쪼갤수록 여러 세션을 엮는 추론은 좋아지고 전체 성능은 나빠지는 trade-off다.
 
+![value 설계별 QA 성능 (논문 Figure 5)](https://momozzing.github.io/assets/images/longmemeval/fig5-value-designs.png)
+
+Full과 Multi-Session Subset을 나눠서 토큰 수 대비 정확도를 그렸다.
+
+-> Multi-Session Subset에서는 Round Facts(보라색) 점이 위로 올라간다.
+
 ### **4.2 Key: Multi-key indexing improves retrieval and RAG**
 
 키를 사실로 늘리면 검색이랑 QA가 같이 오른다 (CP 2).
@@ -151,11 +175,23 @@ CP 4: Reading Strategy, 가져온 걸 어떻게 읽나.
 
 여기에 뽑아낸 사용자 사실을 키로 더 붙이면 recall@k가 9.4%p, 정확도가 5.4%p 오른다고 한다. 요약, 키프레이즈, 사용자 사실, 타임스탬프 이벤트를 값에서 뽑아서 검색 경로를 여러 개 만드는 방식이다.
 
+![key 설계별 검색·QA 성능 (논문 Table 3)](https://momozzing.github.io/assets/images/longmemeval/table3-key-designs.png)
+
+굵게 표시된 K = V + fact 행이 검색과 QA를 같이 올린다고 한다.
+
+-> Value = Round에서는 K = fact나 K = keyphrase만 쓰면 검색 지표가 K = V보다 낮다. 값을 키로 그대로 두고 사실을 더해야 오른다.
+
 ### **4.3 Query: Time-aware query expansion improves temporal reasoning**
 
 시간을 고려해야 시간 질문을 푼다 (CP 3).
 
 값을 타임스탬프 이벤트로 색인하고 검색을 그 시간 범위로 제한하면, temporal reasoning의 memory recall이 6.8~11.3%p 오른다고 한다. 단 질의를 늘릴 때 강한 LLM을 써야 그렇다.
+
+![temporal reasoning 부분집합 검색 성능 (논문 Table 4)](https://momozzing.github.io/assets/images/longmemeval/table4-time-aware.png)
+
+시간을 고려한 질의 확장이 검색 범위를 좁혀서 검색을 돕는다고 한다.
+
+-> 질의 확장 모델을 Llama 3.1 8B Instruct로 바꾸면 K = V보다 낮아지는 칸도 있다.
 
 ### **4.4 Improving reading with chain-of-note and structured format**
 
@@ -166,6 +202,10 @@ CP 4: Reading Strategy, 가져온 걸 어떻게 읽나.
 Chain-of-Note(답하기 전에 필요한 내용을 먼저 뽑음)랑 구조화된 포맷으로 프롬프팅하면 LLM 세 개에서 최대 10점 오른다.
 
 -> 검색을 아무리 고쳐도 읽는 단계에서 10점을 놓치고 있었다는 얘기다.
+
+![oracle 검색에서 읽기 방식별 QA 성능 (논문 Figure 6)](https://momozzing.github.io/assets/images/longmemeval/fig6-reading.png)
+
+근거 세션만 넣어주는 oracle 설정에서 잰 결과다. JSON 형식에 CoN을 붙인 조합이 나머지 셋보다 크게 높다고 한다.
 
 ## **5. 지금 관점: ReFind와 겹쳐 읽기**
 

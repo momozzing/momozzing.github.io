@@ -35,6 +35,12 @@ LLM은 컨텍스트 창 크기가 정해져 있어서, 세션이 끊기거나 �
 
 Figure 1 예시가 이 논문의 동기다. 사용자가 채식이고 유제품을 못 먹는다고 말했는데, 다음 세션에서 시스템이 그걸 잊고 맞지 않는 추천을 한다. 메모리가 있으면 그 조건이 유지된다.
 
+![세션 간 메모리 유무에 따른 응답 차이 (논문 Figure 1)](https://momozzing.github.io/assets/images/mem0/fig1-memory-importance.png)
+
+왼쪽이 메모리가 없는 경우, 오른쪽이 메모리가 있는 경우다.
+
+-> 왼쪽은 다음 세션에서 Chicken Alfredo를 추천한다.
+
 ## **2. Proposed Methods**
 
 사실을 뽑는 추출 단계와, 그걸 메모리에 반영하는 갱신 단계로 나뉜다.
@@ -85,6 +91,12 @@ Figure 1 예시가 이 논문의 동기다. 사용자가 채식이고 유제품�
 2. 관계 생성기가 엔티티 쌍마다 관계가 있는지 보고 트리플을 만든다
 
 갱신할 때는 충돌을 찾아서 해소하는 과정이 돈다.
+
+![Mem0g 그래프 메모리 구조 (논문 Figure 3)](https://momozzing.github.io/assets/images/mem0/fig3-mem0g-architecture.png)
+
+추출 단계에서 Entity Extractor와 Relations Generator가 노드와 트리플을 만들고, 갱신 단계에서 Conflict Detector와 Update Resolver가 기존 그래프에 반영한다.
+
+-> Mem0의 Figure 2와 두 단계 구성은 같고, 저장 단위가 사실 대신 트리플이다.
 
 ## **3. Experimental Setup**
 

@@ -56,6 +56,12 @@ Predictive Coding Theory(Rao & Ballard 1999, Friston 2010, Clark 2013)에서 기
 
 프레임워크는 구조, 표현, 증류 세 가지 사전(prior)을 따르고, 두 개의 모듈이 이어진 구조다. 상보 학습 시스템(CLS)에 대응한다고 한다.
 
+![NEMORI 전체 구조 (논문 Figure 1)](https://momozzing.github.io/assets/images/nemori/fig1-nemori-overview.png)
+
+위쪽 Episodic Memory Integration이 원시 대화를 서사 에피소드로 바꾸고, 아래쪽 Semantic Knowledge Distillation이 예측 오차로 지식을 뽑는다.
+
+오른쪽은 뽑은 지식을 받는 쪽이다. 자체 관리 모듈이나 MemoryOS, A-MEM 같은 외부 시스템에 증류 층으로 붙일 수 있다고 한다.
+
 ### **2.2 Episodic Memory Integration**
 
 원시 대화를 이어지는 서사(에피소드)로 바꾼다. 세 단계다.

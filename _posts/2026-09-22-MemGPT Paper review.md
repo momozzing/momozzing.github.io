@@ -47,8 +47,6 @@ LLM이 자기 컨텍스트에 뭘 넣을지 스스로 관리하는 'LLM OS'를 �
 
 ## **2. MemGPT (MemoryGPT)**
 
-![MemGPT 계층 메모리 구조 (논문 Figure 3)](https://momozzing.github.io/assets/images/memgpt/fig3-hierarchy.png)
-
 메모리를 둘로 나눈다.
 
 - Main context : LLM 프롬프트 토큰. 물리 메모리/RAM에 해당한다. 여기 있는 건 in-context라서 추론할 때 바로 쓸 수 있다
@@ -58,6 +56,12 @@ external context는 다시 둘이다.
 
 - Recall Storage : MemGPT 메시지 DB. 큐 매니저가 쓰고 함수로 읽는다
 - Archival Storage : 함수로 읽고 함수로 쓴다
+
+![MemGPT 계층 메모리 구조 (논문 Figure 3)](https://momozzing.github.io/assets/images/memgpt/fig3-hierarchy.png)
+
+위쪽 점선 안이 main context(프롬프트 토큰)이고, 아래 두 저장소가 external context다.
+
+-> 구역마다 읽기/쓰기 권한과 누가 쓰는지가 붙어 있다.
 
 ### **2.1 Main context (prompt tokens)**
 
@@ -79,9 +83,15 @@ FIFO 큐의 첫 인덱스에는 큐에서 밀려난 메시지들을 재귀적으
 
 Figure 1 예시를 보면 동작 방식이 잘 보인다.
 
+![메모리 압력 경고 뒤 working context에 쓰는 예시 (논문 Figure 1)](https://momozzing.github.io/assets/images/memgpt/fig1-memory-pressure.png)
+
 컨텍스트 공간이 부족해지면 시스템 경고(System Alert: Memory Pressure)가 LLM에 전달되고, LLM이 `working_context.append("Birthday is February 7")` 같은 함수를 직접 호출해서 영구 메모리에 쓴다.
 
 Figure 4는 갱신하는 예시다. 사용자가 헤어졌다고 하니 `working_context.replace("Boyfriend named James", "Ex-boyfriend named James")`를 호출한다.
+
+![working context를 갱신하는 예시 (논문 Figure 4)](https://momozzing.github.io/assets/images/memgpt/fig4-update-context.png)
+
+갱신되는 정보는 프롬프트 토큰 안의 working context에 들어 있다고 한다.
 
 replace로 덮어쓴다. 뒤에서 볼 Mem0의 UPDATE·DELETE는 이쪽이고, Zep은 무효화로 처리해서 여기서 갈린다.
 

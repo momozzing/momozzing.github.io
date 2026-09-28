@@ -478,9 +478,9 @@ CoALA 리뷰 때는 "기억을 지우는 건 아직 연구가 없다"고 했었�
 
 #### **7.3.1 Look-Back: RL is Internalizing Memory Management Abilities for Agents**
 
-![RL 기반 메모리 시스템의 진화 (논문 Figure 11)](https://momozzing.github.io/assets/images/agent-memory-survey/fig11-rl-evolution.png)
-
 메모리도 강화학습 쪽으로 가고 있다고 한다. 세 단계로 나눈다.
+
+![RL 기반 메모리 시스템의 진화 (논문 Figure 11)](https://momozzing.github.io/assets/images/agent-memory-survey/fig11-rl-evolution.png)
 
 1. RL-free : 지금 대부분. 고정 임계값, 고정 검색 파이프라인. LLM이 관여하는 것처럼 보여도 프롬프트로만 돌아간다 (Mem0, MemOS, ExpeL, G-Memory 등)
 2. RL-assisted : 일부만 RL. RMM은 검색 결과 재정렬에, Mem-α와 Memory-R1은 메모리 만드는 과정에 RL을 쓴다

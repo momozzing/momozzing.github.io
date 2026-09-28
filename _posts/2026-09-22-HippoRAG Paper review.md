@@ -41,6 +41,12 @@ HippoRAG는 Ohio State University와 Stanford에서 만든 RAG 방법이다.
 
 두 번째는 다르다. "스탠퍼드"에서 뻗는 경로도 많고 "알츠하이머"에서 뻗는 경로도 많다. 둘이 만나는 지점을 찾아야 하는데, 질의 임베딩 하나로는 그 지점이 안 보인다.
 
+![지식 통합이 필요한 질문과 RAG (논문 Figure 1)](https://momozzing.github.io/assets/images/hipporag/fig1-knowledge-integration.png)
+
+기존 RAG는 구절을 따로따로 인코딩해서, 두 특징이 한 구절에 같이 나오지 않으면 Prof. Thomas를 찾기 어렵다고 한다.
+
+-> 아래 HippoRAG 줄은 그래프 위에서 두 노드 사이 경로로 답에 닿는다.
+
 그래서 여러 단계 RAG를 완벽하게 돌려도 이런 지식 통합 문제에는 부족할 때가 많다고 한다.
 
 ## **2. HippoRAG**

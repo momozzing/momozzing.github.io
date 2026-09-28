@@ -129,9 +129,9 @@ GPT-4를 블랙박스 API로만 부르고, 파인튜닝이나 gradient 업데이
 
 -> 커리큘럼이 새 자원을 요구하니 새 지형으로 가야 하고, 이동 스킬이 쌓이니 멀리 갈 수 있게 되는 식으로 도는 것 같다.
 
-![새로운 월드에서의 zero-shot 일반화 (논문 Table 2, Figure 8)](https://momozzing.github.io/assets/images/voyager/fig8-zeroshot.png)
-
 새 월드 일반화 실험은 인벤토리를 비우고 처음 보는 월드에서 다이아몬드 곡괭이, 황금 검, 용암 양동이, 나침반을 만들게 한다.
+
+![새로운 월드에서의 zero-shot 일반화 (논문 Table 2, Figure 8)](https://momozzing.github.io/assets/images/voyager/fig8-zeroshot.png)
 
 Voyager는 4개 전부 3/3 성공이고, 베이스라인은 전부 0/3이다.
 

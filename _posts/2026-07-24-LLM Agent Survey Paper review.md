@@ -35,7 +35,7 @@ CoALA가 인지 아키텍처에서 가져온 이론이라면, 이 서베이는 2
 
 LLM 기반 에이전트는 출발점이 다르다고 한다. 웹 지식을 통째로 가진 모델이 중심 제어기가 되니까, 도메인 데이터로 학습하지 않아도 행동할 수 있고 자연어로 상호작용할 수 있다.
 
-![분야의 성장 추세 (논문 Fig 1)](https://momozzing.github.io/assets/images/wang-survey/fig1-growth.png)
+![분야의 성장 추세 (논문 Figure 1)](https://momozzing.github.io/assets/images/wang-survey/fig1-growth.png)
 
 2021년 WebGPT에서 시작해서 2023년에 논문이 확 늘어나는 그래프다.
 
@@ -47,14 +47,14 @@ LLM 기반 에이전트는 출발점이 다르다고 한다. 웹 지식을 통�
 
 ### **2.1 Agent Architecture Design**
 
-![에이전트 구조의 통합 프레임워크 (논문 Fig 2)](https://momozzing.github.io/assets/images/wang-survey/fig2-framework.png)
-
 에이전트를 4개 모듈로 나눈다.
 
 1. Profile : 누구인가
 2. Memory : 무엇을 기억하는가
 3. Planning : 어떻게 계획하는가
 4. Action : 무엇을 하는가
+
+![에이전트 구조의 통합 프레임워크 (논문 Figure 2)](https://momozzing.github.io/assets/images/wang-survey/fig2-framework.png)
 
 Profile이 Memory와 Planning에 영향을 주고, 셋이 모여서 Action을 정한다.
 
@@ -96,8 +96,6 @@ recency, relevance, importance의 가중합이다.
 
 #### **2.1.3 Planning Module**
 
-![단일 경로와 다중 경로 추론 (논문 Fig 3)](https://momozzing.github.io/assets/images/wang-survey/fig3-planning.png)
-
 계획을 피드백이 있는지 없는지로 나눈다.
 
 피드백 없는 계획은 이렇다.
@@ -105,6 +103,8 @@ recency, relevance, importance의 가중합이다.
 - 단일 경로 추론 : CoT, 한 줄로 쭉
 - 다중 경로 추론 : CoT-SC, ToT, 트리로 탐색
 - 외부 플래너 : LLM이 계획을 형식 언어로 바꾸고 고전 플래너가 푼다
+
+![단일 경로와 다중 경로 추론 (논문 Figure 3)](https://momozzing.github.io/assets/images/wang-survey/fig3-planning.png)
 
 피드백 있는 계획은 이렇다.
 
@@ -125,9 +125,9 @@ recency, relevance, importance의 가중합이다.
 
 ### **2.2 Agent Capability Acquisition**
 
-![능력 획득 전략의 전환 (논문 Fig 4)](https://momozzing.github.io/assets/images/wang-survey/fig4-eras.png)
-
 프레임워크 말고 이 그림도 남는다.
+
+![능력 획득 전략의 전환 (논문 Figure 4)](https://momozzing.github.io/assets/images/wang-survey/fig4-eras.png)
 
 모델 능력을 얻는 전략이 시대마다 쌓여왔다고 한다.
 
@@ -143,13 +143,15 @@ mechanism engineering은 파라미터도 프롬프트도 아니고, 모듈과 �
 
 ## **3. LLM-based Autonomous Agent Application**
 
-![응용 분야와 평가 전략 (논문 Fig 5)](https://momozzing.github.io/assets/images/wang-survey/fig5-app-eval.png)
-
 응용은 세 분야로 나눈다.
 
 - 사회과학 : 사회 시뮬레이션, 심리, 법
 - 자연과학 : 문서 관리, 실험 보조, 교육
 - 공학 : SW 개발, 로봇, 산업 자동화
+
+![응용 분야와 평가 전략 (논문 Figure 5)](https://momozzing.github.io/assets/images/wang-survey/fig5-app-eval.png)
+
+그림 오른쪽은 다음 장에서 다루는 평가 전략이다.
 
 ## **4. LLM-based Autonomous Agent Evaluation**
 

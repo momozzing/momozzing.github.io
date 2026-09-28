@@ -51,7 +51,13 @@ Memory-Augmented Generation(MAG) 시스템을 메모리 구조에 따라 넷으�
 - Episodic and Reflective Memory : 일화·반성
 - Structured and Hierarchical Memory : 구조화·계층
 
-앞에서 본 것들을 넣어보면 Mem0가 둘째, A-MEM이 셋째, Zep이 넷째다.
+![MAG 시스템 분류 (논문 Figure 1)](https://momozzing.github.io/assets/images/anatomy/fig1-mag-taxonomy.png)
+
+네 갈래 아래에 세부 유형과 해당 시스템들이 달려 있다. 부록에 있는 그림이다.
+
+Mem0는 Entity-Centric, NEMORI는 Episodic Reflection, Zep과 SYNAPSE는 Graph-Structured, MemGPT는 OS-Inspired 칸에 들어가 있다.
+
+앞에서 본 것들을 넣어보면 Mem0랑 A-MEM이 둘째, Zep이 넷째다.
 
 분류는 앞에서 본 [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)랑 크게 다르지 않다. 실제 분석은 뒤에서부터 나온다.
 
@@ -72,6 +78,10 @@ Memory-Augmented Generation(MAG) 시스템을 메모리 구조에 따라 넷으�
 - Volume (총 토큰 양) : HotpotQA(~1k), MemBench(~100k)는 128k 창에 다 들어간다. 포화 위험이 높다
 - Interaction depth (상호작용 깊이)
 - Entity diversity (엔티티 다양성)
+
+![벤치마크별 구조적 포화 위험 (논문 Table 2)](https://momozzing.github.io/assets/images/anatomy/table2-saturation-risk.png)
+
+모델 성능이 아니라 벤치마크 자체 통계로 매긴 추정치라고 한다. 포화 위험은 long-context LLM이 프롬프트에 다 넣고 풀 수 있을지를 가늠한 값이다.
 
 겉보기 난이도가 아니라, 이런 구조적 특성이 long-context LLM이 감당할 수 있는 범위를 넘느냐로 포화 위험이 정해진다고 한다.
 

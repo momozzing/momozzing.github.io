@@ -147,6 +147,12 @@ MBPP Python은 77.1로 GPT-4(80.1)보다 낮다.
 
 테스트를 다 통과했는데 실제로는 틀린 코드일 확률(false positive)이 HumanEval은 1.4%인데 MBPP는 16.3%나 된다.
 
+![정확도와 자체 생성 테스트 성능 (논문 Table 2)](https://momozzing.github.io/assets/images/reflexion/table2-test-generation.png)
+
+FP 열이 "테스트는 통과했는데 코드는 틀린" 비율이다.
+
+MBPP Python만 Base보다 Reflexion이 낮은 줄과 같이 보면 된다.
+
 -> 평가자가 부실하면 반성도 부실해진다.
 
 ![테스트 생성/반성 ablation (논문 Table 3)](https://momozzing.github.io/assets/images/reflexion/table3-ablation.png)

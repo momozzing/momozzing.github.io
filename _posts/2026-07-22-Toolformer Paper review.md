@@ -96,13 +96,15 @@ $$L_i^- - L_i^+ \geq \tau_f$$
 
 ### **4.2 Downstream Tasks**
 
-![LAMA와 수학 벤치마크 결과 (논문 Table 3, 4)](https://momozzing.github.io/assets/images/toolformer/table34-lama-math.png)
-
 #### **4.2.1 LAMA**
 
 사실 조회 태스크다.
 
 SQuAD 기준으로 GPT-J 17.8 → Toolformer 33.8이다. 6.7B 모델이 GPT-3 175B(26.8)를 넘는다.
+
+![LAMA 결과 (논문 Table 3)](https://momozzing.github.io/assets/images/toolformer/table3-lama.png)
+
+Toolformer (disabled) 줄은 같은 모델에서 API 호출만 막은 결과다.
 
 모델은 예제의 98.1%에서 QA 도구를 부르기로 스스로 정했다고 한다.
 
@@ -110,15 +112,17 @@ SQuAD 기준으로 GPT-J 17.8 → Toolformer 33.8이다. 6.7B 모델이 GPT-3 17
 
 ASDiv, SVAMP, MAWPS 전부에서 OPT랑 GPT-3를 크게 이긴다. 계산기 호출 비율은 97.9%다.
 
+![수학 벤치마크 결과 (논문 Table 4)](https://momozzing.github.io/assets/images/toolformer/table4-math.png)
+
 API를 끈 Toolformer(disabled)도 베이스라인보다 오르는데, API 호출을 허용하면 그 두 배 이상이 된다.
 
 -> API를 꺼도 오르는 건 좀 신기하다. 파인튜닝 데이터 자체가 도움이 된 건가??
 
 #### **4.2.3 Question Answering**
 
-![QA 벤치마크 결과 (논문 Table 5)](https://momozzing.github.io/assets/images/toolformer/table5-qa.png)
-
 WebQS, NQ, TriviaQA에서는 같은 크기 베이스라인은 이기는데 GPT-3 175B에는 진다.
+
+![QA 벤치마크 결과 (논문 Table 5)](https://momozzing.github.io/assets/images/toolformer/table5-qa.png)
 
 논문은 원인을 두 가지로 든다.
 
@@ -135,9 +139,9 @@ CCNet으로 파인튜닝한 게 사전학습 분포와 어긋나서 그런 것 �
 
 ### **4.4 Scaling Laws**
 
-![모델 크기별 도구 활용 효과 (논문 Figure 4)](https://momozzing.github.io/assets/images/toolformer/fig4-scaling.png)
-
 GPT-2 계열 작은 모델들로 같은 실험을 해보면, 775M 미만 모델은 도구를 줘도 잘 쓰지 못한다고 한다.
+
+![모델 크기별 도구 활용 효과 (논문 Figure 4)](https://momozzing.github.io/assets/images/toolformer/fig4-scaling.png)
 
 도구가 도움이 되기 시작하는 건 언어 능력이 어느 정도 있는 모델부터다.
 

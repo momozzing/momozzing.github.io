@@ -123,6 +123,14 @@ LRU와는 주고받는 관계다. 중앙값과 p95는 LRU가 조금 낫다(154 v
 
 값 기반으로 관리하면 recency 기반인 LRU에서도 남아 있는 극단적으로 느린 요청을 줄일 수 있다고 한다.
 
+꼬리 분포는 그림으로 보면 더 분명하다.
+
+![요청 지연 CCDF (논문 Figure 1)](https://momozzing.github.io/assets/images/amv-l/fig1-latency-ccdf.png)
+
+지연이 x 이상인 요청 비율(CCDF)을 로그 축으로 그린 것이다.
+TTL은 1초 넘는 구간에 요청이 많이 남아 있고, LRU와 AMV-L은 둘 다 꼬리를 크게 줄인다고 한다.
+-> 오른쪽 끝을 보면 된다. LRU는 드물게 매우 느린 요청이 길게 남고, AMV-L은 그보다 앞에서 끊긴다.
+
 ### **4.2 Mechanism: retrieval working set and vector search footprint**
 
 검색 발자국을 본다.
@@ -133,6 +141,12 @@ LRU와는 주고받는 관계다. 중앙값과 p95는 LRU가 조금 낫다(154 v
 | 스캔한 벡터 p95 | 4,824 | 261 | 690 |
 
 TTL에서는 p95 후보군이 4,824개까지 커진다. AMV-L은 690으로 85.7% 줄이고, LRU는 261로 94.6% 줄인다.
+
+![검색 후보군 크기 분포 (논문 Figure 3)](https://momozzing.github.io/assets/images/amv-l/fig3-retrieval-working-set.png)
+
+검색 후보군 크기 \|R\|의 누적 분포다.
+TTL은 위쪽 꼬리가 길고, AMV-L은 hot 항목과 상한이 있는 warm 샘플만 검색 대상으로 두어서 분포가 좁아진다고 한다.
+후보군 크기 \|R\|가 유사도 검색 비용을 곱으로 키우는 요인이라서, 이 분포가 곧 검색 비용을 예측한다고 한다.
 
 근데 LRU가 더 적게 스캔하는데 극단 꼬리는 AMV-L이 낫다. 스캔 수만으로는 설명이 안 된다는 건데, 논문도 이걸 시스템적으로 미묘한 부분이라고 한다.
 

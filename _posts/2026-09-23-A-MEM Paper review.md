@@ -37,6 +37,12 @@ introduction 부분을 보면 문제 제기가 Zep이나 Mem0랑 좀 다르다.
 
 Figure 1이 이 차이를 보여준다. 기존 메모리 시스템은 워크플로에 메모리 접근 패턴을 미리 정해둬야 한다. 그래서 새 환경에서 일반화가 안 되고 장기 상호작용에서 효과가 떨어진다고 한다.
 
+![기존 메모리 시스템과 agentic memory 비교 (논문 Figure 1)](https://momozzing.github.io/assets/images/a-mem/fig1-traditional-vs-agentic.png)
+
+(a)는 에이전트가 메모리를 단순히 읽고 쓰기만 하고, (b)는 메모리 쪽에도 에이전트가 붙어 있다.
+
+A-MEM은 메모리 연산을 동적으로 해서 에이전트를 더 유연하게 만든다고 한다.
+
 ## **2. Methodology**
 
 설계를 제텔카스텐에서 가져왔다. 원자적 노트 작성과 유연한 조직화, 이 두 원칙이다. 노트끼리 동적 색인과 링크로 이어서 지식 네트워크를 만든다.
@@ -130,6 +136,10 @@ m*_j ← LLM( m_n ∥ M_near \ m_j ∥ m_j ∥ P_s3 )
 
 Link Generation(LG)과 Memory Evolution(ME)을 하나씩 빼본다.
 
+![LG·ME ablation (논문 Table 3)](https://momozzing.github.io/assets/images/a-mem/table3-ablation.png)
+
+GPT-4o-mini를 기반 모델로 잰 결과라고 한다.
+
 - 둘 다 제거 : 성능이 크게 떨어진다. Multi Hop과 Open Domain에서 특히 그렇다
 - LG만 (w/o ME) : 중간. 둘 다 없는 것보다는 훨씬 낫다
 - 전체 : 모든 범주에서 제일 좋고, 복잡한 추론에서 특히 좋다
@@ -139,6 +149,10 @@ Link Generation(LG)과 Memory Evolution(ME)을 하나씩 빼본다.
 ### **3.3 Scaling Analysis**
 
 1,000 → 10,000 → 100,000 → 1,000,000 항목으로 열 배씩 늘려가며 잰다.
+
+![메모리 크기별 사용량과 검색 시간 (논문 Table 4)](https://momozzing.github.io/assets/images/a-mem/table4-scaling.png)
+
+-> 메모리 사용량은 세 방법이 같은 값이고, 검색 시간은 ReadAgent만 크게 늘어난다.
 
 - 공간 복잡도 : 세 시스템 모두 선형 `O(N)`으로 같다. A-MEM이 저장 공간을 더 쓰지는 않는다
 - 검색 시간 : 100만 메모리에서도 0.31µs → 3.70µs 정도다. MemoryBank가 조금 더 빠르지만 A-MEM도 비슷하다고 한다
