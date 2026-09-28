@@ -29,7 +29,7 @@ NEMORI는 Fudan University, Shanda Group, Beihang University 등에서 만든 �
 
 좀 더 자세히 알아보자.
 
-## **1. 문제**
+## **1. Introduction**
 
 논문 첫 문단에 문제를 이렇게 적는다.
 
@@ -42,7 +42,9 @@ LLM 에이전트 메모리는 어떤 정보를 남길 가치가 있는지 정하
 
 앞에서 본 [Generative Agents](https://momozzing.github.io/paper%20review/Generative-Agents-Paper-review/)의 recency·relevance·importance 3점수 회상이 딱 이런 휴리스틱이다. importance를 LLM한테 1~10점으로 매기게 하는 방식이 여기서 말하는 설계다.
 
-## **2. 예측 부호화에서 가져온 기준**
+## **2. Methodology**
+
+### **2.1 Overview & Motivations**
 
 Predictive Coding Theory(Rao & Ballard 1999, Friston 2010, Clark 2013)에서 기준을 가져온다.
 
@@ -54,9 +56,7 @@ Predictive Coding Theory(Rao & Ballard 1999, Friston 2010, Clark 2013)에서 기
 
 프레임워크는 구조, 표현, 증류 세 가지 사전(prior)을 따르고, 두 개의 모듈이 이어진 구조다. 상보 학습 시스템(CLS)에 대응한다고 한다.
 
-## **3. 두 모듈**
-
-### **3.1 Episodic Memory Integration**
+### **2.2 Episodic Memory Integration**
 
 원시 대화를 이어지는 서사(에피소드)로 바꾼다. 세 단계다.
 
@@ -66,7 +66,7 @@ Predictive Coding Theory(Rao & Ballard 1999, Friston 2010, Clark 2013)에서 기
 
 앞에서 본 [LongMemEval 리뷰](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)의 CP 1(Value 입자)과 같은 문제인데, 거기서는 "round가 최적"이라는 고정 답이었고 여기서는 LLM이 경계를 찾는다.
 
-### **3.2 Semantic Knowledge Distillation**
+### **2.3 Semantic Knowledge Distillation**
 
 이 논문에서 제일 중요한 부분이다. 메모리를 어떻게 관리하든 상관없게(management-agnostic) 만들었다고 한다.
 
@@ -82,9 +82,11 @@ Predictive Coding Theory(Rao & Ballard 1999, Friston 2010, Clark 2013)에서 기
 
 -> 3번은 설명이 따로 없다. 뽑은 지식을 관리 시스템에 넣는 단계 같은데 어떻게 합치는지는 모르겠다??
 
-## **4. 결과**
+## **3. Experiments**
 
-### **4.1 LoCoMo**
+### **3.1 Main Results (RQ1)**
+
+LoCoMo 결과다.
 
 | 모델 | NEMORI | 최강 베이스라인 | 개선 |
 |---|---:|---|---:|
@@ -95,35 +97,15 @@ Full Context도 두 모델 모두에서 조금 넘는다고 한다(80.8 vs 80.6,
 
 뒤에서 볼 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 ∆(Context Saturation Gap)로 보면 +0.2 ~ +0.7이다. 양수지만 작다.
 
-LoCoMo는 평균 24K 토큰이라 전부 넣어도 되는 벤치마크라서 그렇다. 논문도 이걸 알고 바로 더 긴 벤치마크로 넘어간다.
+LoCoMo는 평균 24K 토큰이라 전부 넣어도 되는 벤치마크라서 그렇다. 논문도 이걸 알고 더 긴 벤치마크로 넘어간다.
 
 Temporal Reasoning이 특히 높다. gpt-4.1-mini에서 77.3(A-MEM 대비 +15.9%), gpt-4o-mini에서 67.6(Zep 대비 +14.8%)이다.
 
 에피소드 중심으로 만들어두면 추론 부담 일부가 답변 생성 때가 아니라 메모리 만들 때로 옮겨가기 때문이라고 한다.
 
-### **4.2 LongMemEvalS**
+### **3.2 Efficiency Analysis (RQ2)**
 
-| 질문 유형 | Full-context (101K tok) | NEMORI (3.7–4.8K tok) |
-|---|---:|---:|
-| Single-session Preference | 16.7 | 86.7 |
-| Single-session Assistant | 98.2 | 92.9 |
-| Temporal Reasoning | 60.2 | 72.2 |
-| Multi-session | 51.1 | 55.6 |
-| Knowledge Update | 76.9 | 79.5 |
-| Single-session User | 85.7 | 90.0 |
-| 평균 | 65.6 | 74.6 |
-
-(gpt-4.1-mini 기준)
-
-∆가 +9.0이다. LoCoMo에서 +0.2였던 게 여기서 커졌다.
-
-맥락이 길어질수록 증류가 더 도움이 된다고 한다. Full Context는 입력이 길면 어텐션이 흐려지는데, NEMORI는 필요한 것만 검색해서 넣기 때문이라고 한다.
-
-컨텍스트를 95~96% 줄이면서 정확도가 더 높다.
-
-single-session-assistant에서만 진다(92.9 vs 98.2). 앞에서 본 [Zep 리뷰](https://momozzing.github.io/paper%20review/Zep-Paper-review/)에서도 같은 패턴이었다. 어시스턴트 발화는 추출하면서 흐려진다.
-
-### **4.3 비용**
+비용을 본다.
 
 메모리 구축 (gpt-4o-mini)
 
@@ -153,7 +135,7 @@ Full Context 대비 토큰은 88%, 지연은 47% 줄었고 정확도는 더 높�
 
 LangMem은 토큰이 125개인데 검색에 19.8초를 쓴다. 앞에서 본 [Mem0 리뷰](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)에서도 같은 패턴이었다. 토큰을 줄인다고 빨라지는 건 아니다.
 
-### **4.4 Ablation**
+### **3.3 Ablation Study (RQ3)**
 
 예측 오차로 증류하는 것과, 들어온 에피소드에서 바로 지식을 뽑는 직접 증류를 비교한다.
 
@@ -168,7 +150,7 @@ native 관리 모듈은 거의 차이가 없다. 64.6 vs 65.0, 74.7 vs 74.9다.
 
 논문은 이걸 management-agnostic 설계의 근거로 쓴다. 증류가 거의 다 하고, 관리 방식은 별로 상관없다는 것이다.
 
-### **4.5 제3자 통합**
+### **3.4 Third-Party Integration (RQ5)**
 
 NEMORI를 다른 메모리 시스템 앞단의 증류 모듈로 붙여본다.
 
@@ -176,7 +158,31 @@ NEMORI를 다른 메모리 시스템 앞단의 증류 모듈로 붙여본다.
 
 기존 시스템을 바꾸지 않고 앞에 끼워 넣을 수 있다는 얘기다.
 
-## **5. 지금 관점: importance 점수를 대체할 수 있나**
+### **3.5 Scalability Analysis (RQ6)**
+
+LongMemEvalS 결과다.
+
+| 질문 유형 | Full-context (101K tok) | NEMORI (3.7–4.8K tok) |
+|---|---:|---:|
+| Single-session Preference | 16.7 | 86.7 |
+| Single-session Assistant | 98.2 | 92.9 |
+| Temporal Reasoning | 60.2 | 72.2 |
+| Multi-session | 51.1 | 55.6 |
+| Knowledge Update | 76.9 | 79.5 |
+| Single-session User | 85.7 | 90.0 |
+| 평균 | 65.6 | 74.6 |
+
+(gpt-4.1-mini 기준)
+
+∆가 +9.0이다. LoCoMo에서 +0.2였던 게 여기서 커졌다.
+
+맥락이 길어질수록 증류가 더 도움이 된다고 한다. Full Context는 입력이 길면 어텐션이 흐려지는데, NEMORI는 필요한 것만 검색해서 넣기 때문이라고 한다.
+
+컨텍스트를 95~96% 줄이면서 정확도가 더 높다.
+
+single-session-assistant에서만 진다(92.9 vs 98.2). 앞에서 본 [Zep 리뷰](https://momozzing.github.io/paper%20review/Zep-Paper-review/)에서도 같은 패턴이었다. 어시스턴트 발화는 추출하면서 흐려진다.
+
+## **4. 지금 관점: importance 점수를 대체할 수 있나**
 
 이 시리즈에서 다루는 시스템들이 뭘 기준으로 남길지 정했는지 모아보면 이렇다.
 
@@ -197,7 +203,7 @@ NEMORI만 기준이 데이터에서 나온다. 나머지는 "무엇이 중요한
 
 -> 어시스턴트 발화는 약하다. LongMemEvalS single-session-assistant에서 Full Context보다 5.3점 낮다. 안내나 추천을 많이 하는 챗봇이면 그 부분은 원문을 따로 남겨야 할 것 같다.
 
-## **6. Conclusion**
+## **5. Conclusion**
 
 conclusion 부분을 보면, 인지과학에서 아이디어를 가져와 증류 단계에서 경험이 나중에 쓸모 있을지를 판단하는, 학습이 필요 없는 프레임워크를 만들었다고 한다. 예측 오차가 기억으로 남길 가치가 있다는 것이다.
 

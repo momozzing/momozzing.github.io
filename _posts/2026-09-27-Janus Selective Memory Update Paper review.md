@@ -15,7 +15,6 @@ toc_sticky: true
 field: agent-memory
 ---
 
-
 The Past Is Prologue: A Plug-in Controller for Selective Updates in Sequentially Evolving LLM Memory
 
 [https://arxiv.org/abs/2606.31121](https://arxiv.org/abs/2606.31121)
@@ -30,7 +29,7 @@ Janus는 University of Virginia, Princeton, UCF에서 만든 메모리 갱신 �
 
 좀 더 자세히 알아보자.
 
-## **1. 문제**
+## **1. Introduction**
 
 기존 시스템은 메모리 갱신이 앞으로의 행동을 좋게 만드는지 확인하지 않고 그냥 반영한다고 한다.
 
@@ -48,7 +47,9 @@ Figure 1 그래프를 보면 태스크가 진행되면서 테스트 정확도가
 
 앞에서 본 [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/) 분류로 보면 Functions는 experiential memory이고, Dynamics는 evolution에 해당한다.
 
-## **2. Janus**
+## **2. Method**
+
+### **2.1 Janus: Plug-in Memory Control**
 
 ExpeL, DC-RS 같은 기존 갱신기를 감싸는 플러그인이다. 갱신 규칙 자체는 안 바꾼다.
 
@@ -59,7 +60,9 @@ ExpeL, DC-RS 같은 기존 갱신기를 감싸는 플러그인이다. 갱신 규
 1. 언제 비교할 것인가 (when to compare)
 2. 무엇으로 비교할 것인가 (what to compare)
 
-### **2.1 언제**
+#### **2.1.1 Memory Momentum Trigger (MMT)**
+
+언제 비교할지를 정하는 부분이다.
 
 매번 비교하면 비싸다.
 
@@ -67,7 +70,9 @@ ExpeL, DC-RS 같은 기존 갱신기를 감싸는 플러그인이다. 갱신 규
 
 그래서 이름이 momentum이다. 갱신들이 대체로 같은 방향으로 가다가 갑자기 다른 방향으로 튀면 그때 확인하자는 것이다.
 
-### **2.2 무엇으로**
+#### **2.1.2 Hybrid Trigger-Time Evaluation Set**
+
+무엇으로 비교할지를 정하는 부분이다.
 
 이력 전체를 다시 돌리는 건 비싸서, 작게 만든 평가 집합을 쓴다. 세 가지를 섞는다.
 
@@ -77,11 +82,15 @@ ExpeL, DC-RS 같은 기존 갱신기를 감싸는 플러그인이다. 갱신 규
 
 이 집합으로 옛 메모리랑 새 메모리를 평가해서 더 나은 쪽을 쓴다.
 
-## **3. 결과**
+## **3. Experiment**
+
+### **3.1 Experimental Settings**
 
 데이터셋 여섯 개(MATH500, GPQA Diamond, MMLU-Pro Eng./Phy., APIBench-HF, HumanEval), 백본 두 개, 갱신기 두 개로 실험했다.
 
-### **Qwen3-8B**
+### **3.2 Main Results**
+
+Qwen3-8B 결과다.
 
 | 방법 | MATH500 | GPQA | MMLU-Eng | MMLU-Phy | APIBench | HumanEval | 평균 |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -92,7 +101,7 @@ ExpeL, DC-RS 같은 기존 갱신기를 감싸는 플러그인이다. 갱신 규
 | ExpeL | 80.0 | 72.9 | 68.8 | 90.4 | 66.4 | 91.2 | 78.3 |
 | ExpeL + Janus | 81.6 | 78.5 | 71.6 | 92.8 | 70.4 | 93.9 | 81.5 |
 
-### **DeepSeek-V4-Flash**
+DeepSeek-V4-Flash 결과다.
 
 | 방법 | 평균 |
 |---|---:|
@@ -106,7 +115,9 @@ ExpeL, DC-RS 같은 기존 갱신기를 감싸는 플러그인이다. 갱신 규
 
 제일 많이 오른 건 GPQA에서 DC-RS 73.4 → 81.5로 8.1점이다.
 
-### **3.1 트리거 시점이 중요하다**
+### **3.3 MMT Trigger Ablation**
+
+트리거 시점이 중요하다는 실험이다.
 
 MMT를 네 가지 방식이랑 비교했다.
 
@@ -119,7 +130,9 @@ MMT를 네 가지 방식이랑 비교했다.
 
 그리고 평가 집합이 작고 잡음이 있을 수 있어서, 많이 비교한다고 꼭 좋은 건 아니라고 한다. Always가 제일 좋은 게 아니다.
 
-### **3.2 세 구성요소가 다 기여한다**
+### **3.4 Support Set Composition Ablation**
+
+평가 집합의 세 구성요소가 다 기여하는지 본다.
 
 평가 집합에서 하나씩 빼 봤다.
 
@@ -133,7 +146,9 @@ MMT를 네 가지 방식이랑 비교했다.
 
 coverage는 본 분포를 넓게 대표하는 역할을, boundary는 메모리 상태에 민감한 사례를 맡는다고 한다.
 
-### **3.3 갱신을 다 받으면 중간에 정체한다**
+### **3.5 Memory Deployment Ablation**
+
+갱신을 다 받으면 중간에 정체한다는 실험이다.
 
 스트림의 20%, 40%, 60%, 80%, 100% 시점마다 중간 메모리로 정확도를 쟀다.
 

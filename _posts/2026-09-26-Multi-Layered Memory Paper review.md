@@ -31,7 +31,9 @@ Multi-Layered Memory는 Fulloop에서 만든 에이전트 메모리 구조다.
 
 좀 더 자세히 알아보자.
 
-## **1. 검증 못 한 부분**
+## **1. Introduction**
+
+검증 못 한 부분부터 적어둔다.
 
 앞에서 본 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서 평가가 타당한지 따져보라고 했으니, 그 기준을 여기에도 대본다.
 
@@ -59,9 +61,7 @@ full-context 베이스라인이랑 비교를 안 해서, Anatomy 논문에서 �
 
 -> 이 네 가지 때문에 절대 수치는 인용하기 어려울 것 같다. 대신 같은 시스템 안에서 계층을 하나씩 떼는 ablation은 조건이 같으니까 상대 비교로는 볼 만하다. 아래는 그 부분 위주로 본다.
 
-## **2. 문제 설정**
-
-연구 문제는 이렇다고 한다.
+이제 introduction 부분을 보면, 연구 문제는 이렇다고 한다.
 
 여러 세션에 걸친 대화가 있을 때, 컨텍스트가 2차로 늘거나 추론 비용이 커지지 않으면서 세션을 넘어 안정적인 의미 표현을 유지하려면 어떻게 해야 하는가.
 
@@ -74,7 +74,9 @@ full-context 베이스라인이랑 비교를 안 해서, Anatomy 논문에서 �
 
 정리하면 효율은 올리는데 보존이 안정적이지 않거나, 재현율은 올리는데 드리프트를 못 막는다고 한다.
 
-## **3. MLMF**
+## **2. Proposed Methodology**
+
+논문은 이 구조를 MLMF라고 부른다.
 
 대화 이력을 세 계층으로 나눈다.
 
@@ -91,7 +93,9 @@ full-context 베이스라인이랑 비교를 안 해서, Anatomy 논문에서 �
 
 Experiential은 없다. CoALA의 procedural에 해당하는 계층도 없다.
 
-## **4. Ablation**
+## **3. Results and Analysis**
+
+### **3.1 Ablation Study**
 
 모듈을 하나씩 떼면서 F1, 6기간 보존율, 거짓 기억률(FMR)을 잰다.
 
@@ -114,7 +118,7 @@ Experiential은 없다. CoALA의 procedural에 해당하는 계층도 없다.
 
 앞에서 본 [LongMemEval 리뷰](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서 ABS(회피)를 따로 능력으로 둔 것과 이어지는 얘기다.
 
-## **5. 지금 관점: 계층을 몇 개 둘 것인가**
+## **4. 지금 관점: 계층을 몇 개 둘 것인가**
 
 ablation만 놓고 보면 순서가 이렇게 나온다.
 
@@ -135,7 +139,7 @@ FMR을 따로 재는 건 가져와 볼 만하다.
 
 다만 1장에 적은 문제들 때문에 절대 수치(0.618, 56.90%, 5.1%)는 인용하지 않는 게 나을 것 같다. ablation의 상대 순서만 참고한다.
 
-## **6. Conclusion**
+## **5. Conclusion**
 
 conclusion 부분을 보면, 계층적 메모리 분해에 adaptive retrieval gating이랑 retention regularization을 붙인 프레임워크를 제안했다고 한다. working·episodic·semantic을 나눠서 세션 간 드리프트를 막으면서 컨텍스트가 늘어나는 것도 막는다.
 

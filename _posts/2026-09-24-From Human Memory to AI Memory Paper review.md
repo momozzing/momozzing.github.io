@@ -25,11 +25,11 @@ From Human Memory to AI Memory는 Huawei Noah's Ark Lab에서 쓴 LLM 메모리 
 
 2025년 4월 22일에 나왔고 4월 23일에 v2가 올라왔다. 저자 8명, 26쪽이다.
 
-뒤에서 볼 [2026년 서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)보다 8개월 먼저 나왔다. 같은 대상을 다르게 나눈다. 5장에서 두 서베이를 비교해서 1년 사이에 뭐가 달라졌는지 정리했다.
+뒤에서 볼 [2026년 서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)보다 8개월 먼저 나왔다. 같은 대상을 다르게 나눈다. 뒤의 지금 관점 절에서 두 서베이를 비교해서 1년 사이에 뭐가 달라졌는지 정리했다.
 
 좀 더 자세히 알아보자.
 
-## **1. 문제 설정**
+## **1. Introduction**
 
 기존 리뷰들이 메모리 메커니즘은 자세히 정리했지만 빠진 게 있다고 한다.
 
@@ -37,7 +37,11 @@ LLM 기반 AI 시스템의 메모리와 사람 기억이 어떤 관계인지, �
 
 그래서 사람 기억 분류부터 시작해서 AI 메모리와 연결한다.
 
-## **2. 인간 기억 쪽**
+## **2. Overview**
+
+### **2.1 Human Memory**
+
+인간 기억 쪽부터 본다.
 
 Atkinson-Shiffrin 다중저장 모델로 단기와 장기를 나눈다.
 
@@ -48,7 +52,9 @@ Atkinson-Shiffrin 다중저장 모델로 단기와 장기를 나눈다.
 
 뒤에서 볼 [2026 서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)도 7.8절에서 Atkinson-Shiffrin과 Tulving을 가져오는데, 거기서는 마지막 절에 두고 여기서는 시작점에 둔다.
 
-## **3. 3D-8Q 분류**
+### **2.2 Memory of LLM-driven AI Systems**
+
+#### **2.2.1 3D-8Q Memory Taxonomy**
 
 세 축으로 나눈다.
 
@@ -67,9 +73,7 @@ Atkinson-Shiffrin 다중저장 모델로 단기와 장기를 나눈다.
 - VII (System·파라미터·단기, Working) : KV 캐시 같은 임시 파라미터 저장으로 추론 속도 최적화
 - VIII (System·파라미터·장기, Semantic + Procedural) : 모델 파라미터에 들어 있는 기반 지식
 
-### **3.1 personal vs system**
-
-두 개념을 이렇게 나눈다.
+personal과 system 두 개념은 이렇게 나눈다.
 
 Personal memory는 모델이 환경에서 보고 들은 개별 데이터이고, system memory는 과제를 하면서 만들어진 중간 결과처럼 시스템 안에서 생긴 메모리라고 한다.
 
@@ -77,7 +81,7 @@ Personal memory는 모델이 환경에서 보고 들은 개별 데이터이고, 
 
 -> 실무에서는 이 구분이 쓸모 있을 것 같다. 사용자 정보와 에이전트 자기 작업 기록은 수명도 삭제 정책도 다르다. 개인정보 삭제 요청이 오면 personal만 지우면 되고 system은 남긴다.
 
-### **3.2 이 시리즈 논문들을 8분면에 넣으면**
+이 시리즈 논문들을 8분면에 넣으면 어떨까.
 
 이 시리즈에서 다루는 논문들을 넣어보면 이렇다. 아직 안 본 논문도 섞여 있는데, 뒤에서 하나씩 나온다.
 
@@ -93,7 +97,7 @@ Personal memory는 모델이 환경에서 보고 들은 개별 데이터이고, 
 
 -> 이렇게 칸을 나눠두니 어디가 비어 있는지 보인다.
 
-## **4. 다섯 가지 전환 방향**
+## **3. Open Problems and Future Directions**
 
 `From X to Y` 형식으로 다섯 가지를 제시한다.
 
@@ -103,7 +107,7 @@ Personal memory는 모델이 환경에서 보고 들은 개별 데이터이고, 
 4. Exclusive → Shared : 지금은 시스템마다 메모리가 따로 논다. 의료 모델이 금융 모델과 메모리를 공유하는 식으로 도메인끼리 지식을 옮기는 걸 전망한다
 5. Individual Privacy → Collective Privacy : 데이터 공유가 늘면서 프라이버시 보호가 개인에서 집단 쪽으로 옮겨간다
 
-## **5. 지금 관점: 2026 서베이와 교차 검증**
+## **4. 지금 관점: 2026 서베이와 교차 검증**
 
 두 서베이를 나란히 놓으면 8개월 사이에 달라진 게 보인다.
 
@@ -129,7 +133,7 @@ Personal memory는 모델이 환경에서 보고 들은 개별 데이터이고, 
 
 -> 서베이는 축으로 세웠는데 실제 연구는 거기 없다. 왜 그런지는 잘 모르겠다??
 
-## **6. Conclusion**
+## **5. Conclusion**
 
 conclusion 부분을 보면, 사람 기억과 LLM 기반 AI 메모리의 관계를 정리하고, 사람의 인지 원리가 더 효율적이고 유연한 메모리 구조를 만드는 데 어떻게 도움이 될 수 있는지 살펴봤다고 한다.
 

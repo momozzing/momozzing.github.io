@@ -39,9 +39,11 @@ introduction 부분을 보면 기존 장기 대화 벤치마크가 못 보던 �
 
 그리고 기존 벤치마크는 대화 이력이 너무 짧고, 실제 과제를 하는 대화랑은 성격이 다르다고 한다.
 
-## **2. 벤치마크 설계**
+## **2. LongMemEval**
 
-### **2.1 다섯 가지 능력**
+벤치마크 설계부터 보자.
+
+### **2.1 LongMemEval: Benchmark Curation**
 
 장기기억을 다섯 가지 능력으로 나눈다.
 
@@ -55,8 +57,6 @@ ABS가 따로 있는 게 좋았다. 기존 벤치마크는 맞히는 것만 쟀�
 
 -> 실제로 챗봇을 만들어보면 없는 기억을 지어내는 게 더 문제다.
 
-### **2.2 일곱 가지 질문 유형**
-
 다섯 능력을 재려고 질문 유형을 일곱 개 만들었다.
 
 1. single-session-user : 한 세션 안에서 사용자가 말한 정보
@@ -69,7 +69,7 @@ ABS가 따로 있는 게 좋았다. 기존 벤치마크는 맞히는 것만 쟀�
 
 abstention은 따로 모으지 않고 기존 질문을 틀린 전제로 바꿔서 만들었다. 그래서 같은 이력에서 답이 있는 질문이랑 없는 질문을 짝으로 만들 수 있다.
 
-### **2.3 데이터 구축**
+데이터는 이렇게 만든다.
 
 사용자 속성 164개를 다섯 범주(생활양식, 소유물, 생애 사건, 상황 맥락, 인구통계)로 나눠 정리했다.
 
@@ -82,7 +82,9 @@ abstention은 따로 모으지 않고 기존 질문을 틀린 전제로 바꿔�
 
 세션을 더 넣으면 이력을 얼마든지 늘릴 수 있게 만들었다고 한다.
 
-## **3. 난이도**
+### **2.2 LongMemEval represents a significant challenge**
+
+사전 평가로 난이도를 먼저 보여준다.
 
 ![상용 시스템과 long-context LLM의 사전 평가 (논문 Figure 3)](https://momozzing.github.io/assets/images/longmemeval/fig3-pilot.png)
 
@@ -91,7 +93,9 @@ abstention은 따로 모으지 않고 기존 질문을 틀린 전제로 바꿔�
 
 abstract를 보면 이걸 한 줄로 요약한다. 대화가 이어지면서 정보를 기억해야 하는 상황에서 정확도가 약 30% 떨어진다고 한다.
 
-## **4. 통합 프레임**
+## **3. A Unified View of Long-Term Memory Assistants**
+
+### **3.1 Long-Term Memory System: Formulation**
 
 장기 메모리를 큰 key-value 저장소로 본다.
 
@@ -107,7 +111,9 @@ abstract를 보면 이걸 한 줄로 요약한다. 대화가 이어지면서 정
 
 기존 메모리 시스템 아홉 개가 전부 이 틀로 표현된다는 걸 표로 보여준다.
 
-그리고 여기서 설계할 때 정해야 하는 제어점(CP) 네 개를 뽑는다.
+### **3.2 Long-Term Memory System: Design Choices**
+
+여기서 설계할 때 정해야 하는 제어점(CP) 네 개를 뽑는다.
 
 CP 1: Value, 뭘 한 덩어리로 저장하나.
 
@@ -125,27 +131,35 @@ CP 4: Reading Strategy, 가져온 걸 어떻게 읽나.
 
 검색을 잘해도 LLM이 긴 컨텍스트를 제대로 읽고 추론한다는 보장이 없다.
 
-## **5. 실험에서 나온 설계 지침**
+## **4. Experiment Results**
 
-제어점마다 실험을 돌려서 결론을 냈다.
+실험에서 나온 설계 지침이다. 제어점마다 실험을 돌려서 결론을 냈다.
 
-첫째, 저장 단위는 세션보다 라운드가 낫다 (CP 1)
+### **4.1 Value: Decomposition improves RAG performance**
+
+저장 단위는 세션보다 라운드가 낫다 (CP 1).
 
 세션 대신 round로 저장하는 게 낫다고 한다. 사용자 사실까지 더 쪼개면 정보가 빠져서 전체 성능은 떨어지는데, multi-session 추론 정확도는 올라간다고 한다.
 
 잘게 쪼갤수록 여러 세션을 엮는 추론은 좋아지고 전체 성능은 나빠지는 trade-off다.
 
-둘째, 키를 사실로 늘리면 검색이랑 QA가 같이 오른다 (CP 2)
+### **4.2 Key: Multi-key indexing improves retrieval and RAG**
+
+키를 사실로 늘리면 검색이랑 QA가 같이 오른다 (CP 2).
 
 값을 그대로 키로 쓰는 flat 인덱스도 이미 꽤 강한 베이스라인이다.
 
 여기에 뽑아낸 사용자 사실을 키로 더 붙이면 recall@k가 9.4%p, 정확도가 5.4%p 오른다고 한다. 요약, 키프레이즈, 사용자 사실, 타임스탬프 이벤트를 값에서 뽑아서 검색 경로를 여러 개 만드는 방식이다.
 
-셋째, 시간을 고려해야 시간 질문을 푼다 (CP 3)
+### **4.3 Query: Time-aware query expansion improves temporal reasoning**
+
+시간을 고려해야 시간 질문을 푼다 (CP 3).
 
 값을 타임스탬프 이벤트로 색인하고 검색을 그 시간 범위로 제한하면, temporal reasoning의 memory recall이 6.8~11.3%p 오른다고 한다. 단 질의를 늘릴 때 강한 LLM을 써야 그렇다.
 
-넷째, 잘 꺼내도 잘 읽는 건 따로다 (CP 4)
+### **4.4 Improving reading with chain-of-note and structured format**
+
+잘 꺼내도 잘 읽는 건 따로다 (CP 4).
 
 검색이 완벽해도 가져온 걸 제대로 쓰는 건 쉽지 않다고 한다.
 
@@ -153,7 +167,7 @@ Chain-of-Note(답하기 전에 필요한 내용을 먼저 뽑음)랑 구조화�
 
 -> 검색을 아무리 고쳐도 읽는 단계에서 10점을 놓치고 있었다는 얘기다.
 
-## **6. 지금 관점: ReFind와 겹쳐 읽기**
+## **5. 지금 관점: ReFind와 겹쳐 읽기**
 
 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)랑 비교해보면,
 
@@ -176,7 +190,7 @@ CP 4의 10점은 바로 써볼 수 있다. 검색을 어떻게 짜든 읽는 단
 
 -> 평가할 때는 다섯 능력 중 KU랑 ABS를 먼저 보면 될 것 같다. 바뀐 사용자 정보를 못 따라가거나 없는 걸 지어내는 게 챗봇에서는 더 큰 문제다.
 
-## **7. Conclusion**
+## **6. Conclusion**
 
 장기기억을 다섯 능력(정보 추출, 다중 세션 추론, 시간 추론, 지식 갱신, 회피)으로 나눈 벤치마크와, 메모리 설계를 indexing·retrieval·reading 세 단계 네 제어점으로 나눈 틀을 같이 내놓았다.
 

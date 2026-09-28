@@ -60,13 +60,15 @@ LLM은 파라미터를 바로바로 바꿀 수 없으니까, 환경이랑 상호
 
 논문은 질문 다섯 개를 세우고 장마다 하나씩 답한다. 정의, Forms, Functions, Dynamics, 앞으로의 방향 순이다. 가운데 세 개(Forms–Functions–Dynamics)가 이 논문의 분류 틀이다.
 
-## **2. Preliminaries**
+## **2. Preliminaries: Formalizing Agents and Memory**
 
 2장은 두 가지를 한다. 에이전트와 메모리를 수식으로 정의하고, 비슷한 개념들과 경계를 나눈다.
 
-### **2.1–2.2 에이전트와 메모리를 형식화한다**
+### **2.1 LLM-based Agent Systems**
 
 에이전트는 관측을 받아서 행동을 한다. 행동 종류가 자연어 생성, 도구 호출, 계획 출력, 환경 조작, 에이전트 간 통신으로 다양하고, 행동을 정할 때 메모리에서 꺼낸 정보도 같이 쓴다.
+
+### **2.2 Agent Memory Systems**
 
 메모리 쪽 정의에서 볼 만한 게 두 가지 있다.
 
@@ -82,7 +84,7 @@ LLM은 파라미터를 바로바로 바꿀 수 없으니까, 환경이랑 상호
 
 그리고 이 세 단계를 매번 다 할 필요는 없다고 한다. 태스크 시작할 때 한 번만 검색하는 시스템도 있고 계속 꺼내는 시스템도 있다.
 
-### **2.3 인접 개념과의 경계**
+### **2.3 Comparing Agent Memory with Other Key Concepts**
 
 agent memory를 기준으로 헷갈리기 쉬운 개념 세 개랑 비교한다.
 
@@ -127,7 +129,7 @@ Context engineering은 컨텍스트 창을 제한된 자원으로 보고 뭘 넣
 
 *"the boundary between engineering the context and maintaining an agent's short-term memory effectively dissolves"*
 
-## **3. Forms**
+## **3. Form: What Carries Memory?**
 
 기억이 어디에 어떤 형태로 저장되느냐로 나눈다. 세 가지다.
 
@@ -135,13 +137,13 @@ Context engineering은 컨텍스트 창을 제한된 자원으로 보고 뭘 넣
 - Parametric : 모델 파라미터 안에 저장
 - Latent : 모델 내부 표현(KV 캐시, hidden state). 사람이 읽을 수 없음
 
-### **3.1 Token-level**
+### **3.1 Token-level Memory**
 
 단위들 사이에 어떤 구조를 두느냐로 1D, 2D, 3D로 나눈다.
 
 ![Token-level memory의 차원별 분류 (논문 Figure 3)](https://momozzing.github.io/assets/images/agent-memory-survey/fig3-token-level.png)
 
-#### **3.1.1 Flat (1D)**
+#### **3.1.1 Flat Memory (1D)**
 
 그냥 하나씩 쌓아두는 방식. 항목끼리 관계는 저장하지 않는다.
 
@@ -155,14 +157,14 @@ Context engineering은 컨텍스트 창을 제한된 자원으로 보고 뭘 넣
 
 Dialogue 쪽은 처음엔 대화를 그냥 저장하거나 요약하다가, 저장 단위를 어떻게 자를지 고민하는 쪽으로 가고, 요즘은 생각이나 반성을 저장하는 쪽(Think-in-Memory, RMM)까지 갔다고 한다.
 
-#### **3.1.2 Planar (2D)**
+#### **3.1.2 Planar Memory (2D)**
 
 항목끼리 연결을 만드는데 한 층 안에서만 만든다.
 
 - Tree : HAT(긴 대화를 나눠서 단계적으로 묶음), MemTree
 - Graph : 2D에서 제일 많이 쓰는 방식. Ret-LLM, KGT, A-MEM, HuaTuo(의료 KG)
 
-#### **3.1.3 Hierarchical (3D)**
+#### **3.1.3 Hierarchical Memory (3D)**
 
 층 사이에도 연결을 만든다. 원본 → 요약 → 주제 순으로 올라가면서 위아래로도 찾아갈 수 있다.
 
@@ -171,11 +173,11 @@ Dialogue 쪽은 처음엔 대화를 그냥 저장하거나 요약하다가, 저�
 
 실제 서비스는 아직 대부분 1D에 있고, 2D·3D는 Zep이나 A-MEM 같은 최근 연구들이다. 올라갈수록 만들고 유지하는 비용이 든다.
 
-### **3.2 Parametric**
+### **3.2 Parametric Memory**
 
 모델 파라미터에 기억을 넣는 쪽이다. 원본 모델을 직접 바꾸느냐, 옆에 모듈을 붙이느냐로 나뉜다.
 
-#### **3.2.1 Internal**
+#### **3.2.1 Internal Parametric Memory**
 
 원본 가중치에 직접 넣는다. 언제 넣느냐로 또 나눈다.
 
@@ -185,13 +187,13 @@ Dialogue 쪽은 처음엔 대화를 그냥 저장하거나 요약하다가, 저�
 
 추론할 때 비용이 안 드는 대신, 새로 넣으려면 재학습을 해야 하고 옛날 걸 잊기 쉽다. 그래서 도메인 지식처럼 큰 덩어리용이지, 사용자 개인 정보처럼 자주 바뀌는 데는 안 맞는다고 한다.
 
-#### **3.2.2 External**
+#### **3.2.2 External Parametric Memory**
 
 원본은 그대로 두고 adapter 같은 추가 파라미터에 넣는다. K-Adapter, WISE, MLP-Memory, T-Patcher, MemLoRA 등.
 
 모듈이라 붙였다 뗐다 할 수 있고 롤백도 된다. 대신 모델 내부 계산을 거쳐서 영향을 주는 거라 효과가 간접적이다.
 
-### **3.3 Latent**
+### **3.3 Latent Memory**
 
 KV 캐시나 hidden state처럼 모델 내부 표현으로 기억한다. 잠재 상태를 어디서 가져오느냐로 나눈다.
 
@@ -235,7 +237,7 @@ Token-level은 모델을 안 건드리고 붙이는 방식이라 최신 모델�
 
 -> 실무에서 Token-level부터 쓰게 되는 이유가 이거인 것 같다. 고칠 수 있고, 볼 수 있고, 모델 바꿔도 남는다.
 
-## **4. Functions**
+## **4. Functions: Why Agents Need Memory?**
 
 어떻게 저장하느냐가 아니라 왜 기억하느냐로 나눈다.
 
@@ -249,7 +251,7 @@ LLM은 원래 stateless라서 에이전트로 쓰려면 기억이 필요하고, 
 - Experiential : 에이전트가 어떻게 나아지는가 (*"How does the agent improve?"*)
 - Working : 지금 무엇을 생각하고 있는가 (*"What is the agent thinking about now?"*)
 
-### **4.1 Factual**
+### **4.1 Factual Memory**
 
 사용자에 대한 것과 환경에 대한 것으로 나뉜다.
 
@@ -269,41 +271,41 @@ LLM은 원래 stateless라서 에이전트로 쓰려면 기억이 필요하고, 
 
 사용자 말고 바깥 정보. 긴 문서, 코드베이스, 도구 같은 것. HippoRAG, MemTree, LMLM 등이 여기 들어간다.
 
-### **4.2 Experiential**
+### **4.2 Experiential Memory**
 
 경험을 얼마나 가공해서 남기느냐로 네 가지로 나눈다.
 
 ![Experiential memory 분류 (논문 Figure 7)](https://momozzing.github.io/assets/images/agent-memory-survey/fig7-experiential.png)
 
-#### **4.2.1 Case-based**
+#### **4.2.1 Case-based Memory**
 
 있었던 일을 거의 그대로 남긴다. 그대로 예시로 쓸 수 있다. Memento, JARVIS-1.
 
-#### **4.2.2 Strategy-based**
+#### **4.2.2 Strategy-based Memory**
 
 무슨 일이 있었는지가 아니라 다음에 어떻게 할지를 뽑아서 남긴다. 추론 패턴, 워크플로 같은 것. Reflexion이 여기 들어간다.
 
-#### **4.2.3 Skill-based**
+#### **4.2.3 Skill-based Memory**
 
 실행할 수 있는 함수나 API로 만든다. 호출할 수 있고, 결과를 확인할 수 있고, 다른 스킬이랑 조합할 수 있어야 한다. Voyager, SkillWeaver, Memp.
 
-#### **4.2.4 Hybrid**
+#### **4.2.4 Hybrid memory**
 
 위의 것들을 섞어서 쓴다. ExpeL.
 
 -> 로그만 쌓고 있으면 case, 회고해서 규칙을 뽑으면 strategy, 그걸 도구로 만들면 skill인 셈이다. 위로 갈수록 재사용은 잘 되는데 만드는 비용이 든다.
 
-### **4.3 Working**
+### **4.3 Working Memory**
 
 지금 작업 중인 내용을 잠깐 들고 있는 공간이다.
 
 논문은 LLM의 컨텍스트 창이 그냥 읽기만 하는 버퍼라서 진짜 working memory라고 보기 어렵다고 한다. 뭘 남기고 뭘 버릴지 스스로 정하는 기능이 없다는 것이다.
 
-#### **4.3.1 Single-turn**
+#### **4.3.1 Single-turn Working Memory**
 
 한 번에 들어오는 긴 입력을 처리한다. 토큰 수를 줄이거나(LLMLingua 등), 구조화된 표현으로 바꾼다.
 
-#### **4.3.2 Multi-turn**
+#### **4.3.2 Multi-turn Working Memory**
 
 대화가 길어지면서 쌓이는 이력을 관리한다. 이력이 쌓이면 어텐션이 흐려지고 느려지고 목표를 잃는다(goal drift). 그래서 고정 크기 상태로 압축하거나(MemAgent, MemSearcher), 이력을 접어두는(Context Folding, ReSum) 방식을 쓴다.
 
@@ -311,13 +313,13 @@ Figure 1에서 KV 캐시 압축이 Working memory 칸에 있던 이유가 이거
 
 기존 episodic/semantic 구분은 정보의 종류로 나눈 거고, 이 분류는 그 기억으로 뭘 하려는지로 나눈 것이다. 사용자 선호 기억이랑 실패에서 배운 교훈은 둘 다 "장기기억"이지만 쓰임새가 다르다. 전자는 사용자가 말을 바꾸면 고쳐야 하고, 후자는 잘 안 먹히면 고쳐야 한다.
 
-## **5. Dynamics**
+## **5. Dynamics: How Memory Operates and Evolves?**
 
 기억이 만들어지고, 바뀌고, 꺼내지는 과정을 다룬다.
 
 ![메모리 생애주기 (논문 Figure 8)](https://momozzing.github.io/assets/images/agent-memory-survey/fig8-dynamics.png)
 
-### **5.1 Formation**
+### **5.1 Memory Formation**
 
 원본 데이터에서 기억을 만드는 단계. 다섯 가지 방식이 있다.
 
@@ -329,7 +331,7 @@ Figure 1에서 KV 캐시 압축이 Working memory 칸에 있던 이유가 이거
 
 -> 1번이랑 2번이 헷갈리는데, 요약은 "대충 무슨 대화였나"이고 증류는 "여기서 건질 사실이 뭔가"라고 보면 될 것 같다.
 
-### **5.2 Evolution**
+### **5.2 Memory Evolution**
 
 새 기억을 기존 저장소에 합치는 단계.
 
@@ -337,15 +339,15 @@ Figure 1에서 KV 캐시 압축이 Working memory 칸에 있던 이유가 이거
 
 ![메모리 진화 메커니즘 (논문 Figure 9)](https://momozzing.github.io/assets/images/agent-memory-survey/fig9-evolution.png)
 
-#### **5.2.1 Consolidation (통합)**
+#### **5.2.1 Consolidation**
 
 비슷한 기억끼리 묶어서 더 큰 단위로 만든다. 어느 크기로 묶을지가 어렵다고 한다.
 
-#### **5.2.2 Updating (갱신)**
+#### **5.2.2 Updating**
 
 새 정보랑 충돌하면 기존 기억을 고친다. 외부 저장소를 고치는 방식이랑 모델을 편집하는 방식이 있다.
 
-#### **5.2.3 Forgetting (망각)**
+#### **5.2.3 Forgetting**
 
 오래되거나 쓸모없는 걸 지운다. 너무 많이 쌓이면 검색이 느려지고 잡음이 는다. 대신 너무 많이 지우면 가끔 필요한 걸 잃는다.
 
@@ -357,13 +359,13 @@ Figure 1에서 KV 캐시 압축이 Working memory 칸에 있던 이유가 이거
 
 CoALA 리뷰 때는 "기억을 지우는 건 아직 연구가 없다"고 했었는데, 3년 사이에 망각이 따로 한 항목이 됐다.
 
-### **5.3 Retrieval**
+### **5.3 Memory Retrieval**
 
 꺼내 쓰는 단계. 네 단계로 나눈다.
 
 ![메모리 검색 분류 (논문 Figure 10)](https://momozzing.github.io/assets/images/agent-memory-survey/fig10-retrieval.png)
 
-#### **5.3.1 Timing and Intent**
+#### **5.3.1 Retrieval Timing and Intent**
 
 언제 꺼낼지. MIRIX는 매번 여섯 개 DB를 다 뒤지고, MemGPT는 LLM이 필요할 때 직접 검색 함수를 부른다.
 
@@ -385,7 +387,7 @@ CoALA 리뷰 때는 "기억을 지우는 건 아직 연구가 없다"고 했었�
 
 실제로 쓸 수 있는 벤치마크와 프레임워크를 정리한 장이다.
 
-### **6.1 벤치마크**
+### **6.1 Benchmarks and Datasets**
 
 메모리용 벤치마크를 세 가지로 나눈다.
 
@@ -395,7 +397,7 @@ CoALA 리뷰 때는 "기억을 지우는 건 아직 연구가 없다"고 했었�
 
 그 외에 메모리 전용은 아니지만 메모리가 필요한 벤치마크로 ALFWorld, WebArena, ToolBench, SWE-bench Verified, GAIA 같은 것도 정리해뒀다.
 
-### **6.2 오픈소스 프레임워크**
+### **6.2 Open-Source Frameworks**
 
 25종을 표로 정리했는데 주요한 것만 가져왔다. `Fac.`는 factual, `Exp.`는 experiential, `MM.`은 multimodal 지원 여부다.
 
@@ -429,9 +431,11 @@ CoALA 리뷰 때는 "기억을 지우는 건 아직 연구가 없다"고 했었�
 
 -> 앞의 세 개(7.1~7.3)는 결국 같은 얘기 같다. 사람이 정하던 걸 에이전트가 스스로 하게 만든다는 것.
 
-### **7.1 검색에서 생성으로**
+### **7.1 Memory Retrieval vs. Memory Generation**
 
-#### **7.1.1 지금까지**
+검색에서 생성으로 가는 흐름이다.
+
+#### **7.1.1 Look Back: From Memory Retrieval to Memory Generation**
 
 지금까지는 저장해둔 걸 잘 찾아오는 게 목표였다. 인덱싱, 유사도, 리랭킹을 개선하는 연구가 대부분이다.
 
@@ -442,7 +446,7 @@ CoALA 리뷰 때는 "기억을 지우는 건 아직 연구가 없다"고 했었�
 1. retrieve-then-generate : 검색한 걸 재료로 다시 정리해서 만든다 (ComoRAG, G-Memory, CoMEM)
 2. direct generation : 검색 없이 바로 만든다 (MemGen, VisMem)
 
-#### **7.1.2 앞으로**
+#### **7.1.2 Future Perspective**
 
 생성형 메모리가 갖춰야 할 것 세 가지.
 
@@ -450,9 +454,11 @@ CoALA 리뷰 때는 "기억을 지우는 건 아직 연구가 없다"고 했었�
 2. 텍스트, 코드, 도구 결과 같은 여러 정보를 하나로 합쳐야 한다. 논문은 여기에 Latent 메모리(3.3)가 맞을 것 같다고 한다
 3. 언제 어떻게 만들지를 사람이 정하지 말고 학습해야 한다
 
-### **7.2 수작업에서 자동 구축으로**
+### **7.2 Automated Memory Management**
 
-#### **7.2.1 지금까지**
+수작업으로 짜던 메모리를 자동으로 구축하는 쪽이다.
+
+#### **7.2.1 Look-Back: From Hand-crafted to Automatically Constructed Memory Systems**
 
 지금 메모리 시스템은 대부분 사람이 규칙을 정한다. 뭘 저장할지, 언제 쓸지, 어떻게 고칠지. Mem0는 상세한 프롬프트로, MemoryOS는 임계값으로 정한다.
 
@@ -460,15 +466,17 @@ CoALA 리뷰 때는 "기억을 지우는 건 아직 연구가 없다"고 했었�
 
 최근엔 CAM이나 Memory-R1처럼 에이전트가 스스로 관리하게 하는 시도가 있다.
 
-#### **7.2.2 앞으로**
+#### **7.2.2 Future Perspective**
 
 메모리 조작(add/update/delete/retrieval)을 에이전트의 도구 호출로 만들자고 한다. 에이전트가 자기가 뭘 저장하고 뭘 지우는지 알게 하자는 것이다.
 
 -> CoALA에서 retrieval이랑 learning을 행동으로 넣자고 했던 게 3년 뒤에 이렇게 돌아왔다.
 
-### **7.3 휴리스틱에서 RL로**
+### **7.3 Reinforcement Learning Meets Agent Memory**
 
-#### **7.3.1 지금까지**
+휴리스틱에서 RL로 넘어가는 얘기다.
+
+#### **7.3.1 Look-Back: RL is Internalizing Memory Management Abilities for Agents**
 
 ![RL 기반 메모리 시스템의 진화 (논문 Figure 11)](https://momozzing.github.io/assets/images/agent-memory-survey/fig11-rl-evolution.png)
 
@@ -477,7 +485,7 @@ CoALA 리뷰 때는 "기억을 지우는 건 아직 연구가 없다"고 했었�
 1. RL-free : 지금 대부분. 고정 임계값, 고정 검색 파이프라인. LLM이 관여하는 것처럼 보여도 프롬프트로만 돌아간다 (Mem0, MemOS, ExpeL, G-Memory 등)
 2. RL-assisted : 일부만 RL. RMM은 검색 결과 재정렬에, Mem-α와 Memory-R1은 메모리 만드는 과정에 RL을 쓴다
 
-#### **7.3.2 앞으로**
+#### **7.3.2 Future Perspective**
 
 전부 RL로 가는 게 다음 단계라고 본다. 조건이 두 개다.
 
@@ -486,17 +494,27 @@ CoALA 리뷰 때는 "기억을 지우는 건 아직 연구가 없다"고 했었�
 
 -> 1번은 좀 과감한 주장 같다. 사람이 이해할 수 없는 구조가 나오면 디버깅은 어떻게 하지??
 
-### **7.4–7.8 멀티모달 · 공유 메모리 · 월드 모델 · 신뢰성 · 인지과학**
+### **7.4 Multimodal Memory**
 
-나머지 다섯 개는 짧게.
+이미지·영상 쪽이 제일 앞서 있다.
 
-- Multimodal : 이미지·영상 쪽이 제일 앞서 있다
-- Shared memory : 멀티에이전트에서 각자 기억하다가 공유 저장소로 가는 중. 대신 서로 덮어쓰는 문제가 생긴다
-- World model : 월드 모델은 다음 상태를 예측하려면 이전 상태를 기억해야 해서 메모리가 중요하다
-- Trustworthy : 메모리에 개인정보가 쌓이니까 유출 위험이 있다. 나중엔 OS처럼 버전 관리되고 감사할 수 있는 메모리가 필요하다고 한다
-- Human-cognitive : 지금 에이전트 메모리는 사람 기억 구조를 많이 닮았는데, 사람은 기억을 매번 새로 재구성하고 에이전트는 저장된 걸 그대로 꺼낸다. 그래서 사람이 잘 때 기억을 정리하는 것처럼 오프라인으로 정리하는 시간을 두자고 제안한다
+### **7.5 Shared Memory in Multi-Agent Systems**
 
-## **지금 관점: CoALA의 4계층과 이 논문의 3기둥**
+멀티에이전트에서 각자 기억하다가 공유 저장소로 가는 중이다. 대신 서로 덮어쓰는 문제가 생긴다.
+
+### **7.6 Memory for World Model**
+
+월드 모델은 다음 상태를 예측하려면 이전 상태를 기억해야 해서 메모리가 중요하다.
+
+### **7.7 Trustworthy Memory**
+
+메모리에 개인정보가 쌓이니까 유출 위험이 있다. 나중엔 OS처럼 버전 관리되고 감사할 수 있는 메모리가 필요하다고 한다.
+
+### **7.8 Human-Cognitive Connections**
+
+지금 에이전트 메모리는 사람 기억 구조를 많이 닮았는데, 사람은 기억을 매번 새로 재구성하고 에이전트는 저장된 걸 그대로 꺼낸다. 그래서 사람이 잘 때 기억을 정리하는 것처럼 오프라인으로 정리하는 시간을 두자고 제안한다.
+
+## **8. 지금 관점: CoALA의 4계층과 이 논문의 3기둥**
 
 CoALA 리뷰를 읽고 나서 제일 궁금했던 게, CoALA의 네 가지 기억이랑 이 논문의 세 가지가 어떻게 대응되냐였다.
 
@@ -513,7 +531,7 @@ Procedural이 사라진 게 제일 큰 차이다. CoALA는 "무엇을 담는가"
 
 -> 벡터 DB부터 정하고 기능을 맞추는 경우가 많은데, 6장 표에서 보듯 벡터 DB는 factual만 지원한다.
 
-## **8. Conclusion**
+## **9. Conclusion**
 
 이 논문은 새 시스템을 만든 게 아니라 흩어진 개념을 정리한 논문이다.
 

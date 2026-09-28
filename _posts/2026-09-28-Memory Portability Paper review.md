@@ -15,7 +15,6 @@ toc_sticky: true
 field: agent-memory
 ---
 
-
 Does Your Agent's Memory Survive a Model Upgrade? A Controlled Study of Memory Portability
 
 [https://arxiv.org/abs/2609.05339](https://arxiv.org/abs/2609.05339)
@@ -30,7 +29,7 @@ Does Your Agent's Memory Survive a Model Upgrade? A Controlled Study of Memory P
 
 좀 더 자세히 알아보자.
 
-## **1. 문제**
+## **1. Introduction**
 
 에이전트는 같은 메모리 저장소를 그대로 두고도 잊을 수 있다고 한다.
 
@@ -40,7 +39,9 @@ Does Your Agent's Memory Survive a Model Upgrade? A Controlled Study of Memory P
 2. 임베딩 버전이 섞이면 검색이 깨질 수 있다
 3. 원본 증거가 없으면 복구가 안 될 수 있다
 
-## **2. 네 가지 메모리 형식**
+## **2. What does it mean for memory to survive an upgrade?**
+
+### **2.1 Memory formats and their trade-offs**
 
 같은 이력을 네 가지 방식으로 저장해서 비교한다.
 
@@ -51,6 +52,8 @@ Does Your Agent's Memory Survive a Model Upgrade? A Controlled Study of Memory P
 
 LC-RAW와 RAG는 쓰는 모델이 없어서 대조군으로 쓴다.
 
+## **3. Testing memory migrations**
+
 실험 설정은 이렇다.
 
 - 합성 이력 48개에 무작위 정답 코드를 심어서 정확하게 채점
@@ -58,7 +61,11 @@ LC-RAW와 RAG는 쓰는 모델이 없어서 대조군으로 쓴다.
 - 컨텍스트 예산을 맞춤
 - 결과를 보기 전에 가설과 분석 계획을 서명된 Git 태그로 고정
 
-## **3. 고정 스키마는 옮겨가고, 자유형 노트는 안 옮겨간다**
+## **4. Results and analysis**
+
+### **4.1 A fixed schema transfers better than free-form notes**
+
+고정 스키마는 옮겨가고, 자유형 노트는 안 옮겨간다.
 
 쓰는 모델을 바꾸고 읽는 모델은 고정한 채로 쟀다.
 
@@ -81,7 +88,26 @@ NOTES는 방향에 따라 부호가 바뀐다. Llama가 Qwen 노트를 읽으면
 
 -> A→B가 괜찮아도 B→A는 무너질 수 있으니, 교체 방향별로 따로 테스트해야 한다.
 
-## **4. 임베딩을 반만 옮기면 대부분을 잃는다**
+### **4.2 Retrieval can fail before the new model sees anything**
+
+검색이 먼저 무너진다.
+
+모델을 바꾸기 전부터 RAG 파이프라인 자체가 병목이었다.
+
+| 방식 | 정확도 범위 |
+|---|---|
+| LC-RAW (원본 그대로) | 0.712 ~ 0.911 |
+| RAG | 0.535 ~ 0.565 |
+
+리더 모델과 상관없이 검색이 필요한 증거를 실제로 가져오는 건 약 60%뿐이라고 한다.
+
+40%는 못 찾는다는 뜻이다.
+
+다만 논문은 이게 RAG 전체의 한계라고 하지는 않는다. 일부러 단순하게 만들었기 때문이다. 단일 단계 dense 검색기, 이벤트 기반 청크, 코사인 top-k=8을 썼고 리랭커나 어휘 검색은 없다.
+
+앞에서 본 [MemMachine 리뷰](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)는 이웃 턴 확장으로, [SYNAPSE 리뷰](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)는 BM25+dense 이중 트리거로 이 부분을 채웠다. 그런 장치가 없으면 40%를 놓친다는 걸 여기서 보여준다.
+
+임베딩을 반만 옮기면 대부분을 잃는다.
 
 임베딩을 bge-large-en v1.0에서 v1.5로 바꿀 때 네 가지 방식을 비교한다.
 
@@ -103,45 +129,9 @@ NOTES는 방향에 따라 부호가 바뀐다. Llama가 Qwen 노트를 읽으면
 
 -> 임베딩 모델을 바꿀 때 기존 벡터는 그대로 두고 새로 들어오는 것만 새 모델로 넣는 경우가 많은데, 그러면 이렇게 된다는 거다.
 
-## **5. 손실은 리더보다 앞에서 일어난다**
+### **4.3 Raw history buys a second chance—if the repairer can use it**
 
-정확도 손실이 어느 단계에서 생기는지 나눠서 봤다.
-
-| 형식 | 주 원인 | 기여 | 비중 |
-|---|---|---:|---:|
-| NOTES | 저장 단계(쓰기) | 0.467 ± 0.014 | 80% |
-| NOTES | 노트 내 검색 | 0.036 ± 0.009 | 6% |
-| RAG | 검색 단계 | 0.364 ± 0.012 | 81% |
-| RAG | 저장된 청크 자체 | 거의 0 | — |
-
-둘이 정반대다.
-
-NOTES는 쓸 때 이미 잃는다. 노트를 새 리더 문체에 맞게 다시 써봤는데 회복이 안 됐다고 한다.
-
-문제는 낯선 표현이 아니라 빠지거나 망가진 내용이라고 한다.
-
-RAG는 반대로 청크에는 정보가 거의 다 남아 있는데 검색이 못 찾는다. 검색을 건너뛰고 맞는 청크를 바로 주면 두 리더 모두 대체로 잘 푼다.
-
-그래서 리더를 바꾸기 전에, 결정적 증거를 저장했는지, 검색했는지, 전달했는지부터 확인하라고 한다. NOTES는 요약·쓰기 단계를, RAG는 청킹·색인·랭킹을 고쳐야 한다고 한다.
-
-## **6. 검색이 먼저 무너진다**
-
-모델을 바꾸기 전부터 RAG 파이프라인 자체가 병목이었다.
-
-| 방식 | 정확도 범위 |
-|---|---|
-| LC-RAW (원본 그대로) | 0.712 ~ 0.911 |
-| RAG | 0.535 ~ 0.565 |
-
-리더 모델과 상관없이 검색이 필요한 증거를 실제로 가져오는 건 약 60%뿐이라고 한다.
-
-40%는 못 찾는다는 뜻이다.
-
-다만 논문은 이게 RAG 전체의 한계라고 하지는 않는다. 일부러 단순하게 만들었기 때문이다. 단일 단계 dense 검색기, 이벤트 기반 청크, 코사인 top-k=8을 썼고 리랭커나 어휘 검색은 없다.
-
-앞에서 본 [MemMachine 리뷰](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)는 이웃 턴 확장으로, [SYNAPSE 리뷰](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)는 BM25+dense 이중 트리거로 이 부분을 채웠다. 그런 장치가 없으면 40%를 놓친다는 걸 여기서 보여준다.
-
-## **7. 원본을 남기면 두 번째 기회가 생긴다**
+원본을 남기면 두 번째 기회가 생긴다.
 
 모델이 쓴 노트는 원본을 압축한 사본이다. 쓰는 모델이 사실을 빠뜨렸으면 노트를 다시 써도 되살릴 수 없다.
 
@@ -163,7 +153,30 @@ RAG는 반대로 청크에는 정보가 거의 다 남아 있는데 검색이 �
 
 RAG 재임베딩은 $0.013, KG-fixed 재구축은 거의 공짜다. 구조화된 데이터는 복구가 싸고 확실하다.
 
-## **8. 지금 관점: 모델을 갈아끼울 때**
+### **4.4 Most memory loss happens upstream of the reader**
+
+손실은 리더보다 앞에서 일어난다.
+
+정확도 손실이 어느 단계에서 생기는지 나눠서 봤다.
+
+| 형식 | 주 원인 | 기여 | 비중 |
+|---|---|---:|---:|
+| NOTES | 저장 단계(쓰기) | 0.467 ± 0.014 | 80% |
+| NOTES | 노트 내 검색 | 0.036 ± 0.009 | 6% |
+| RAG | 검색 단계 | 0.364 ± 0.012 | 81% |
+| RAG | 저장된 청크 자체 | 거의 0 | — |
+
+둘이 정반대다.
+
+NOTES는 쓸 때 이미 잃는다. 노트를 새 리더 문체에 맞게 다시 써봤는데 회복이 안 됐다고 한다.
+
+문제는 낯선 표현이 아니라 빠지거나 망가진 내용이라고 한다.
+
+RAG는 반대로 청크에는 정보가 거의 다 남아 있는데 검색이 못 찾는다. 검색을 건너뛰고 맞는 청크를 바로 주면 두 리더 모두 대체로 잘 푼다.
+
+그래서 리더를 바꾸기 전에, 결정적 증거를 저장했는지, 검색했는지, 전달했는지부터 확인하라고 한다. NOTES는 요약·쓰기 단계를, RAG는 청킹·색인·랭킹을 고쳐야 한다고 한다.
+
+## **5. 지금 관점: 모델을 갈아끼울 때**
 
 앞의 논문들이 무엇을 만들지를 다뤘다면, 이 논문은 만든 다음에 모델이 바뀌면 어떻게 되는지를 다룬다.
 
@@ -181,7 +194,7 @@ KG-fixed는 ∆가 0.0004였다. 자유롭게 쓰게 하지 말고 정해진 필
 
 -> 새 모델이 "잊었다"고 보이면 리더 탓을 하기 전에 저장·검색·전달부터 봐야겠다.
 
-## **9. Conclusion**
+## **6. Conclusion**
 
 모델 업그레이드를 단순 교체가 아니라 메모리 마이그레이션으로 다루라고 한다.
 

@@ -37,7 +37,7 @@ RAG의 한계에서 시작한다.
 
 그래서 만든 게 Graphiti다. 비정형 대화 데이터랑 정형 비즈니스 데이터를 같이 넣으면서 과거 관계도 남겨두는 시간 인식 지식그래프 엔진이다.
 
-## **2. 지식그래프 구성**
+## **2. Knowledge Graph Construction**
 
 메모리를 시간 인식 지식그래프 `G = (N, E, φ)`로 두고, 서브그래프 세 층으로 쌓는다.
 
@@ -61,11 +61,13 @@ RAG의 한계에서 시작한다.
 
 에피소드 → 엔티티 → 커뮤니티로 올라가는 구조라서, [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)의 Token-level 3D(Hierarchical)에 들어간다. 서베이에서 Zep을 Pyramid 쪽에 넣은 이유가 이거다.
 
-## **3. 시간 추출과 엣지 무효화**
+### **2.1 Semantic Entities and Facts**
+
+엔티티와 사실을 뽑은 다음 시간 정보를 붙인다.
+
+#### **2.1.1 Temporal Extraction and Edge Invalidation**
 
 논문은 이 부분이 Graphiti가 다른 지식그래프 엔진이랑 다른 점이라고 한다.
-
-### **3.1 네 개의 타임스탬프**
 
 에피소드에서 사실의 시간 정보를 뽑는다. 절대 시각("Alan Turing was born on June 23, 1912")이랑 상대 시각("I started my new job two weeks ago") 둘 다 다룬다.
 
@@ -77,8 +79,6 @@ RAG의 한계에서 시작한다.
 - `t_invalid` : 사실이 더 이상 참이 아니게 된 시각
 
 앞의 둘은 트랜잭션 타임라인(시스템이 언제 그렇게 알았나), 뒤의 둘은 유효 타임라인(실제로 언제 참이었나)이다. 이 넷이 엣지에 사실이랑 같이 저장된다.
-
-### **3.2 무효화**
 
 새 엣지가 들어오면 기존 엣지를 무효화할 수 있다. 순서는 이렇다.
 
@@ -92,13 +92,26 @@ RAG의 한계에서 시작한다.
 
 -> "작년에는 뭐라고 했지" 같은 질문에 Mem0는 답을 못 하고 Zep은 답할 수 있다. 지금 참인 것이랑 그때 참이었던 건 다른 질문인데, 지우는 방식으로는 뒤쪽을 못 푼다.
 
-## **4. 검색**
+## **3. Memory Retrieval**
 
 검색을 세 단계 합성 `f(α) = χ(ρ(φ(α)))`으로 둔다.
 
 1. Search `φ` : 후보를 찾는다
 2. Reranker `ρ` : 결과를 다시 정렬한다
 3. Constructor `χ` : 노드랑 엣지를 텍스트 맥락으로 바꾼다
+
+Constructor가 만드는 출력 형식은 이렇다.
+
+```
+format: FACT (Date range: from - to)
+<FACTS> {facts} </FACTS>
+ENTITY_NAME: entity summary
+<ENTITIES> {entities} </ENTITIES>
+```
+
+의미 엣지마다 사실이랑 `t_valid`·`t_invalid`를 같이 준다. LLM이 "이 사실은 이 기간에 참이었다"를 보고 답하게 된다.
+
+### **3.1 Search**
 
 Search에서는 함수 세 개를 쓴다.
 
@@ -112,20 +125,9 @@ Search에서는 함수 세 개를 쓴다.
 
 세 개를 같이 쓰는 건 리랭킹 전에 후보를 넓게 모으려는 것이다. 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)의 hybrid 검색이랑 비슷하다.
 
-Constructor가 만드는 출력 형식은 이렇다.
+## **4. Experiments**
 
-```
-format: FACT (Date range: from - to)
-<FACTS> {facts} </FACTS>
-ENTITY_NAME: entity summary
-<ENTITIES> {entities} </ENTITIES>
-```
-
-의미 엣지마다 사실이랑 `t_valid`·`t_invalid`를 같이 준다. LLM이 "이 사실은 이 기간에 참이었다"를 보고 답하게 된다.
-
-## **5. 평가**
-
-### **5.1 DMR**
+### **4.1 Deep Memory Retrieval (DMR)**
 
 Deep Memory Retrieval은 앞에서 본 [MemGPT](https://momozzing.github.io/paper%20review/MemGPT-Paper-review/) 팀이 자기들 주 평가 지표로 쓴 벤치마크다. 500개 다중 세션 대화, 대화당 5세션, 세션당 최대 12메시지다.
 
@@ -145,7 +147,9 @@ Zep이 MemGPT보다 높긴 한데, 대화를 통째로 넣은 full-conversation�
 
 논문도 바로 더 어려운 평가로 넘어간다. gpt-4o-mini에서는 MemGPT 결과를 재현하지 못했는데, 공개된 방법 설명이 부족해서라고 한다.
 
-### **5.2 LongMemEval**
+### **4.2 LongMemEval (LME)**
+
+결과부터 보자.
 
 | 방법 | 모델 | 정확도 | 지연 | 지연 IQR | 평균 컨텍스트 토큰 |
 |---|---|---:|---:|---:|---:|
@@ -160,7 +164,7 @@ Zep이 MemGPT보다 높긴 한데, 대화를 통째로 넣은 full-conversation�
 
 -> LongMemEval이 긴 이력에서 관련된 부분만 찾는 과제라서 full-context가 오히려 불리한 것 같다.
 
-### **5.3 질문 유형별**
+질문 유형별로 보면 이렇다.
 
 | 질문 유형 | Full-context | Zep | Δ |
 |---|---:|---:|---:|
@@ -181,7 +185,7 @@ single-session-assistant에서만 떨어진다. gpt-4o에서 −17.7%, gpt-4o-mi
 
 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서 어시스턴트 쪽 정보 기억을 따로 능력으로 둔 게 이런 경우를 보려는 거였던 것 같다.
 
-## **6. 지금 관점: 삭제 대신 무효화**
+## **5. 지금 관점: 삭제 대신 무효화**
 
 이 시리즈 논문들이 모순을 어떻게 다루는지 모아보면,
 
@@ -202,7 +206,7 @@ single-session-assistant에서만 떨어진다. gpt-4o에서 −17.7%, gpt-4o-mi
 2. 어시스턴트가 한 말을 기억하는 게 약하다. 안내나 추천을 많이 하는 챗봇이면 "아까 뭐라고 알려줬지"를 자주 묻는데, 그래프 추출만으로는 부족할 수 있다.
 3. 저장할 때 LLM을 부른다. 엔티티 추출, 관계 생성, 모순 판단이 다 LLM이다. 검색도 Mem0 p95가 0.2초인데 Zep은 3.2초다(질의 전체 기준). 저장 지연은 논문에 안 나와 있다.
 
-## **7. Conclusion**
+## **6. Conclusion**
 
 의미 기억이랑 일화 기억을 엔티티·커뮤니티 요약과 같이 담는 그래프 기반 메모리를 만들었다. 기존 메모리 벤치마크에서 제일 높은 성능을 내면서 토큰도 줄이고 지연도 훨씬 낮다고 한다.
 

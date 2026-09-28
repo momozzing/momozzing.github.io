@@ -45,7 +45,9 @@ RAG는 이력을 벡터 DB에 넣고 의미 유사도로 꺼낸다. 사실 하�
 
 -> 나중에 볼 [ReFind 리뷰](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)의 "결정을 질의 시점까지 미룬다"는 것과 비슷하다. 이번엔 그래프 쪽이다.
 
-## **2. 통합 episodic-semantic 그래프**
+## **2. Methodology**
+
+### **2.1 Unified Episodic-Semantic Graph**
 
 메모리를 방향 그래프 `G = (V, E)`로 두고, 노드를 두 종류로 나눈다.
 
@@ -63,13 +65,11 @@ RAG는 이력을 벡터 DB에 넣고 의미 유사도로 꺼낸다. 사실 하�
 
 -> 벡터 유사도로는 "Mark"랑 "스키 여행"이 안 붙는다. 같은 시간대에 나왔다는 것만으로 잇는 것이다.
 
-## **3. 인지 동역학**
+### **2.2 Cognitive Dynamics: Spreading Activation**
 
 Collins와 Loftus(1975)의 사람 의미기억 모델에서 가져왔다고 한다.
 
-### **3.1 초기화**
-
-질의 `q`가 오면 먼저 앵커 노드를 찾는다. 두 가지 경로를 쓴다.
+먼저 초기화(Initialization)다. 질의 `q`가 오면 먼저 앵커 노드를 찾는다. 두 가지 경로를 쓴다.
 
 - Lexical Trigger : BM25 희소 검색. "Kendall" 같은 고유명사를 정확히 매칭
 - Semantic Trigger : dense 검색. "스키 여행" 같은 개념적으로 비슷한 것을 찾음
@@ -80,9 +80,7 @@ Collins와 Loftus(1975)의 사람 의미기억 모델에서 가져왔다고 한�
 
 -> 세 논문이 따로 같은 결론에 온 셈이다. 고유명사는 어휘 검색, 주제는 dense 검색이 필요하다.
 
-### **3.2 전파**
-
-ACT-R(Anderson, 1983)을 따라서 주의가 나뉘는 걸 모델링한다.
+다음은 전파(Propagation with Fan Effect)다. ACT-R(Anderson, 1983)을 따라서 주의가 나뉘는 걸 모델링한다.
 
 ```
 u^(t+1)_i = (1−δ)·a^(t)_i + Σ_{j∈N(i)} S · w_ji · a^(t)_j / fan(j)
@@ -95,13 +93,11 @@ u^(t+1)_i = (1−δ)·a^(t)_i + Σ_{j∈N(i)} S · w_ji · a^(t)_j / fan(j)
 - 시간 엣지 : `w_ji = e^{−ρ|τ_i−τ_j|}` (시간 감쇠 `ρ = 0.01`)
 - 의미 엣지 : `w_ji = sim(h_i, h_j)`
 
-### **3.3 측면 억제**
-
-주의 선택을 모델링한 부분이다. 강하게 활성화된 개념이 경쟁 개념을 누르고 나서 발화한다.
+마지막은 측면 억제(Lateral Inhibition)다. 주의 선택을 모델링한 부분이다. 강하게 활성화된 개념이 경쟁 개념을 누르고 나서 발화한다.
 
 이게 뒤에서 적대적 질의를 거절하는 데 쓰인다.
 
-## **4. 3중 신호 하이브리드 검색**
+### **2.3 Triple-Signal Hybrid Retrieval**
 
 점수는 세 개를 합친다.
 
@@ -121,7 +117,7 @@ S(v_i) = λ₁·sim(h_i,h_q) + λ₂·a^(T)_i + λ₃·PageRank(v_i)
 
 기본 `k = 30`이다.
 
-## **5. 불확실성 인지 거절**
+### **2.4 Uncertainty-Aware Rejection**
 
 없는 엔티티에 대해 묻는 적대적 질의를 다루는 부분이다. 사람 기억의 "Feeling of Knowing"(FOK)에서 아이디어를 가져왔다고 한다. 두 단계다.
 
@@ -141,11 +137,13 @@ S(v_i) = λ₁·sim(h_i,h_q) + λ₂·a^(T)_i + λ₃·PageRank(v_i)
 
 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서는 ABS(회피)를 다섯 능력 중 하나로 뒀는데, 여기서는 그걸 시스템에서 직접 구현했다.
 
-## **6. 결과**
+## **3. Experiments**
 
 LoCoMo 벤치마크, GPT-4o-mini 기준이다.
 
-### **6.1 전체**
+### **3.1 Main Results**
+
+전체부터 보자.
 
 | 시스템 | 가중 평균 F1 |
 |---|---:|
@@ -156,7 +154,7 @@ LoCoMo 벤치마크, GPT-4o-mini 기준이다.
 
 적대적 범주를 뺀 가중 평균이다. A-Mem보다 +7.2점이고 태스크 순위 1.0이라고 한다.
 
-### **6.2 범주별**
+범주별로 나누면 이렇다.
 
 | 범주 | A-Mem | SYNAPSE |
 |---|---:|---:|
@@ -184,13 +182,13 @@ LoCoMo 벤치마크, GPT-4o-mini 기준이다.
 
 -> 유사도만 보면 오래된 기억이 이긴다.
 
-### **6.3 Ablation**
+### **3.2 Ablation Study**
 
 측면 억제가 불확실성 게이트 앞에서 전처리 역할을 한다고 한다. 게이트를 빼면(`τ_gate = 0`) Adversarial F1이 67.2로 떨어지고, 억제까지 빼면 더 떨어진다.
 
 -> 게이트만으로는 안 되는 것이다. 억제가 먼저 경쟁 노드를 눌러줘야 "최상위 노드의 활성 에너지"를 신뢰도로 쓸 수 있다.
 
-### **6.4 효율**
+### **3.3 Efficiency Analysis**
 
 | | SYNAPSE | LoCoMo | MemGPT | MemoryOS | LangMem |
 |---|---:|---:|---:|---:|---:|
@@ -205,7 +203,7 @@ LangMem도 비용 효율이 150.7로 비슷한데, 성능이 34.3 F1로 낮다.
 
 그래프를 만드는 비용은 에이전트를 쓰는 기간 전체에 나눠지니까 질의당으로 보면 무시할 만하다고 한다.
 
-## **7. 지금 관점: 세 장치를 따로 볼 것**
+## **4. 지금 관점: 세 장치를 따로 볼 것**
 
 장치 중에 따로 떼어 쓸 수 있는 것과 같이 써야 하는 것이 나뉜다.
 
@@ -230,7 +228,7 @@ PageRank를 전역 사전확률로 쓰는 것도 떼어낼 수 있다. 자주 �
 
 평가가 LoCoMo 텍스트 벤치마크 하나뿐이라는 것도 한계로 적었다. 다음에 볼 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/) 기준으로 보면 full-context 비교(∆)가 없어서 포화 여부도 알 수 없다.
 
-## **8. Conclusion**
+## **5. Conclusion**
 
 conclusion 부분을 보면, 생물학적 활성 확산을 흉내 내서 기존 검색 시스템의 맥락 고립 문제를 푸는 구조를 제안했다고 한다. 메모리를 동적 연상 그래프로 두고, 끊겨 있는 사실을 잇고 관련 없는 잡음은 거른다.
 

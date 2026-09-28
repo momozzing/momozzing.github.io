@@ -45,7 +45,7 @@ introduction 부분을 보면 문제는 단순하다. 고정 길이 컨텍스트
 
 LLM이 자기 컨텍스트에 뭘 넣을지 스스로 관리하는 'LLM OS'를 만든다는 것이다.
 
-## **2. 두 계층, 네 저장소**
+## **2. MemGPT (MemoryGPT)**
 
 ![MemGPT 계층 메모리 구조 (논문 Figure 3)](https://momozzing.github.io/assets/images/memgpt/fig3-hierarchy.png)
 
@@ -54,7 +54,12 @@ LLM이 자기 컨텍스트에 뭘 넣을지 스스로 관리하는 'LLM OS'를 �
 - Main context : LLM 프롬프트 토큰. 물리 메모리/RAM에 해당한다. 여기 있는 건 in-context라서 추론할 때 바로 쓸 수 있다
 - External context : 컨텍스트 창 밖의 정보. 디스크에 해당한다. 추론에 쓰려면 main context로 직접 옮겨와야 한다
 
-### **2.1 Main context**
+external context는 다시 둘이다.
+
+- Recall Storage : MemGPT 메시지 DB. 큐 매니저가 쓰고 함수로 읽는다
+- Archival Storage : 함수로 읽고 함수로 쓴다
+
+### **2.1 Main context (prompt tokens)**
 
 프롬프트 토큰을 연속된 세 구역으로 나눈다.
 
@@ -64,32 +69,13 @@ LLM이 자기 컨텍스트에 뭘 넣을지 스스로 관리하는 'LLM OS'를 �
 
 FIFO 큐의 첫 인덱스에는 큐에서 밀려난 메시지들을 재귀적으로 요약한 시스템 메시지가 들어간다. 밀려나도 흔적은 남기는 것이다.
 
-### **2.2 External context**
-
-- Recall Storage : MemGPT 메시지 DB. 큐 매니저가 쓰고 함수로 읽는다
-- Archival Storage : 함수로 읽고 함수로 쓴다
-
-### **2.3 Queue Manager**
+### **2.2 Queue Manager**
 
 새 메시지가 오면 큐 매니저가 FIFO 큐에 붙이고, 프롬프트 토큰을 이어 붙여서 LLM 추론을 돌린다.
 
 들어온 메시지랑 생성된 출력은 둘 다 recall storage에 쓴다. 함수 호출로 recall storage에서 메시지를 꺼내면 큐 뒤에 다시 붙여서 컨텍스트 창에 넣는다.
 
-컨텍스트가 넘칠 때 처리하는 것도 큐 매니저가 한다.
-
-### **2.4 함수 연쇄와 하트비트**
-
-LLM 출력을 함수 호출로 해석한다. 함수 실행기가 main context와 external context 사이로 데이터를 옮긴다.
-
-여기서 재밌는 게 하나 있다.
-
-LLM이 출력에 `request_heartbeat=true`라는 인자를 넣으면 바로 다음 추론을 요청할 수 있다고 한다. 이렇게 함수를 연쇄해서 여러 단계 검색을 한다.
-
-이 플래그가 없으면(yield) 다음 외부 이벤트(사용자 메시지나 예약된 인터럽트)가 올 때까지 LLM을 돌리지 않는다.
-
--> ReAct 루프랑 거의 같은 구조다. 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서는 반복 검색이 M 세트에서 20.4점을 차지하는데, MemGPT도 2023년에 이미 반복 검색을 하고 있었다. 그런데 ReFind 표에서 MemGPT가 28.0에 그친 건 검색 인터페이스가 세션·시간·중복을 몰라서인 것 같다.
-
-### **2.5 메모리 압력 경고**
+컨텍스트가 넘칠 때 처리하는 것도 큐 매니저가 한다. 메모리 압력 경고도 큐 매니저가 큐에 넣는다.
 
 Figure 1 예시를 보면 동작 방식이 잘 보인다.
 
@@ -99,9 +85,25 @@ Figure 4는 갱신하는 예시다. 사용자가 헤어졌다고 하니 `working
 
 replace로 덮어쓴다. 뒤에서 볼 Mem0의 UPDATE·DELETE는 이쪽이고, Zep은 무효화로 처리해서 여기서 갈린다.
 
-## **3. 평가**
+### **2.3 Function executor (handling of completion tokens)**
 
-### **3.1 DMR**
+LLM 출력을 함수 호출로 해석한다. 함수 실행기가 main context와 external context 사이로 데이터를 옮긴다.
+
+### **2.4 Control flow and function chaining**
+
+여기서 재밌는 게 하나 있다.
+
+LLM이 출력에 `request_heartbeat=true`라는 인자를 넣으면 바로 다음 추론을 요청할 수 있다고 한다. 이렇게 함수를 연쇄해서 여러 단계 검색을 한다.
+
+이 플래그가 없으면(yield) 다음 외부 이벤트(사용자 메시지나 예약된 인터럽트)가 올 때까지 LLM을 돌리지 않는다.
+
+-> ReAct 루프랑 거의 같은 구조다. 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서는 반복 검색이 M 세트에서 20.4점을 차지하는데, MemGPT도 2023년에 이미 반복 검색을 하고 있었다. 그런데 ReFind 표에서 MemGPT가 28.0에 그친 건 검색 인터페이스가 세션·시간·중복을 몰라서인 것 같다.
+
+## **3. Experiments**
+
+### **3.1 MemGPT for conversational agents**
+
+#### **3.1.1 Deep memory retrieval task (consistency)**
 
 이전 대화(세션 1~5)에서 나온 주제에 대해 구체적으로 물어본다.
 
@@ -118,7 +120,7 @@ replace로 덮어쓴다. 뒤에서 볼 Mem0의 UPDATE·DELETE는 이쪽이고, Z
 
 -> 그런데 뒤에서 볼 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)에서 잰 full-conversation 베이스라인이 94.4%다. MemGPT의 93.4%는 대화를 통째로 넣은 것보다 낮다. MemGPT가 비교한 건 잘린 컨텍스트였지 전체 컨텍스트가 아니었다.
 
-### **3.2 대화 오프너**
+#### **3.1.2 Conversation opener task (engagement)**
 
 에이전트가 먼저 말을 거는 품질을 본다. 페르소나 라벨과의 유사도(SIM-1/3), 사람이 쓴 오프너와의 유사도(SIM-H)로 잰다.
 
@@ -131,7 +133,7 @@ replace로 덮어쓴다. 뒤에서 볼 Mem0의 UPDATE·DELETE는 이쪽이고, Z
 
 사람이 쓴 오프너보다 높게 나온다(SIM-1 0.868 vs 0.800). working context에 정보를 저장해두는 게 좋은 오프너를 만드는 데 중요하다고 한다.
 
-### **3.3 문서 분석과 중첩 KV 검색**
+### **3.2 MemGPT for document analysis**
 
 문서 QA에서는 컨텍스트 한계를 훨씬 넘는 문서를 처리한다.
 

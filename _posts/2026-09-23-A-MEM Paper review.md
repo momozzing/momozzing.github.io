@@ -37,7 +37,7 @@ introduction 부분을 보면 문제 제기가 Zep이나 Mem0랑 좀 다르다.
 
 Figure 1이 이 차이를 보여준다. 기존 메모리 시스템은 워크플로에 메모리 접근 패턴을 미리 정해둬야 한다. 그래서 새 환경에서 일반화가 안 되고 장기 상호작용에서 효과가 떨어진다고 한다.
 
-## **2. Zettelkasten을 가져온다**
+## **2. Methodology**
 
 설계를 제텔카스텐에서 가져왔다. 원자적 노트 작성과 유연한 조직화, 이 두 원칙이다. 노트끼리 동적 색인과 링크로 이어서 지식 네트워크를 만든다.
 
@@ -99,7 +99,9 @@ m*_j ← LLM( m_n ∥ M_near \ m_j ∥ m_j ∥ P_s3 )
 
 -> 그런데 나중에 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/) 기준으로 보면 이 대체는 비가역이다. `c_i`(원본)는 남지만 `X_i`(맥락 서술), `K_i`, `G_i`는 덮어쓴다. 진화가 잘못 가면 이전 해석으로 못 돌아가는 거 아닌가??
 
-## **3. Experiments**
+## **3. Experiment**
+
+### **3.1 Empirical Results**
 
 파운데이션 모델 여섯 개로 LoCoMo를 돌린다.
 
@@ -124,7 +126,7 @@ m*_j ← LLM( m_n ∥ M_near \ m_j ∥ m_j ∥ P_s3 )
 2. 작은 모델에서 차이가 더 크다. Qwen2.5-3b에서 A-MEM은 순위 1.0, MemGPT는 2.4다. Multi Hop F1이 12.57 vs 5.07로 2.5배다. 컨텍스트에 다 넣어주는 방식은 약한 모델이 잘 소화를 못 하는 것 같다.
 3. Single Hop은 GPT-4o의 LOCOMO가 더 높다(61.56 vs 48.43). 단순 사실을 물을 때는 원문을 통째로 주는 게 낫다. 이 시리즈 다른 리뷰들에서도 계속 나오는 패턴이다.
 
-### **3.1 Ablation**
+### **3.2 Ablation Study**
 
 Link Generation(LG)과 Memory Evolution(ME)을 하나씩 빼본다.
 
@@ -134,7 +136,7 @@ Link Generation(LG)과 Memory Evolution(ME)을 하나씩 빼본다.
 
 링크 생성이 메모리 조직의 토대고, 진화는 거기에 정제를 더하는 거라고 한다.
 
-### **3.2 확장성**
+### **3.3 Scaling Analysis**
 
 1,000 → 10,000 → 100,000 → 1,000,000 항목으로 열 배씩 늘려가며 잰다.
 
@@ -164,7 +166,7 @@ A-MEM은 원본은 남기고 해석은 덮어쓰는 쪽이다.
 
 -> 작은 모델을 쓴다면 얘기가 달라질 수도 있다. Qwen2.5-3b에서 MemGPT 대비 2.5배 차이면 꽤 크다.
 
-## **5. Conclusion**
+## **5. Conclusions**
 
 conclusion 부분을 보면 제텔카스텐의 조직 원리에 에이전트가 직접 판단하는 유연성을 합친 메모리 시스템이라고 정리한다. 노트 구성, 링크 생성, 메모리 진화 세 모듈로 돌아가고, 파운데이션 모델 여섯 개에서 기존 SOTA를 넘었다고 한다.
 

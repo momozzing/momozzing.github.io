@@ -29,7 +29,9 @@ AMV-L은 Georgia Tech에서 만든 에이전트 메모리 관리 방법이다.
 
 좀 더 자세히 알아보자.
 
-## **1. 문제**
+## **1. Introduction**
+
+문제 정의부터 한다.
 
 논문은 문제를 한 문장으로 정리한다.
 
@@ -39,13 +41,16 @@ TTL은 항목이 얼마나 오래 남을지는 제한하지만, 요청이 들어
 
 앞 리뷰들에서 계속 나왔던 느린 검색 수치가 이거다. [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 MemoryOS 검색 31.2초, [Mem0 리뷰](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)의 LangMem p95 59.8초가 여기 해당한다. 저장은 잘 되는데 꺼낼 때 후보군이 너무 커진다.
 
-## **2. AMV-L**
+## **2. AMV-L Overview**
 
 에이전트 메모리를 그냥 저장소가 아니라 관리해야 하는 시스템 자원으로 본다고 한다.
 
 각 항목에 계속 갱신되는 효용 점수 `V(m)`을 매기고, 그 값에 따라 올리고(승격) 내리고(강등) 빼는(축출) 식으로 계층을 유지한다.
 
-### **2.1 세 계층**
+### **2.1 Tiered lifecycle organization**
+
+계층은 세 개다.
+
 
 - Hot : 평소 요청에서 검색하고 프롬프트에 넣을 수 있는 항목
 - Warm : 중간 효용. 기본 검색 경로에서는 빠짐
@@ -57,7 +62,26 @@ TTL은 항목이 얼마나 오래 남을지는 제한하지만, 요청이 들어
 
 나중에 볼 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)는 "원본을 남겨라"(가역성)인데, 여기서도 원본은 남긴다. 검색 대상에서만 뺀다.
 
-### **2.2 값 갱신**
+### **2.2 Lifecycle transitions**
+
+생애주기 전이는 비동기로 한다.
+
+요청을 처리할 때는 사용 기록과 값 갱신만 하고, 계층 이동이나 정리는 요청 처리 경로 밖에서 따로 한다고 한다.
+
+유지보수 때문에 요청 지연이 늘어나지 않게 하려는 것이다.
+
+### **2.3 Bounded retrieval and prompt construction**
+
+통제를 두 가지로 나눈다.
+
+1. Eligibility control (AMV-L 생애주기) : 어떤 항목이 검색에 참여할 수 있는가
+2. Injection control (프롬프트 상한) : 검색된 것 중 몇 개를 프롬프트에 넣는가
+
+대부분의 시스템은 2번만 있다고 한다.
+
+프롬프트 상한은 프롬프트 길이는 묶지만, 1번 없이는 큰 후보군을 검색하는 비용을 못 막는다는 것이다.
+
+## **3. Memory Value Model**
 
 `V(m)`은 세 가지 신호로 갱신한다.
 
@@ -77,26 +101,11 @@ TTL은 항목이 얼마나 오래 남을지는 제한하지만, 요청이 들어
 2. 증분성 : 전체를 다시 계산하지 않고 온라인으로
 3. 저오버헤드 : 닿은 항목당 상수 시간
 
-### **2.3 생애주기 전이는 비동기로**
-
-요청을 처리할 때는 사용 기록과 값 갱신만 하고, 계층 이동이나 정리는 요청 처리 경로 밖에서 따로 한다고 한다.
-
-유지보수 때문에 요청 지연이 늘어나지 않게 하려는 것이다.
-
-### **2.4 두 단계 통제**
-
-통제를 두 가지로 나눈다.
-
-1. Eligibility control (AMV-L 생애주기) : 어떤 항목이 검색에 참여할 수 있는가
-2. Injection control (프롬프트 상한) : 검색된 것 중 몇 개를 프롬프트에 넣는가
-
-대부분의 시스템은 2번만 있다고 한다.
-
-프롬프트 상한은 프롬프트 길이는 묶지만, 1번 없이는 큰 후보군을 검색하는 비용을 못 막는다는 것이다.
-
-## **3. 결과**
+## **4. Results and Discussion**
 
 TTL, LRU를 베이스라인으로 같은 장기 실행 워크로드에서 비교한다. 프롬프트 주입 상한은 모든 조건에서 똑같이 고정했다.
+
+### **4.1 End to end latency and throughput**
 
 | 지표 | TTL | LRU | AMV-L |
 |---|---:|---:|---:|
@@ -114,7 +123,9 @@ LRU와는 주고받는 관계다. 중앙값과 p95는 LRU가 조금 낫다(154 v
 
 값 기반으로 관리하면 recency 기반인 LRU에서도 남아 있는 극단적으로 느린 요청을 줄일 수 있다고 한다.
 
-### **3.1 검색 발자국**
+### **4.2 Mechanism: retrieval working set and vector search footprint**
+
+검색 발자국을 본다.
 
 | 지표 | TTL | LRU | AMV-L |
 |---|---:|---:|---:|
@@ -127,7 +138,13 @@ TTL에서는 p95 후보군이 4,824개까지 커진다. AMV-L은 690으로 85.7%
 
 -> 그럼 LRU의 p99가 왜 더 느린지는 뭐 때문인지?? 자세한 이유는 잘 모르겠다.
 
-### **3.2 병목이 무엇인가**
+### **4.3 Cost and quality tradeoffs**
+
+토큰 오버헤드도 LRU보다 약 6% 낮고, 검색 품질(값 평균)은 0~2% 안에서 비슷하다. 품질은 그대로 두고 꼬리 지연을 줄인 것이다.
+
+### **4.4 Discussion**
+
+병목이 무엇인가를 따진다.
 
 10.4절에서 장기 실행 에이전트 메모리의 병목은 저장 용량이 아니라고 한다. 검색 대상을 통제하지 않아서 요청마다 계산이 커지는 게 문제라는 것이다.
 
@@ -135,9 +152,7 @@ TTL에서는 p95 후보군이 4,824개까지 커진다. AMV-L은 690으로 85.7%
 
 그래서 프롬프트 길이를 묶는 것보다 검색 대상을 묶는 게 더 효과가 크다고 한다.
 
-토큰 오버헤드도 LRU보다 약 6% 낮고, 검색 품질(값 평균)은 0~2% 안에서 비슷하다. 품질은 그대로 두고 꼬리 지연을 줄인 것이다.
-
-## **4. 지금 관점: 우리가 놓친 축**
+## **5. 지금 관점: 놓치고 있던 축**
 
 이 시리즈 논문들이 주로 보는 건 정확도다. 이 논문만 지연이 얼마나 예측 가능한지를 본다.
 
@@ -162,7 +177,14 @@ LangMem이 이 논문에서 말하는 경우에 딱 맞는 것 같다. 메모리
 
 그리고 중앙값, p95, 처리량은 LRU가 이긴다. AMV-L이 나은 건 극단 꼬리뿐이다. SLO가 p99나 >2s 기준이면 AMV-L, 평균 응답이 중요하면 LRU가 더 단순하다. 논문도 이걸 "절충 프런티어 위의 다른 지점"이라고 한다.
 
-## **5. Conclusion**
+여기까지 보고 남은 것들을 적어둔다. 뒤에서 볼 논문들에서 이어지는 얘기도 같이 표시해둔다.
+
+1. 원본을 남기는 쪽. 앞에서 본 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)은 삭제 대신 무효화로 풀었고, 이 논문은 남기되 검색에서만 빼는 방법이다. 뒤에서 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)은 같은 예산에서 가역이 비가역을 이긴다고 하고, [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)는 원본을 안 건드려서 이기고, [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)는 원본이 없으면 복구가 48건 전부 실패한다고 한다.
+2. 저장보다 검색이 병목인 경우. 이 논문의 검색 대상 통제가 그쪽이다. 다만 앞에서 본 [NEMORI](https://momozzing.github.io/paper%20review/NEMORI-Paper-review/)는 반대로 증류로 이겼다. 뒤에서 볼 [MemMachine](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)의 ablation(검색 최적화 +4.2%p vs 저장 +0.8%p), [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서 RAG 손실의 81%가 검색이었던 것도 같은 방향이다. 그래서 뭐가 병목인지 먼저 재보라는 게 [MemFail](https://momozzing.github.io/paper%20review/MemFail-Paper-review/)의 얘기다.
+3. 모델을 키워도 안 풀린다. 앞에서 본 [Anatomy](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 형식 오류율이 그렇고, 뒤에서 볼 [MemFail](https://momozzing.github.io/paper%20review/MemFail-Paper-review/)의 Q2와 [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)의 NOTES 비대칭도 같은 얘기다. 구조 문제라는 것이다.
+4. ∆부터 계산해보자. [Anatomy](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 Context Saturation Gap이다. full-context보다 나은 게 없으면 메모리 시스템을 쓰는 이유는 정확도가 아니라 지연과 비용이다.
+
+## **6. Conclusion**
 
 conclusion 부분을 보면, AMV-L은 메모리를 관리해야 하는 시스템 자원으로 보고, 계속 갱신되는 효용 점수로 생애주기를 관리한다고 한다.
 
@@ -176,16 +198,5 @@ p95, p99 지연을 최대 2~3자릿수 줄이면서 밀리초 단위 중앙값�
 2. AMV-L은 hot 계층 크기에 딱 정해진 상한이 없다. 값 변화로 사실상 조절되긴 하지만, 엄격한 예산을 두면 최악의 경우를 더 확실하게 보장할 수 있다고 한다
 
 여태까지 메모리 논문들이 무엇을 어떻게 기억할지를 봤다면, 이 방법은 기억한 것 중 무엇을 검색 대상으로 둘지를 관리한다.
-
----
-
-## **여기까지 적어두는 것**
-
-여기까지 보고 남은 것들을 적어둔다. 뒤에서 볼 논문들에서 이어지는 얘기도 같이 표시해둔다.
-
-1. 원본을 남기는 쪽. 앞에서 본 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)은 삭제 대신 무효화로 풀었고, 이 논문은 남기되 검색에서만 빼는 방법이다. 뒤에서 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)은 같은 예산에서 가역이 비가역을 이긴다고 하고, [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)는 원본을 안 건드려서 이기고, [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)는 원본이 없으면 복구가 48건 전부 실패한다고 한다.
-2. 저장보다 검색이 병목인 경우. 이 논문의 검색 대상 통제가 그쪽이다. 다만 앞에서 본 [NEMORI](https://momozzing.github.io/paper%20review/NEMORI-Paper-review/)는 반대로 증류로 이겼다. 뒤에서 볼 [MemMachine](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)의 ablation(검색 최적화 +4.2%p vs 저장 +0.8%p), [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서 RAG 손실의 81%가 검색이었던 것도 같은 방향이다. 그래서 뭐가 병목인지 먼저 재보라는 게 [MemFail](https://momozzing.github.io/paper%20review/MemFail-Paper-review/)의 얘기다.
-3. 모델을 키워도 안 풀린다. 앞에서 본 [Anatomy](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 형식 오류율이 그렇고, 뒤에서 볼 [MemFail](https://momozzing.github.io/paper%20review/MemFail-Paper-review/)의 Q2와 [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)의 NOTES 비대칭도 같은 얘기다. 구조 문제라는 것이다.
-4. ∆부터 계산해보자. [Anatomy](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 Context Saturation Gap이다. full-context보다 나은 게 없으면 메모리 시스템을 쓰는 이유는 정확도가 아니라 지연과 비용이다.
 
 다음은 [Multi-Layered Memory](https://momozzing.github.io/paper%20review/Multi-Layered-Memory-Paper-review/)다. 대화 이력을 working·episodic·semantic 세 계층으로 나누고, 계층을 하나씩 떼어보는 ablation으로 각 계층이 얼마나 기여하는지 잰 논문이다.

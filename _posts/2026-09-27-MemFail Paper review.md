@@ -33,9 +33,13 @@ MemFail은 UC Berkeley에서 만든 메모리 시스템 진단 벤치마크이�
 
 좀 더 자세히 알아보자.
 
-## **1. 세 연산과 네 실패 모드**
+## **1. Background**
+
+### **1.1 Three Operations of a Memory System**
 
 메모리 시스템을 요약(summarization), 저장(storage), 검색(retrieval) 세 연산을 이어 붙인 것으로 본다.
+
+### **1.2 Failure Modes**
 
 연산마다 나오는 실패가 있다.
 
@@ -59,11 +63,13 @@ MemFail은 UC Berkeley에서 만든 메모리 시스템 진단 벤치마크이�
 
 기존 연구는 긴 대화 이력을 넣고 사용자 성격이나 선호를 추론하게 하면서, 이 네 가지를 섞어서 평가하고 구분하지 않았다고 한다.
 
-## **2. 다섯 데이터셋, 네 과제**
+## **2. Benchmark Details**
+
+다섯 데이터셋을 네 과제로 묶었다.
 
 과제마다 실패 모드 하나를 일부러 노린다.
 
-### **Task 1: Conditional-Facts**
+### **2.1 Task 1: Conditional-Facts**
 
 요약 실패를 노린다.
 
@@ -84,7 +90,7 @@ Easy와 Hard가 같은 엔티티와 조건을 쓴다. 그래서 성능 차이는
 
 정답 : 아니오
 
-### **Task 2: Coexisting-Facts**
+### **2.2 Task 2: Coexisting-Facts**
 
 저장 + 검색 실패를 노린다.
 
@@ -98,7 +104,7 @@ Easy와 Hard가 같은 엔티티와 조건을 쓴다. 그래서 성능 차이는
 
 정답 : 페도라, 비니, 버킷햇
 
-### **Task 3: Persona-Retrieval**
+### **2.3 Task 3: Persona-Retrieval**
 
 저장 실패를 노린다.
 
@@ -113,7 +119,7 @@ Easy와 Hard가 같은 엔티티와 조건을 쓴다. 그래서 성능 차이는
 
 앞에서 본 [SYNAPSE 리뷰](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)의 "dog 질의가 의미적으로 가까운 Rex와 매칭돼 환각"과 같은 실패를 재는 것이다.
 
-### **Task 4: Long-Hop**
+### **2.4 Task 4: Long-Hop**
 
 검색 실패를 노린다.
 
@@ -125,7 +131,7 @@ Easy와 Hard가 같은 엔티티와 조건을 쓴다. 그래서 성능 차이는
 
 질문 : "아침 에스프레소를 마시면 [결국 무엇을 하나]?"
 
-## **3. 평가 설계**
+## **3. Experimental Setup**
 
 Mem0, A-MEM, SimpleMem, StructMem 네 시스템을 평가한다.
 
@@ -143,9 +149,11 @@ get_all_memories()
 
 채점도 검증했다. 사람이 채점한 100개 예시에서 gpt-5-mini가 98%를 맞혔고, 오류 유형은 98.4% 맞게 분류했다고 한다.
 
-## **4. 결과**
+## **4. Experiments**
 
-### **Q1: 검색 개수 k를 늘리면?**
+### **4.1 Q1: How does performance scale with k, the number of retrieved memories?**
+
+검색 개수 k를 늘리면 어떻게 되는지 본다.
 
 MEMFAIL은 최신 시스템에도 어렵고, k를 늘려도 성능이 잘 안 오른다고 한다. Coexisting-Facts만 예외인데, 많이 꺼내면 같이 있는 사실이 우연히라도 걸릴 확률이 커지기 때문이다.
 
@@ -162,7 +170,9 @@ Mem0 말고는 저장 실패가 거의 없었다고 한다. 실패는 거의 다
 
 앞에서 본 [MemMachine 리뷰](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)에서는 k를 20→30으로 올리면 +4.2%p였는데, 그 이득도 어떤 실패가 병목이냐에 따라 달라진다는 것이다.
 
-### **Q2: 더 좋은 모델을 쓰면?**
+### **4.2 Q2: How does accuracy scale with the strength of the model used by the memory system?**
+
+더 좋은 모델을 쓰면 어떻게 되는지 본다.
 
 더 강한 모델을 써도 정확도가 안 오르고, 대부분 과제에서 오히려 떨어지기도 한다고 한다. 더 똑똑한 추론 모델이 메모리를 너무 길게 만들어서 컨텍스트를 오염시킬 수 있다는 것이다.
 
@@ -170,7 +180,9 @@ Mem0 말고는 저장 실패가 거의 없었다고 한다. 실패는 거의 다
 
 앞에서 본 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 백본 민감도, [NEMORI 리뷰](https://momozzing.github.io/paper%20review/NEMORI-Paper-review/)의 "휴리스틱이 문제"와 이어진다. 모델을 바꿔서 풀리는 문제가 아니다.
 
-### **Q3: 토큰을 더 쓰면?**
+### **4.3 Q3: What does MEMFAIL reveal about the tradeoff between performance and token consumption?**
+
+토큰을 더 쓰면 어떻게 되는지 본다.
 
 요약 실패가 병목인 과제(Persona-Retrieval, Conditional-Facts Hard)에서는 토큰을 늘리면 성능이 오른다. 반대로 검색 과제는 토큰을 더 쓰면 떨어질 수도 있다고 한다.
 
@@ -199,7 +211,7 @@ Coexisting-Facts에서 특히 그런데, 메모리를 크게 저장하면 의미
 
 conclusion 부분을 보면, 지금 시스템들은 구조적인 제약에 묶여 있어서 토큰을 더 쓰거나 더 똑똑한 모델을 쓴다고 해결되지 않는다고 한다.
 
-저자들이 아는 한 실패 모드를 세밀하게 분석할 수 있는 첫 벤치마크라고 하고, 3장의 API만 구현하면 어떤 메모리 시스템이든 평가할 수 있다고 한다. 데이터셋과 평가 코드도 공개했다.
+저자들이 아는 한 실패 모드를 세밀하게 분석할 수 있는 첫 벤치마크라고 하고, 앞의 Experimental Setup에서 본 API만 구현하면 어떤 메모리 시스템이든 평가할 수 있다고 한다. 데이터셋과 평가 코드도 공개했다.
 
 한계도 적어뒀다. MEMFAIL 데이터셋은 전부 LLM으로 만들고(gpt-4.1-mini, gpt-5-mini, gpt-5) 걸렀다. 모든 항목을 사람이 확인했지만, 대화·엔티티·표현이 실제 서비스 환경보다 좁을 수 있다고 한다. 그래서 MEMFAIL 점수는 특정 실패에 대한 진단 신호로 봐야지 실제 성능 예측으로 보면 안 된다고 한다.
 

@@ -30,7 +30,9 @@ MemMachine은 MemVerge, Inc.에서 만든 오픈소스 메모리 시스템이다
 
 좀 더 자세히 알아보자.
 
-## **1. 설계 입장**
+## **1. Introduction**
+
+설계 입장부터 보자.
 
 단기 메모리, 장기 일화 메모리, 프로필 메모리 세 개를 원문 보존 구조로 묶는다.
 
@@ -38,7 +40,9 @@ MemMachine은 MemVerge, Inc.에서 만든 오픈소스 메모리 시스템이다
 
 없애는 게 아니라 줄이는 거다. 프로필 메모리는 여전히 LLM으로 추출한다.
 
-## **2. Contextualization**
+## **2. MemMachine Architecture**
+
+### **2.1 Contextualization**
 
 대화 메모리 검색이 어려운 이유를 이렇게 설명한다.
 
@@ -57,7 +61,7 @@ MemMachine은 MemVerge, Inc.에서 만든 오픈소스 메모리 시스템이다
 
 -> 앞 1개, 뒤 2개로 비대칭인 건 대화에서 답이 질문 뒤에 오니까 뒤쪽을 더 보는 것 같다.
 
-## **3. 프로필 메모리**
+### **2.2 Profile Memory (Semantic Memory)**
 
 일화 메모리가 원시 상호작용을 그대로 두는 거라면, 프로필 메모리는 사용자 속성을 요약해서 모아둔다.
 
@@ -69,9 +73,11 @@ LLM 추출은 여기서만 쓴다. 원문은 일화 메모리에 남아 있으�
 
 앞에서 본 [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)에서는 사실만 남기고 원문을 버렸는데, 여기서는 원문을 남긴다.
 
-## **4. Retrieval Agent**
+## **3. Retrieval Agent**
 
 다중홉 질의를 위해서 에이전트를 따로 둔다.
+
+### **3.1 The Late Binding Problem**
 
 논문 예시는 이렇다. Acme의 CEO(Person X)를 찾고, 그 배우자 Person Y를 찾고, Person Y의 고용주 Company Z를 찾아야 한다.
 
@@ -86,15 +92,24 @@ LLM 추출은 여기서만 쓴다. 원문은 일화 메모리에 남아 있으�
 
 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)도 이 문제를 반복 검색으로 푼다. ReFind 실험에서는 검색을 1회로 묶으면 M 세트에서 20.4점이 빠진다.
 
+### **3.2 Architecture**
+
 해법은 도구 트리다. `ToolSelectAgent`가 질의를 보고 셋 중 하나로 보낸다.
 
 1. MemMachine Agent : 직접 검색
 2. SplitQuery Agent : 질의를 병렬로 쪼갬(fan-out)
 3. ChainOfQuery Agent : 증거를 반복해서 모음(다중홉)
 
-## **5. 결과**
+### **3.3 Benchmark Results**
 
-### **5.1 LoCoMo**
+다중홉 에이전트 결과다.
+
+- HotpotQA hard: 93.2%
+- WikiMultiHop(무작위 노이즈 포함): 92.6%
+
+## **4. Results and Analysis**
+
+### **4.1 LoCoMo Benchmark Results**
 
 | 지표 | 점수 |
 |---|---:|
@@ -104,11 +119,15 @@ LLM 추출은 여기서만 쓴다. 원문은 일화 메모리에 남아 있으�
 | Temporal | 0.7352 |
 | Open-domain | 0.7083 |
 
+### **4.2 Comparative Analysis**
+
 차순위 시스템(Memobase)보다 +9.7점이라고 한다.
 
 Temporal만 진다. Memobase가 0.8505로 더 높다.
 
 논문은 타임스탬프를 고려한 검색으로 개선할 수 있다고 보고 있다. 그리고 agent 모드에서는 0.9159까지 올라가서, 시간 추론은 평가 모델 능력에 많이 좌우된다고 한다.
+
+### **4.3 Efficiency Analysis**
 
 효율도 같이 보고한다.
 
@@ -116,7 +135,7 @@ Temporal만 진다. Memobase가 0.8505로 더 높다.
 - 메모리 추가 속도 ~75% 향상
 - 검색 속도 최대 75% 향상
 
-### **5.2 LongMemEvalS ablation**
+### **4.4 LongMemEvalS Ablation Study**
 
 500문항 전체에서 여섯 가지를 하나씩 바꿔가며 쟀다. 최고 점수는 93.0%다.
 
@@ -137,7 +156,7 @@ Temporal만 진다. Memobase가 0.8505로 더 높다.
 
 -> Mem0(추출), Zep(그래프), A-MEM(링크+진화)이 다 저장 단계에 LLM을 많이 쓴다. 그 투자가 효과가 있는지 의심하는 거다.
 
-### **5.3 작은 모델이 이긴다**
+작은 모델이 이긴다는 결과도 있다.
 
 답변 LLM으로 GPT-5-mini가 GPT-5보다 +2.6% 높았다고 한다. 최적화된 프롬프트랑 같이 썼을 때 그렇고, 비용 대비로도 제일 낫다.
 
@@ -145,12 +164,11 @@ Temporal만 진다. Memobase가 0.8505로 더 높다.
 
 ablation에서 CoT 제거가 +1.6%p였던 것과 같은 얘기다.
 
-### **5.4 다중홉 에이전트**
+## **5. Discussion**
 
-- HotpotQA hard: 93.2%
-- WikiMultiHop(무작위 노이즈 포함): 92.6%
+### **5.1 Architectural Design Tensions**
 
-## **6. 설계 공간 비교표**
+설계 공간 비교표다.
 
 논문이 MemMachine, Mem0, Zep, MemOS, Full Context를 속성별로 비교해 두었다.
 
@@ -166,7 +184,7 @@ ablation에서 CoT 제거가 +1.6%p였던 것과 같은 얘기다.
 
 앞에서 본 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서는 A-Mem 구축에 15시간, Nemori 형식 오류 30%가 나왔는데, 둘 다 쓰기 단계 LLM 호출에서 생긴 문제였다. 호출이 적으면 이런 위험도 줄어든다.
 
-## **7. 메모리가 도움이 안 되는 경우**
+### **5.2 When Memory Helps (and When It Doesn’t)**
 
 논문이 이걸 절을 따로 두고 적었다.
 
@@ -182,7 +200,7 @@ ablation에서 CoT 제거가 +1.6%p였던 것과 같은 얘기다.
 - 단일 턴, 무상태 질의 (검색, 번역, 단순 QA)
 - 양은 많고 개인화는 적은 트래픽
 
-## **8. 지금 관점: 검색부터 손본다**
+## **6. 지금 관점: 검색부터 손본다**
 
 이 논문에서 해볼 만한 건 저장 구조를 안 바꾸고도 된다.
 
@@ -206,7 +224,7 @@ ablation에서 CoT 제거가 +1.6%p였던 것과 같은 얘기다.
 
 -> 그런데 여기도 full-context 대비 ∆는 없다. 설계 공간 비교에 Full Context가 들어가 있는데 성능 비교는 안 했다??
 
-## **9. Conclusion**
+## **7. Conclusion**
 
 원문 보존, 비용 효율, 개인화를 우선으로 둔 오픈소스 메모리 시스템이다.
 

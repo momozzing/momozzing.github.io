@@ -44,7 +44,9 @@ memory addition(추가)이랑 memory deletion(삭제) 두 가지 연산만 본�
 1. Error propagation (오류 전파) : 과거 경험에 있던 오류가 쌓여서 미래 성능을 떨어뜨린다
 2. Misaligned experience replay (어긋난 경험 재생) : 겉으로는 제대로 된 실행이었는데, 경험으로 다시 쓰면 도움이 별로 안 되거나 오히려 잘못 이끈다
 
-## **2. 실험 설계**
+## **2. Addition of Memory**
+
+### **2.1 Setup**
 
 에이전트 네 개를 쓴다. 하나는 통제용으로 만든 합성 에이전트고, 셋은 실제 에이전트다.
 
@@ -66,7 +68,9 @@ RegAgent는 입력 벡터 `x`랑 근처 입력에 대한 과거 추측들을 받
 - Coarse : 자동 평가기(C1/C2/C3)로 골라서 넣음
 - Strict : 사람 평가 기준으로 엄격하게 골라서 넣음
 
-## **3. 전부 넣으면 나빠진다**
+### **2.2 Execution quality and memory size jointly determine long-term agent performance**
+
+전부 넣으면 나빠진다.
 
 | 평가기 | RegAgent SR | 메모리 | EHRAgent ACC | 메모리 | AgentDriver SR | 메모리 | CIC-IoT ACC | 메모리 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -87,7 +91,7 @@ RegAgent는 입력 벡터 `x`랑 근처 입력에 대한 과거 추측들을 받
 
 -> 크기만 키우는 건 손해라는 얘기다.
 
-## **4. Experience-Following**
+### **2.3 Experience-Following Property**
 
 질의마다 검색된 메모리 레코드와의 입력 유사도, 출력 유사도를 둘 다 재고, 질의 스트림 전체에 대해 누적 평균을 낸다.
 
@@ -99,7 +103,7 @@ RegAgent는 입력 벡터 `x`랑 근처 입력에 대한 과거 추측들을 받
 
 -> 좋은 경험을 넣으면 그대로 따라 하고, 나쁜 경험을 넣어도 그대로 따라 한다는 것이다.
 
-### **4.1 오류 전파**
+### **2.4 Error Propagation in Agent Memory**
 
 잘못됐거나 노이즈가 섞인 레코드가 데모로 검색되면 지금 실행에 영향을 준다. 그 실행이 다시 메모리에 저장되면 오류가 다음 태스크로 넘어간다.
 
@@ -113,13 +117,17 @@ RegAgent는 입력 벡터 `x`랑 근처 입력에 대한 과거 추측들을 받
 
 -> 메모리를 다시 쓰는 루프에서는 손실이 계속 쌓이는 것 같다.
 
-## **5. 삭제**
+## **3. Deletion of Memory**
+
+### **3.1 Setup for Memory Deletion Experiments**
 
 삭제 전략은 세 가지다.
 
 - Periodical : 주기적으로 지움
 - History-based : 이후 실행 기록을 보고 지움
 - Combined : 둘을 합침
+
+### **3.2 Strategic Memory Deletion Improves the Agent Performance**
 
 | 전략 | RegAgent SR | 메모리 | EHRAgent ACC | 메모리 | AgentDriver SR | 메모리 | CIC-IoT ACC | 메모리 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -134,7 +142,9 @@ RegAgent는 입력 벡터 `x`랑 근처 입력에 대한 과거 추측들을 받
 2. History-based 삭제는 성능이 오른다. EHRAgent 38.67 → 42.06, CIC-IoT 85.40 → 89.60. 지웠는데 좋아졌다.
 3. Combined가 메모리를 제일 많이 줄인다. EHRAgent에서 1,012 → 248(75% 감소)인데 성능은 42.34로 제일 높다.
 
-### **5.1 왜 지우면 좋아지나**
+### **3.3 Misaligned Experience Replay**
+
+왜 지우면 좋아지는지를 본다.
 
 어떤 레코드는 도움이 별로 안 되거나 해로운 안내를 준다는 가설이다. 처음에 평가기 필터를 통과했더라도, 지금 태스크 분포랑 맞지 않을 수 있다고 한다.
 
@@ -149,9 +159,13 @@ RegAgent에서는 이걸 직접 볼 수 있다. 예측값이랑 정답값 차이
 
 -> 넣을 때는 좋은 레코드인지 모르지만, 나중에 그 레코드가 검색됐을 때 결과가 어땠는지 기록해두면 라벨이 저절로 쌓인다는 것 같다.
 
-## **6. 어려운 상황**
+## **4. Memory Management under Challenging Scenarios**
 
-먼저 태스크 분포 변화. EHRAgent랑 AgentDriver의 테스트셋 순서를 바꿔서 중간에 분포가 바뀌게 만든다.
+어려운 상황 두 가지를 본다.
+
+### **4.1 Memory Management with Task distribution shift**
+
+EHRAgent랑 AgentDriver의 테스트셋 순서를 바꿔서 중간에 분포가 바뀌게 만든다.
 
 결과가 갈린다. AgentDriver에서는 history-based가 분포 변화가 없는 버전보다도 좋았는데, EHRAgent에서는 history-based가 combined보다 못했다.
 
@@ -159,11 +173,13 @@ RegAgent에서는 이걸 직접 볼 수 있다. 예측값이랑 정답값 차이
 
 -> 분포가 바뀌면 "예전에 결과가 좋았던 레코드"라는 기준이 흔들리니까 그런 것 같다.
 
-다음은 자원 제약. 메모리 용량을 초기 크기(EHRAgent 100, AgentDriver 180)로 고정한다. 주기적 삭제를 먼저 하고, 그래도 넘치면 평균 효용이 제일 낮은 레코드 하나만 지우도록 combined 정책을 바꾼다.
+### **4.2 Memory Management with Resource Constraints**
+
+메모리 용량을 초기 크기(EHRAgent 100, AgentDriver 180)로 고정한다. 주기적 삭제를 먼저 하고, 그래도 넘치면 평균 효용이 제일 낮은 레코드 하나만 지우도록 combined 정책을 바꾼다.
 
 이렇게 하면 고정 메모리 버전보다 성능이 높다고 한다. 저장 공간이 작아도 관련 있고 품질 좋은 레코드만 남기면 된다는 것이다.
 
-## **7. 지금 관점: FIFO 삭제를 쓰고 있다면**
+## **5. 지금 관점: FIFO 삭제를 쓰고 있다면**
 
 앞의 논문들이 저장 구조를 다뤘다면 이 논문은 저장 정책을 다룬다.
 
@@ -173,7 +189,7 @@ RegAgent에서는 이걸 직접 볼 수 있다. 예측값이랑 정답값 차이
 
 -> 무엇을 넣을지 거르는 평가기를 대충 만들면 메모리를 붙인 의미가 없을 것 같다.
 
-5.1의 공짜 품질 라벨은 바로 해볼 수 있을 것 같다. 레코드마다 검색된 횟수랑 그때 결과를 기록하고, 검색됐는데 태스크가 실패한 레코드는 후보에서 내리는 식이다. LLM 호출이 더 필요 없다.
+3.3의 공짜 품질 라벨은 바로 해볼 수 있을 것 같다. 레코드마다 검색된 횟수랑 그때 결과를 기록하고, 검색됐는데 태스크가 실패한 레코드는 후보에서 내리는 식이다. LLM 호출이 더 필요 없다.
 
 삭제 정책은 상황마다 다르다. 분포가 안정적이면 History-based가 성능이 제일 좋았고, 분포가 바뀌면 Periodical이나 Combined가 안정적이었고, 저장 공간이 작으면 Combined에 최저 효용 하나씩 지우는 방식을 썼다.
 
@@ -183,7 +199,7 @@ RegAgent에서는 이걸 직접 볼 수 있다. 예측값이랑 정답값 차이
 
 뒤에서 볼 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)는 full-context와 비교할 때의 ∆ 문제를 따지는데, 여기서는 같은 시스템에서 정책만 바꿔가며 재기 때문에 그 문제가 없다.
 
-## **8. Conclusion**
+## **6. Conclusion**
 
 conclusion 부분을 보면, 추가와 삭제로 에이전트 메모리 관리를 연구했고, experience-following 현상과 거기서 나오는 두 문제(오류 전파, 어긋난 경험 재생)를 보였다고 한다.
 

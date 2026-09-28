@@ -42,7 +42,7 @@ introduction 부분을 보면 문제 제기가 직설적이다.
 3. 시스템 효율 : 지연과 비용의 "agency tax"
 4. 백본 민감도 : 오픈웨이트 모델에서 메모리 연산의 "silent failure"
 
-## **2. 분류**
+## **2. Taxonomy of Agentic Memory**
 
 Memory-Augmented Generation(MAG) 시스템을 메모리 구조에 따라 넷으로 나눈다.
 
@@ -55,13 +55,17 @@ Memory-Augmented Generation(MAG) 시스템을 메모리 구조에 따라 넷으�
 
 분류는 앞에서 본 [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)랑 크게 다르지 않다. 실제 분석은 뒤에서부터 나온다.
 
-## **3. 벤치마크 포화**
+## **3. Evaluation and Pain Points**
 
-### **3.1 문제**
+### **3.1 Benchmark Scalability: The Context Saturation Risk**
+
+벤치마크 포화 문제다.
 
 에이전트 메모리를 쓰는 이유는 유한한 컨텍스트 창을 넘어서 추론하려는 것이다.
 
 그런데 컨텍스트 창이 128k에서 1M으로 늘어나면서 많은 벤치마크가 포화될 위험이 생겼다. 필요한 정보가 전부 프롬프트 하나에 들어가면 외부 메모리가 필요 없어 보인다.
+
+#### **3.1.1 Dimensions of Limitation**
 
 포화 위험을 세 가지 축으로 본다.
 
@@ -71,7 +75,7 @@ Memory-Augmented Generation(MAG) 시스템을 메모리 구조에 따라 넷으�
 
 겉보기 난이도가 아니라, 이런 구조적 특성이 long-context LLM이 감당할 수 있는 범위를 넘느냐로 포화 위험이 정해진다고 한다.
 
-### **3.2 Context Saturation Gap (∆)**
+#### **3.1.2 Context Saturation Gap as an Empirical Diagnostic**
 
 그래서 진단 지표를 하나 제안한다.
 
@@ -102,7 +106,9 @@ Zep과 ReFind는 ∆가 +11 정도다. LongMemEval이 115k 토큰이라 포화�
 
 그래서 작고 얕은 데이터셋에서는 full-context 베이스라인이랑 같이 평가해야 메모리 덕분에 좋아졌다고 말할 수 있다고 한다.
 
-## **4. F1과 의미가 어긋난다**
+### **3.2 LLM-as-a-Judge Evaluation**
+
+F1과 의미가 어긋난다는 부분이다.
 
 F1, BLEU 같은 어휘 지표는 토큰이 얼마나 겹치는지를 본다. 에이전트 메모리처럼 정확히 찾아서 일관되게 종합해야 하는 과제에는 부족하다고 한다.
 
@@ -123,7 +129,7 @@ A-Mem은 의미 기준으로는 괜찮은데(순위 4) F1에서는 낮게 나온
 
 LLM-as-a-judge가 프롬프트에 과적합되는 게 아니냐는 걱정도 있는데, 서로 다른 프롬프트 세 개로 확인해보니 상대 순서는 유지됐다고 한다. 그래도 프롬프트 설계는 조심해야 한다고 덧붙인다.
 
-## **5. 백본 민감도**
+### **3.3 Backbone Sensitivity and Format Stability**
 
 에이전트 메모리에서는 백본 모델이 질문에 답하는 것과 메모리 연산(갱신·통합)을 둘 다 해야 한다. 그래서 오래 쓰려면 출력 형식을 정확히 지켜야 한다.
 
@@ -149,7 +155,9 @@ API 모델(gpt-4o-mini)과 오픈웨이트(Qwen-2.5-3B)를 비교한다.
 
 gpt-4o-mini에서도 Nemori 형식 오류가 17.91%다. API 모델이라고 안전한 것도 아니다.
 
-## **6. Agency Tax**
+### **3.4 System Performance Evaluation**
+
+논문이 agency tax라고 부르는 부분이다.
 
 정확도 말고 지연과 비용도 봐야 한다. 읽기만 하는 RAG랑 다르게 에이전트 메모리는 추출·갱신·통합 같은 유지보수 연산이 더 붙는다.
 
@@ -172,7 +180,7 @@ gpt-4o-mini에서도 Nemori 형식 오류가 17.91%다. API 모델이라고 안�
 
 유지보수 비용은 비동기로 처리되는 경우가 많아서 표에서 뺐다고 한다. 그러니까 이 표도 전체 비용은 아니다.
 
-## **7. 지금 관점: 앞 리뷰들을 다시 읽기**
+## **4. 지금 관점: 앞 리뷰들을 다시 읽기**
 
 이 논문을 읽고 나니 앞 리뷰들 수치가 좀 다르게 보인다.
 
@@ -186,7 +194,7 @@ gpt-4o-mini에서도 Nemori 형식 오류가 17.91%다. API 모델이라고 안�
 
 -> 검색 지연도 따로 재야 한다. MemoryOS의 31초는 정확도 표에 안 나온다.
 
-## **8. Conclusion**
+## **5. Conclusion and Future Directions**
 
 conclusion 부분을 보면 에이전트 메모리가 아키텍처뿐 아니라 평가 타당성, 확장성, 강건성에서도 제약을 받는다고 정리한다. 제안은 두 가지다.
 
