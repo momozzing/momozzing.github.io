@@ -188,7 +188,7 @@ DC-RS와 ExpeL 둘 다 갱신을 전부 받으면 초중반에는 좋아지다�
 
 앞에서 본 [Experience-Following 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)의 Add all 결과랑 같은 모양이다. 거기서는 최종 성능만 봤는데, 여기서는 곡선이 꺾이는 지점까지 보여준다.
 
-## **4. 지금 관점: 갱신을 배포로 본다**
+## **4. 지금 관점: 갱신 전에 옛 버전과 비교하기**
 
 앞 논문들에서 본 갱신 방식을 모아보면 이렇다.
 

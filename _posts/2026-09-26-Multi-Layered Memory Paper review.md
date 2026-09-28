@@ -132,7 +132,7 @@ Experiential은 없다. CoALA의 procedural에 해당하는 계층도 없다.
 
 앞에서 본 [LongMemEval 리뷰](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서 ABS(회피)를 따로 능력으로 둔 것과 이어지는 얘기다.
 
-## **4. 지금 관점: 계층을 몇 개 둘 것인가**
+## **4. 지금 관점: 계층을 몇 개 둘까**
 
 ablation만 놓고 보면 순서가 이렇게 나온다.
 

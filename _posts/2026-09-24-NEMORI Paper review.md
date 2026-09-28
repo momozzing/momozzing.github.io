@@ -58,16 +58,16 @@ Predictive Coding Theory(Rao & Ballard 1999, Friston 2010, Clark 2013)에서 기
 
 ![NEMORI 전체 구조 (논문 Figure 1)](https://momozzing.github.io/assets/images/nemori/fig1-nemori-overview.png)
 
-위쪽 Episodic Memory Integration이 원시 대화를 서사 에피소드로 바꾸고, 아래쪽 Semantic Knowledge Distillation이 예측 오차로 지식을 뽑는다.
+위쪽 Episodic Memory Integration이 원시 대화를 이야기처럼 이어지는 에피소드로 바꾸고, 아래쪽 Semantic Knowledge Distillation이 예측 오차로 지식을 뽑는다.
 
 오른쪽은 뽑은 지식을 받는 쪽이다. 자체 관리 모듈이나 MemoryOS, A-MEM 같은 외부 시스템에 증류 층으로 붙일 수 있다고 한다.
 
 ### **2.2 Episodic Memory Integration**
 
-원시 대화를 이어지는 서사(에피소드)로 바꾼다. 세 단계다.
+원시 대화를 이야기처럼 이어지는 에피소드로 바꾼다. 세 단계다.
 
 1. Local Message Partitioning : 메시지 버퍼 `B`에 쌓다가 관측 창 길이 `w`에 도달하면 나눈다. 창 안에서 어디까지가 한 덩어리인지 LLM이 보고 경계를 정한다
-2. Narrative Episode Generation : 나눈 묶음을 서사로 만든다
+2. Narrative Episode Generation : 나눈 묶음을 이야기 형태의 에피소드로 만든다
 3. Associative Memory Integration : 기존 에피소드와 이어지는 게 있으면 합치고, 없으면 따로 넣는다
 
 앞에서 본 [LongMemEval 리뷰](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)의 CP 1(Value 입자)과 같은 문제인데, 거기서는 "round가 최적"이라는 고정 답이었고 여기서는 LLM이 경계를 찾는다.

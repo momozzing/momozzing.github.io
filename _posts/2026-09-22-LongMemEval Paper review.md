@@ -207,7 +207,7 @@ Chain-of-Note(답하기 전에 필요한 내용을 먼저 뽑음)랑 구조화�
 
 근거 세션만 넣어주는 oracle 설정에서 잰 결과다. JSON 형식에 CoN을 붙인 조합이 나머지 셋보다 크게 높다고 한다.
 
-## **5. 지금 관점: ReFind와 겹쳐 읽기**
+## **5. 지금 관점: ReFind와 비교**
 
 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)랑 비교해보면,
 
