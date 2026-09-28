@@ -1,0 +1,21 @@
+# 논문리뷰 분야. 포스트 front matter 의 field 값과 key 가 같아야 한다.
+- key: agent-memory
+  title: "Agent Memory"
+  desc: "에이전트가 대화와 경험을 어떻게 기억하는가. MemGPT부터 2026년 논문까지 나온 순서대로 읽는다."
+  order: asc
+- key: agent
+  title: "LLM Agent"
+  desc: "LLM이 생각하고, 도구를 쓰고, 행동하는 구조. ReAct, Reflexion, Voyager, CoALA."
+  order: asc
+- key: llm
+  title: "LLM"
+  desc: "대형 언어 모델의 학습, 튜닝, 안전."
+  order: asc
+- key: dialog
+  title: "대화 시스템 (TOD · DST)"
+  desc: "목적형 대화, 슬롯 필링, 대화 상태 추적."
+  order: asc
+- key: nlp
+  title: "NLP 기초"
+  desc: "NER, 파싱, 관계 추출, 번역, Post-training."
+  order: asc

@@ -17,6 +17,7 @@ mathjax: true
 # classes: wide
 toc: true
 toc_sticky: true
+field: dialog
 ---
 
 [이전 리뷰](https://momozzing.github.io/study/TOD,-DST/) -> TOD, DST 설명 

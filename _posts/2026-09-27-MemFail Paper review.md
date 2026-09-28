@@ -1,5 +1,5 @@
 ---
-date: 2026-09-28 01:00:00 +0900
+date: 2026-09-27 12:00:00 +0900
 title: "MemFail Paper review"
 excerpt: "메모리 시스템을 블랙박스로 두지 않는다. 요약·저장·검색 세 연산으로 분해해서 어느 단계에서 깨졌는지 짚어내는 진단 벤치마크."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 MemFail: Stress-Testing Failure Modes of LLM Memory Systems
@@ -206,4 +207,4 @@ conclusion 부분을 보면, 지금 시스템들은 구조적인 제약에 묶�
 
 -> 앞의 시스템 논문들이 다 좋은 수치를 냈는데, 그 수치 뒤에 어떤 실패가 있는지는 이런 걸로 봐야 할 것 같다. 도입할 거면 벤치마크 점수보다 이 네 테스트를 직접 돌려보는 게 나을 것 같다.
 
-다음은 마지막 두 편이다. [From Human Memory to AI Memory](https://arxiv.org/abs/2504.15965)로 2025년 서베이와 비교해보고, [AMV-L](https://arxiv.org/abs/2603.04443)로 지연 관리를 본다.
+다음은 [Janus](https://momozzing.github.io/paper%20review/Janus-Selective-Memory-Update-Paper-review/)다. 새 메모리를 바로 쓰지 않고 옛 메모리랑 비교해서 나은 쪽을 남기는 갱신 컨트롤러다.

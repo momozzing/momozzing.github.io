@@ -507,3 +507,38 @@ html[data-theme="dark"] {
     @include dark-theme;
   }
 }
+
+/* 논문리뷰 분야 카드 (/categories/Paper_review/) */
+.paper-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.paper-fields__card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid rgba(127, 127, 127, 0.3);
+  border-radius: 10px;
+  text-decoration: none !important;
+  color: inherit !important;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.paper-fields__card:hover {
+  border-color: rgba(127, 127, 127, 0.7);
+  transform: translateY(-2px);
+}
+.paper-fields__title { font-size: 1.15em; font-weight: 700; }
+.paper-fields__meta { font-size: 0.85em; opacity: 0.65; }
+.paper-fields__desc { font-size: 0.92em; opacity: 0.85; line-height: 1.5; }
+
+/* 분야별 논문 목록 (/paper-review/<field>/) */
+.paper-field__desc { opacity: 0.85; }
+.paper-field__back { font-size: 0.9em; }
+.paper-field__list { padding-left: 1.6em; }
+.paper-field__item { margin-bottom: 1.1rem; }
+.paper-field__title { font-weight: 600; }
+.paper-field__excerpt { margin: 0.2rem 0 0; font-size: 0.9em; opacity: 0.75; }
+.paper-field__item--extra { list-style: none; margin-left: -1.6em; padding-top: 0.6rem; border-top: 1px dashed rgba(127, 127, 127, 0.35); }

@@ -1,5 +1,5 @@
 ---
-date: 2026-09-24 09:00:00 +0900
+date: 2026-09-23 12:00:00 +0900
 title: "A-MEM Paper review"
 excerpt: "Zettelkasten을 LLM 에이전트에 옮겼다. 새 기억이 들어오면 스스로 링크를 걸고, 그 과정에서 기존 기억의 맥락·키워드·태그까지 고쳐 쓴다."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 A-Mem: Agentic Memory for LLM Agents
@@ -22,7 +23,7 @@ A-MEM은 Rutgers University 등에서 만든 LLM 에이전트용 메모리 시�
 
 2025년 2월 17일에 나왔고, 2025년 10월 8일에 v11까지 갔다. 저자 6명에 28쪽이다.
 
-앞에서 본 [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)와 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)은 사람이 구조를 정했다. Mem0는 네 가지 연산을 사람이 정했고, Zep은 엔티티-관계-커뮤니티 3계층을 사람이 설계했다.
+앞에서 본 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)과 뒤에서 볼 [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)는 사람이 구조를 정한다. Zep은 엔티티-관계-커뮤니티 3계층을 사람이 설계했고, Mem0는 네 가지 연산을 사람이 정했다.
 
 A-MEM은 구조를 에이전트가 스스로 만들게 한다.
 
@@ -30,7 +31,7 @@ A-MEM은 구조를 에이전트가 스스로 만들게 한다.
 
 ## **1. Introduction**
 
-introduction 부분을 보면 문제 제기가 앞 두 논문이랑 좀 다르다.
+introduction 부분을 보면 문제 제기가 Zep이나 Mem0랑 좀 다르다.
 
 지금 메모리 시스템들은 저장과 검색은 되는데 메모리를 정교하게 조직하지는 못한다고 한다. 그래프 DB를 쓴 최근 시도들도 마찬가지고, 연산과 구조가 고정돼 있어서 태스크가 바뀌면 적응을 못 한다고 한다.
 
@@ -96,7 +97,7 @@ m*_j ← LLM( m_n ∥ M_near \ m_j ∥ m_j ∥ P_s3 )
 
 새 경험이 들어오면 옛 기억의 해석이 바뀐다는 생각이다. 논문은 이게 사람이 배우는 과정이랑 비슷하다고 한다. 시간이 지나면 지식 구조가 정교해지고 여러 메모리에 걸친 패턴을 찾게 된다는 것이다.
 
--> 그런데 앞에서 본 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/) 기준으로 보면 이 대체는 비가역이다. `c_i`(원본)는 남지만 `X_i`(맥락 서술), `K_i`, `G_i`는 덮어쓴다. 진화가 잘못 가면 이전 해석으로 못 돌아가는 거 아닌가??
+-> 그런데 나중에 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/) 기준으로 보면 이 대체는 비가역이다. `c_i`(원본)는 남지만 `X_i`(맥락 서술), `K_i`, `G_i`는 덮어쓴다. 진화가 잘못 가면 이전 해석으로 못 돌아가는 거 아닌가??
 
 ## **3. Experiments**
 
@@ -121,7 +122,7 @@ m*_j ← LLM( m_n ∥ M_near \ m_j ∥ m_j ∥ P_s3 )
 
 1. 토큰을 훨씬 적게 쓴다. LOCOMO와 MEMGPT는 16,900토큰을 쓰는데 A-MEM은 1,200~2,500토큰으로 순위가 더 높다. 7~14배 차이다.
 2. 작은 모델에서 차이가 더 크다. Qwen2.5-3b에서 A-MEM은 순위 1.0, MemGPT는 2.4다. Multi Hop F1이 12.57 vs 5.07로 2.5배다. 컨텍스트에 다 넣어주는 방식은 약한 모델이 잘 소화를 못 하는 것 같다.
-3. Single Hop은 GPT-4o의 LOCOMO가 더 높다(61.56 vs 48.43). 단순 사실을 물을 때는 원문을 통째로 주는 게 낫다. 앞 리뷰들에서도 계속 나온 패턴이다.
+3. Single Hop은 GPT-4o의 LOCOMO가 더 높다(61.56 vs 48.43). 단순 사실을 물을 때는 원문을 통째로 주는 게 낫다. 이 시리즈 다른 리뷰들에서도 계속 나오는 패턴이다.
 
 ### **3.1 Ablation**
 
@@ -144,16 +145,16 @@ Link Generation(LG)과 Memory Evolution(ME)을 하나씩 빼본다.
 
 ## **4. 지금 관점: 진화를 켤 것인가**
 
-앞에서 본 논문들이랑 나란히 놓아보면 이렇다.
+이 시리즈의 다른 논문들이랑 나란히 놓아보면 이렇다.
 
 - Mem0 : 구조는 사람이 정함(4연산). 원본 안 남김. 갱신은 DELETE
 - Zep : 구조는 사람이 정함(3계층). 원본은 episode로 남김. 갱신은 무효화
 - A-MEM : 구조는 에이전트가 정함(링크·진화). 원본은 `c_i`로 남김. 갱신은 덮어쓰기
-- ReFind : 구조 없음. 원본 남김. 갱신 없음
+- ReFind (뒤에서 볼 논문) : 구조 없음. 원본 남김. 갱신 없음
 
 A-MEM은 원본은 남기고 해석은 덮어쓰는 쪽이다.
 
--> 중간 지점 같은데 걸리는 게 하나 있다. 진화가 연쇄된다. 새 메모리가 들어올 때마다 이웃 넷의 맥락이 바뀌고, 그 이웃들이 또 다른 메모리의 이웃이다. Rate-Distortion에서 본 반복 압축 오차 누적이 여기서도 생길 수 있을 것 같은데, 논문은 이걸 재지 않았다.
+-> 중간 지점 같은데 걸리는 게 하나 있다. 진화가 연쇄된다. 새 메모리가 들어올 때마다 이웃 넷의 맥락이 바뀌고, 그 이웃들이 또 다른 메모리의 이웃이다. Rate-Distortion에서 다루는 반복 압축 오차 누적이 여기서도 생길 수 있을 것 같은데, 논문은 이걸 재지 않았다.
 
 -> 키 확장은 가져다 쓰기 쉬워 보인다. `concat(원문, 키워드, 태그, 맥락)`으로 임베딩을 만드는 것만으로 검색 경로가 늘어난다. LongMemEval에서 +9.4%p recall이 나왔던 방법이고, 링크나 진화 없이도 쓸 수 있다.
 
@@ -169,8 +170,8 @@ conclusion 부분을 보면 제텔카스텐의 조직 원리에 에이전트가 
 
 한계도 직접 적어두었다. 메모리를 동적으로 조직하긴 하지만 그 품질이 기반 언어모델 능력에 달려 있고, 모델이 다르면 맥락 서술이나 연결이 다르게 만들어질 수 있다고 한다.
 
--> 구조를 에이전트한테 맡기면 구조가 모델에 따라 달라진다는 얘기다. [Model Upgrade 생존](https://arxiv.org/abs/2609.05339) 논문에서 다루는 문제랑 이어지는 부분이다.
+-> 구조를 에이전트한테 맡기면 구조가 모델에 따라 달라진다는 얘기다. 나중에 볼 [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/) 논문에서 다루는 문제랑 이어지는 부분이다.
 
-여태까지 Mem0나 Zep이 사람이 짠 구조에 기억을 넣었다면, A-MEM은 에이전트가 링크를 걸고 기존 기억까지 고쳐 쓰면서 구조를 만들어간다.
+Zep이나 Mem0가 사람이 짠 구조에 기억을 넣는다면, A-MEM은 에이전트가 링크를 걸고 기존 기억까지 고쳐 쓰면서 구조를 만들어간다.
 
-다음은 [MemGPT](https://arxiv.org/abs/2310.08560)다. 이 표에서 계속 베이스라인으로 나온 시스템이고, 시간순으로는 이 계열의 출발점이다.
+다음은 [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)다. 대화에서 사실을 뽑아 ADD·UPDATE·DELETE·NOOP 중 하나로 반영하는 방식이고, full-context 대비 p95 지연을 91% 줄였다고 한다.

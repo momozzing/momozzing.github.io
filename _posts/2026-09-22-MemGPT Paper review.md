@@ -1,5 +1,5 @@
 ---
-date: 2026-09-24 12:00:00 +0900
+date: 2026-09-22 09:00:00 +0900
 title: "MemGPT Paper review"
 excerpt: "컨텍스트 창을 물리 메모리로, 외부 저장소를 디스크로 본다. OS의 가상 메모리 페이징을 LLM에 옮긴 2023년 논문이자 이 계열의 출발점."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 MemGPT: Towards LLMs as Operating Systems
@@ -24,7 +25,7 @@ OS가 메모리와 디스크 사이를 페이징하듯이, LLM이 컨텍스트 �
 
 2023년 10월 12일에 나왔고 2024년 2월 12일에 v2가 올라왔다. 저자 7명에 13쪽이고, 학회 발표 없이 arXiv에만 있다.
 
-앞의 네 리뷰에서 계속 베이스라인으로 나온 시스템이다. Zep이 DMR에서 비교한 상대였고, Mem0와 A-MEM 표에도 나왔고, ReFind 표에서는 28.0이었다. 시간순으로는 이 계열의 출발점이라 여기서 읽어봤다.
+이후 메모리 논문들에서 계속 베이스라인으로 나오는 시스템이다. 뒤에서 볼 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)이 DMR에서 비교한 상대이고, [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)와 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/) 표에도 나오고, ReFind 표에서는 28.0이다. 시간순으로는 이 계열의 출발점이라 제일 먼저 읽었다.
 
 2023년 논문이라 지금 기준으로는 오래되었다. 그래도 이후 메모리 시스템들이 쓰는 용어가 여기서 많이 나왔다.
 
@@ -86,7 +87,7 @@ LLM이 출력에 `request_heartbeat=true`라는 인자를 넣으면 바로 다�
 
 이 플래그가 없으면(yield) 다음 외부 이벤트(사용자 메시지나 예약된 인터럽트)가 올 때까지 LLM을 돌리지 않는다.
 
--> ReAct 루프랑 거의 같은 구조다. 앞에서 본 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서는 반복 검색이 M 세트에서 20.4점을 차지했는데, MemGPT도 2023년에 이미 반복 검색을 하고 있었다. 그런데 ReFind 표에서 MemGPT가 28.0에 그친 건 검색 인터페이스가 세션·시간·중복을 몰라서인 것 같다.
+-> ReAct 루프랑 거의 같은 구조다. 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서는 반복 검색이 M 세트에서 20.4점을 차지하는데, MemGPT도 2023년에 이미 반복 검색을 하고 있었다. 그런데 ReFind 표에서 MemGPT가 28.0에 그친 건 검색 인터페이스가 세션·시간·중복을 몰라서인 것 같다.
 
 ### **2.5 메모리 압력 경고**
 
@@ -96,7 +97,7 @@ Figure 1 예시를 보면 동작 방식이 잘 보인다.
 
 Figure 4는 갱신하는 예시다. 사용자가 헤어졌다고 하니 `working_context.replace("Boyfriend named James", "Ex-boyfriend named James")`를 호출한다.
 
-replace로 덮어쓴다. 앞에서 본 Mem0의 UPDATE·DELETE는 이쪽이고, Zep은 무효화로 처리해서 여기서 갈린다.
+replace로 덮어쓴다. 뒤에서 볼 Mem0의 UPDATE·DELETE는 이쪽이고, Zep은 무효화로 처리해서 여기서 갈린다.
 
 ## **3. 평가**
 
@@ -115,7 +116,7 @@ replace로 덮어쓴다. 앞에서 본 Mem0의 UPDATE·DELETE는 이쪽이고, Z
 
 고정 컨텍스트 베이스라인보다 훨씬 높다. GPT-4에서 32.1% → 92.5%다.
 
--> 그런데 앞에서 본 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)에서 잰 full-conversation 베이스라인이 94.4%였다. MemGPT의 93.4%는 대화를 통째로 넣은 것보다 낮다. MemGPT가 비교한 건 잘린 컨텍스트였지 전체 컨텍스트가 아니었다.
+-> 그런데 뒤에서 볼 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)에서 잰 full-conversation 베이스라인이 94.4%다. MemGPT의 93.4%는 대화를 통째로 넣은 것보다 낮다. MemGPT가 비교한 건 잘린 컨텍스트였지 전체 컨텍스트가 아니었다.
 
 ### **3.2 대화 오프너**
 
@@ -150,14 +151,14 @@ Wikipedia 2천만 문서 임베딩 데이터셋도 같이 공개했다.
 - `request_heartbeat` 연쇄 : ReFind의 ReAct 반복 검색
 - 메모리 압력 경고 : 모든 압축 트리거
 
-앞에서 본 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 가역 방식 예로 "Quest와 MemGPT-archival 방식"을 들었는데, 여기서 온 것이다. archival storage에 원본을 두고 질의할 때 꺼내니까 P-rev를 만족한다.
+나중에 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 가역 방식 예로 "Quest와 MemGPT-archival 방식"을 드는데, 여기서 온 것이다. archival storage에 원본을 두고 질의할 때 꺼내니까 P-rev를 만족한다.
 
 그런데 MemGPT 안에는 가역과 비가역이 섞여 있다.
 
 - 가역 : recall storage, archival storage. 원본이 남는다
 - 비가역 : FIFO 큐에서 밀려난 메시지의 재귀 요약, working context의 `replace`
 
-재귀 요약은 큐에서 밀린 메시지가 요약되고, 그 요약이 또 요약된다. Rate-Distortion 실험 2에서 본 반복 압축 오차 누적이 이 부분이다.
+재귀 요약은 큐에서 밀린 메시지가 요약되고, 그 요약이 또 요약된다. Rate-Distortion 실험 2에서 다루는 반복 압축 오차 누적이 이 부분이다.
 
 다만 MemGPT는 recall storage에 원본을 남기니까 요약에서 빠진 걸 검색으로 다시 찾을 수는 있다.
 
@@ -171,7 +172,7 @@ Wikipedia 2천만 문서 임베딩 데이터셋도 같이 공개했다.
 
 한계도 있다.
 
-1. 전부 LLM 판단에 달려 있다. 언제 저장할지, 뭘 검색할지, 언제 함수를 연쇄할지 다 모델이 정한다. 2023년 GPT-4 기준으로 설계됐고, 앞에서 본 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)의 Qwen2.5-3b 결과를 보면 약한 모델에서는 잘 안 돌아간다(순위 2.4).
+1. 전부 LLM 판단에 달려 있다. 언제 저장할지, 뭘 검색할지, 언제 함수를 연쇄할지 다 모델이 정한다. 2023년 GPT-4 기준으로 설계됐고, 뒤에서 볼 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)의 Qwen2.5-3b 결과를 보면 약한 모델에서는 잘 안 돌아간다(순위 2.4).
 2. 토큰을 많이 쓴다. A-MEM 표에서 MemGPT는 16,900~17,000토큰을 쓰는데, A-MEM은 1,200~2,500이다. main context에 FIFO 큐를 통째로 들고 있어서다.
 
 ## **5. Conclusion**
@@ -186,4 +187,4 @@ conclusion 부분을 보면 OS에서 아이디어를 가져와 LLM의 제한된 
 
 3년이 지난 지금 벤치마크 수치는 대부분 추월당했지만, 여기서 나온 용어들은 이후 논문들에서 계속 쓰이고 있다.
 
-다음은 [Anatomy of Agentic Memory](https://arxiv.org/abs/2602.19320)다. 여기까지 본 시스템들의 평가 방식 자체에 어떤 한계가 있는지 따지는 논문이라, 지금까지의 수치를 어떻게 읽어야 할지 보자.
+다음은 [HippoRAG](https://momozzing.github.io/paper%20review/HippoRAG-Paper-review/)다. 해마 색인 이론을 RAG에 옮겨서, LLM으로 스키마 없는 지식그래프를 만들고 Personalized PageRank로 한 번의 검색에 다중홉을 푼다.

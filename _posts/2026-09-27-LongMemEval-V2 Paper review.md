@@ -1,5 +1,5 @@
 ---
-date: 2026-09-26 15:00:00 +0900
+date: 2026-09-27 09:00:00 +0900
 title: "LongMemEval-V2 Paper review"
 excerpt: "V1이 사용자 이력을 물었다면 V2는 환경 경험을 묻는다. 웹 에이전트가 숙련된 동료가 되는가를 재는 벤치마크, 최대 1억 1500만 토큰."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 LongMemEval-V2: Evaluating Long-Term Agent Memory Toward Experienced Colleagues
@@ -24,7 +25,7 @@ LongMemEval-V2는 UCLA에서 만든 에이전트 메모리 벤치마크다.
 
 2026년 5월 12일에 나왔고, 저자 7명에 32쪽이다. [V1](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)과 1저자(Di Wu)가 같다.
 
-V1 리뷰 끝에 "평가 기준을 V2로 옮겨야 할지 판단해야 한다"고 적었었다. 읽어보니 V2는 V1의 후속이라기보다 다른 문제를 잰다. 둘 중 하나를 고르는 게 아니라 무엇을 재려는지에 따라 다르다.
+평가 기준을 V1에서 V2로 옮겨야 할지 보려고 읽었다. 읽어보니 V2는 V1의 후속이라기보다 다른 문제를 잰다. 둘 중 하나를 고르는 게 아니라 무엇을 재려는지에 따라 다르다.
 
 좀 더 자세히 알아보자.
 
@@ -65,7 +66,7 @@ V2는 메모리 시스템이 에이전트를 맞춤 환경을 잘 다루는 숙�
 
 V1의 다섯 가지(정보 추출, 다중 세션 추론, 지식 갱신, 시간 추론, 회피)랑 겹치는 게 거의 없다. V1은 사실을 묻고 V2는 절차와 함정을 묻는다.
 
-[서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)의 Functions 분류로 보면 V1은 factual memory를, V2는 experiential memory를 잰다. 앞의 열두 편은 거의 다 factual 쪽이었다.
+[서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)의 Functions 분류로 보면 V1은 factual memory를, V2는 experiential memory를 잰다. 앞에서 본 메모리 논문들은 거의 다 factual 쪽이었다.
 
 -> Gotchas랑 Premise Awareness는 처음 보는 축이다. "이 환경에서 자주 깨지는 것", "다른 데서는 됐는데 여기선 안 되는 것"을 묻는 벤치마크는 못 봤다.
 
@@ -116,7 +117,7 @@ Query(q)    — 최종 메모리에 질의
 
 질의할 때는 LLM 컨트롤러가 질의랑 지금 메모리 스냅샷을 보고 풀마다 검색 질의를 만든다.
 
-앞에서 본 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)의 다중 충실도(P-fid)를 구현한 모양이다. 원본 조각이랑 추상 노트를 같이 둔다.
+뒤에서 볼 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)의 다중 충실도(P-fid)를 구현한 모양이다. 원본 조각이랑 추상 노트를 같이 둔다.
 
 ### **5.2 AgentRunbook-C (코딩 에이전트)**
 
@@ -130,7 +131,7 @@ Query(q)    — 최종 메모리에 질의
 - query-time manifest : 지금 메모리 구조 요약. 자세히 보기 전에 관련 궤적을 추리는 데 씀
 - helper script : 상태 구간 보기, 궤적 안 검색 같은 자주 쓰는 연산
 
-앞에서 본 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)는 원본을 두고 에이전트가 검색하게 했는데, 여기서는 원본을 파일시스템에 두고 코딩 에이전트에게 맡긴다.
+나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)는 원본을 두고 에이전트가 검색하게 하는데, 여기서는 원본을 파일시스템에 두고 코딩 에이전트에게 맡긴다.
 
 ## **6. 결과**
 
@@ -177,7 +178,7 @@ V2는 환경에 대한 경험을 익히는지를 25M–115M 토큰 규모에서 
 
 업무용 챗봇이라면 V1이 여전히 기준선일 것 같다. 사용자 정보를 기억하고 갱신하는 게 주로 필요한 거라서, V1의 KU(지식 갱신)랑 ABS(회피)가 바로 해당된다.
 
-다만 V2가 보는 축은 앞의 열두 편에서 거의 비어 있었다. experiential memory를 제대로 잰 건 앞에서 본 [Experience-Following](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/) 하나였고, 그것도 직접 만든 태스크였다.
+다만 V2가 보는 축은 앞에서 본 논문들에서 거의 비어 있었다. experiential memory를 제대로 잰 건 앞에서 본 [Experience-Following](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/) 하나였고, 그것도 직접 만든 태스크였다.
 
 -> Gotchas랑 Premise Awareness는 도구 호출을 반복하는 에이전트에 바로 해당하는 것 같다. 예를 들면 MCP 도구가 특정 조건에서 실패하는 패턴을 에이전트가 익히는지 같은 것.
 
@@ -203,4 +204,4 @@ conclusion 부분을 보면, 메모리 시스템은 에이전트가 특정 환�
 
 여태까지 메모리 벤치마크가 사용자에 대한 사실을 기억하는지를 봤다면, V2는 에이전트가 환경에서 겪은 경험을 익히는지를 본다.
 
-다음은 [HippoRAG](https://arxiv.org/abs/2405.14831)다. 앞에서 본 [ReFind 표](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서 구조화 메모리 중에 BM25-RAG를 넘은 유일한 시스템이다.
+다음은 [MemFail](https://momozzing.github.io/paper%20review/MemFail-Paper-review/)이다. 메모리 시스템을 요약·저장·검색 세 연산으로 나눠서, 틀린 답이 어느 단계에서 나왔는지 찾아내는 진단 벤치마크다.

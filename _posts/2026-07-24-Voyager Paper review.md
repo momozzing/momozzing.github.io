@@ -10,6 +10,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent
 ---
 
 Voyager: An Open-Ended Embodied Agent with Large Language Models

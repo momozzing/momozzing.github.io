@@ -1,5 +1,5 @@
 ---
-date: 2026-09-26 12:00:00 +0900
+date: 2026-09-28 03:00:00 +0900
 title: "Memory Portability Paper review"
 excerpt: "모델 교체는 흔한데 메모리 마이그레이션은 아니다. 같은 저장소를 그대로 두고도 에이전트는 잊을 수 있다는 걸 48개 이력으로 통제 측정한 논문."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 
@@ -199,4 +200,4 @@ KG-fixed는 ∆가 0.0004였다. 자유롭게 쓰게 하지 말고 정해진 필
 
 여태까지 메모리 논문들이 한 모델 안에서 성능을 쟀다면, 이 논문은 모델이 바뀐 다음에도 메모리가 쓸 수 있는지를 잰다.
 
-다음은 [LongMemEval-V2](https://arxiv.org/abs/2605.12493)다.
+다음은 [Agent Memory 논문 21편 회고](https://momozzing.github.io/study/Agent-Memory-Retrospective/)다. 21편을 논문이 나온 순서대로 다시 늘어놓고 흐름을 정리했다.

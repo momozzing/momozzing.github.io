@@ -1,5 +1,5 @@
 ---
-date: 2026-09-25 15:00:00 +0900
+date: 2026-09-25 12:00:00 +0900
 title: "SYNAPSE Paper review"
 excerpt: "벡터 유사도 대신 활성 확산으로 관련성을 만든다. 측면 억제와 시간 감쇠로 적대적 질의를 96.6 F1로 거절하고, 질의당 814토큰만 쓴다."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 SYNAPSE: Empowering LLM Agents with Episodic-Semantic Memory via Spreading Activation
@@ -26,7 +27,7 @@ SYNAPSE는 University of Georgia 외 5개 기관에서 만든 에이전트 메�
 
 이름이 같은 다른 논문이 있다. Synapse: Trajectory-as-Exemplar Prompting([2306.07863](https://arxiv.org/abs/2306.07863))은 다른 논문이다. 검색하면 헷갈리기 쉽다.
 
-[앞 리뷰](https://momozzing.github.io/paper%20review/Multi-Layered-Memory-Paper-review/)의 MLMF는 episodic이랑 semantic 계층을 나란히 두기만 했는데, 여기서는 둘을 어떻게 잇느냐를 다룬다. 그리고 그 연결을 미리 계산해두지 않는다.
+이 논문은 episodic이랑 semantic 계층을 어떻게 잇느냐를 다룬다. 뒤에서 볼 [Multi-Layered Memory](https://momozzing.github.io/paper%20review/Multi-Layered-Memory-Paper-review/)의 MLMF는 두 계층을 나란히 두기만 하는데, 여기서는 둘을 잇는다. 그리고 그 연결을 미리 계산해두지 않는다.
 
 좀 더 자세히 알아보자.
 
@@ -42,7 +43,7 @@ RAG는 이력을 벡터 DB에 넣고 의미 유사도로 꺼낸다. 사실 하�
 
 앞에서 본 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)은 LLM으로 링크를 미리 걸어뒀는데, SYNAPSE는 질의가 올 때 에너지를 흘려서 그때그때 관련된 부분그래프를 찾는다.
 
--> [ReFind 리뷰](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서 본 "결정을 질의 시점까지 미룬다"는 것과 비슷하다. 이번엔 그래프 쪽이다.
+-> 나중에 볼 [ReFind 리뷰](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)의 "결정을 질의 시점까지 미룬다"는 것과 비슷하다. 이번엔 그래프 쪽이다.
 
 ## **2. 통합 episodic-semantic 그래프**
 
@@ -75,7 +76,7 @@ Collins와 Loftus(1975)의 사람 의미기억 모델에서 가져왔다고 한�
 
 둘의 Top-k 합집합이 앵커가 되고, 앵커에만 에너지를 넣는다.
 
-앞에서 본 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)랑 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)에서도 sparse+dense 조합을 썼는데, 여기서도 나온다.
+앞에서 본 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)에서도 sparse+dense 조합을 썼는데, 여기서도 나온다. 뒤에서 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)도 같은 조합을 쓴다.
 
 -> 세 논문이 따로 같은 결론에 온 셈이다. 고유명사는 어휘 검색, 주제는 dense 검색이 필요하다.
 
@@ -225,9 +226,9 @@ PageRank를 전역 사전확률로 쓰는 것도 떼어낼 수 있다. 자주 �
 1. Cold Start : 활성 확산은 그래프가 충분히 연결돼 있어야 효과가 있다. 이력이 적은 초기 대화에서는 그래프를 유지하는 비용에 비해 단순한 선형 버퍼보다 얻는 게 적다고 한다
 2. Cognitive Tunneling : 측면 억제 때문에, 꼼꼼히 다 찾는 게 나은 단순한 질의에서는 성능이 떨어질 때가 있다고 한다
 
--> 앞 리뷰들에서도 계속 나온 모양이다. 구조를 정교하게 만들면 단순한 질의에서 손해를 본다. ReFind 표에서 구조화 메모리가 BM25-RAG에 졌던 것, Mem0g가 multi-hop에서 Mem0에 졌던 것과 비슷하다.
+-> 앞 리뷰에서도 나온 모양이다. 구조를 정교하게 만들면 단순한 질의에서 손해를 본다. Mem0g가 multi-hop에서 Mem0에 졌던 것과 비슷하다. 뒤에서 볼 ReFind 표에서도 구조화 메모리가 BM25-RAG에 진다.
 
-평가가 LoCoMo 텍스트 벤치마크 하나뿐이라는 것도 한계로 적었다. 앞에서 본 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/) 기준으로 보면 full-context 비교(∆)가 없어서 포화 여부도 알 수 없다.
+평가가 LoCoMo 텍스트 벤치마크 하나뿐이라는 것도 한계로 적었다. 다음에 볼 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/) 기준으로 보면 full-context 비교(∆)가 없어서 포화 여부도 알 수 없다.
 
 ## **8. Conclusion**
 
@@ -239,4 +240,4 @@ conclusion 부분을 보면, 생물학적 활성 확산을 흉내 내서 기존 
 
 -> 업무용 챗봇에서는 모르는 걸 지어내는 쪽이 더 큰 문제라서, 이쪽이 더 중요할 수도 있을 것 같다.
 
-다음은 [MemMachine](https://arxiv.org/abs/2604.04853)이다. 개인화에 맞춘 시스템이라 문제 설정이 제일 가까운 쪽이다.
+다음은 [Anatomy of Agentic Memory](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)다. 지금까지의 메모리 벤치마크 수치를 어떻게 읽어야 하는지, 벤치마크 포화·F1과 의미의 어긋남·백본 의존·agency tax를 실측한 논문이다.

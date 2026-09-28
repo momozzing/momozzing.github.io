@@ -15,6 +15,7 @@ mathjax: true
 # classes: wide
 toc: true
 toc_sticky: true
+field: llm
 ---
 
 SOLAR는 업스테이지에서 만든 오픈소스 LLM이다.

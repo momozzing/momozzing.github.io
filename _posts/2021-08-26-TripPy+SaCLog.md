@@ -14,6 +14,7 @@ tags:
   - Dialog State Tracking
 last_modified_at: 2021-08-26T08:06:00-05:00
 mathjax: true
+field: dialog
 ---
 [논문 링크](https://arxiv.org/pdf/2106.00291.pdf)
 

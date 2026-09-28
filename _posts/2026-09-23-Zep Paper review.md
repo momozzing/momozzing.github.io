@@ -1,5 +1,5 @@
 ---
-date: 2026-09-23 15:00:00 +0900
+date: 2026-09-23 09:00:00 +0900
 title: "Zep Paper review"
 excerpt: "사실을 지우지 않고 무효화한다. 네 개의 타임스탬프로 양시간(bi-temporal)을 모델링해서, 무엇이 언제 참이었는지와 언제 그렇게 알았는지를 함께 남기는 지식그래프."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 Zep: A Temporal Knowledge Graph Architecture for Agent Memory
@@ -24,7 +25,7 @@ Zep은 Zep AI에서 만든 에이전트 메모리 시스템이다.
 
 사실을 지우지 않고 무효화 표시만 하는 시간 인식 지식그래프로 메모리를 만든다.
 
-[앞에서 본 Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)에서는 DELETE가 되돌릴 수 없는 삭제라서, 모순이라고 판단한 게 틀리면 복구할 방법이 없었는데, 여기서는 같은 문제를 삭제하지 않고 푼다.
+[뒤에서 볼 Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)에서는 DELETE가 되돌릴 수 없는 삭제라서, 모순이라고 판단한 게 틀리면 복구할 방법이 없는데, 여기서는 같은 문제를 삭제하지 않고 푼다.
 
 좀 더 자세히 알아보자.
 
@@ -48,7 +49,7 @@ RAG의 한계에서 시작한다.
 
 원본을 손실 없이 보관하고, 거기서 엔티티랑 관계를 뽑는다는 것이다. Mem0가 사실만 뽑고 원문을 안 남기는 거랑 반대다.
 
-[Rate-Distortion 논문](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/) 용어로 하면 Zep은 P-rev를 지킨다. 추출이 틀려도 에피소드로 돌아가면 된다.
+나중에 볼 [Rate-Distortion 논문](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/) 용어로 하면 Zep은 P-rev를 지킨다. 추출이 틀려도 에피소드로 돌아가면 된다.
 
 두 번째 층은 Semantic Entity Subgraph `G_s`다.
 
@@ -87,7 +88,7 @@ RAG의 한계에서 시작한다.
 
 엣지를 지우지 않고 `t_invalid`만 찍는다. 그래서 지금 관계가 뭔지랑, 관계가 시간에 따라 어떻게 바뀌어 왔는지를 같이 남길 수 있다.
 
-앞에서 본 Mem0는 모순이면 DELETE로 지워서 과거 상태가 사라지고, 판단이 틀려도 복구가 안 된다. 여기서는 `t_invalid`만 찍으니까 과거 상태를 조회할 수 있고, 판단이 틀리면 유효 구간을 다시 잡으면 된다.
+뒤에서 볼 Mem0는 모순이면 DELETE로 지워서 과거 상태가 사라지고, 판단이 틀려도 복구가 안 된다. 여기서는 `t_invalid`만 찍으니까 과거 상태를 조회할 수 있고, 판단이 틀리면 유효 구간을 다시 잡으면 된다.
 
 -> "작년에는 뭐라고 했지" 같은 질문에 Mem0는 답을 못 하고 Zep은 답할 수 있다. 지금 참인 것이랑 그때 참이었던 건 다른 질문인데, 지우는 방식으로는 뒤쪽을 못 푼다.
 
@@ -109,7 +110,7 @@ Search에서는 함수 세 개를 쓴다.
 
 논문은 BFS가 RAG 쪽에서는 거의 안 쓰였다고 한다. AriGraph나 Distill-SynthKG 정도가 예외라고 한다.
 
-세 개를 같이 쓰는 건 리랭킹 전에 후보를 넓게 모으려는 것이다. [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서 본 hybrid 검색이랑 비슷하다.
+세 개를 같이 쓰는 건 리랭킹 전에 후보를 넓게 모으려는 것이다. 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)의 hybrid 검색이랑 비슷하다.
 
 Constructor가 만드는 출력 형식은 이렇다.
 
@@ -126,7 +127,7 @@ ENTITY_NAME: entity summary
 
 ### **5.1 DMR**
 
-Deep Memory Retrieval은 MemGPT 팀이 자기들 주 평가 지표로 쓴 벤치마크다. 500개 다중 세션 대화, 대화당 5세션, 세션당 최대 12메시지다.
+Deep Memory Retrieval은 앞에서 본 [MemGPT](https://momozzing.github.io/paper%20review/MemGPT-Paper-review/) 팀이 자기들 주 평가 지표로 쓴 벤치마크다. 500개 다중 세션 대화, 대화당 5세션, 세션당 최대 12메시지다.
 
 | 방법 | 모델 | 점수 |
 |---|---|---:|
@@ -155,7 +156,7 @@ Zep이 MemGPT보다 높긴 한데, 대화를 통째로 넣은 full-conversation�
 
 여기서는 정확도도 오르고 지연도 줄었다. gpt-4o 기준으로 18.5% 상대 개선에 지연은 약 90% 줄었고, 컨텍스트 토큰은 115k → 1.6k다.
 
-앞에서 본 Mem0는 full-context보다 J를 6점 내주고 지연을 줄였는데, Zep은 정확도를 올리면서 지연을 줄였다.
+뒤에서 볼 Mem0는 full-context보다 J를 6점 내주고 지연을 줄이는데, Zep은 정확도를 올리면서 지연을 줄였다.
 
 -> LongMemEval이 긴 이력에서 관련된 부분만 찾는 과제라서 full-context가 오히려 불리한 것 같다.
 
@@ -178,11 +179,11 @@ single-session-assistant에서만 떨어진다. gpt-4o에서 −17.7%, gpt-4o-mi
 
 -> 이 유형은 어시스턴트가 한 세션 안에서 한 말을 묻는 건데, 어시스턴트 발화는 설명이나 추천이 많아서 엔티티로 뽑기 애매하다. 추출하면서 흐려지는 게 아닐까??
 
-LongMemEval에서 어시스턴트 쪽 정보 기억을 따로 능력으로 둔 게 이런 경우를 보려는 거였던 것 같다.
+앞에서 본 [LongMemEval](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서 어시스턴트 쪽 정보 기억을 따로 능력으로 둔 게 이런 경우를 보려는 거였던 것 같다.
 
 ## **6. 지금 관점: 삭제 대신 무효화**
 
-지금까지 본 논문들이 모순을 어떻게 다루는지 모아보면,
+이 시리즈 논문들이 모순을 어떻게 다루는지 모아보면,
 
 - Mem0 : DELETE로 지운다. 되돌릴 수 없다
 - Zep : `t_invalid`를 찍고 엣지는 남긴다. 되돌릴 수 있다
@@ -211,4 +212,4 @@ conclusion 부분을 보면 논문도 이건 그래프 기반 메모리의 초�
 
 -> 그래프를 안 쓰더라도 타임스탬프 네 개를 두는 건 그대로 가져다 쓸 수 있을 것 같다.
 
-다음은 [A-MEM](https://arxiv.org/abs/2502.12110)이다. 에이전트가 기억 구조를 스스로 정리하는 방식인데, 여기까지가 사람이 정한 구조였다면 그 다음 단계다.
+다음은 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)이다. Zettelkasten을 LLM 에이전트에 옮겨서, 새 기억이 들어오면 스스로 링크를 걸고 기존 기억의 맥락·키워드·태그까지 고쳐 쓴다. 여기까지가 사람이 정한 구조였다면 그 다음 단계다.

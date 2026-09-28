@@ -1,5 +1,5 @@
 ---
-date: 2026-09-25 12:00:00 +0900
+date: 2026-09-26 12:00:00 +0900
 title: "Multi-Layered Memory Paper review"
 excerpt: "working·episodic·semantic 세 계층을 나누고 하나씩 떼어보는 ablation. 계층 도입 판단에 쓸 만한 수치는 있으나 서지 정보에 검증 못 한 부분이 있다."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 Multi-Layered Memory Architectures for LLM Agents: An Experimental Evaluation of Long-Term Context Retention
@@ -26,7 +27,7 @@ Multi-Layered Memory는 Fulloop에서 만든 에이전트 메모리 구조다.
 
 앞 리뷰들에서 계속 미뤄둔 질문이 계층을 몇 개 둘 것인가였다. [CoALA](https://momozzing.github.io/paper%20review/CoALA-Paper-review/)는 네 개(working·episodic·semantic·procedural)를 말했고 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)은 세 개(episode·entity·community)를 썼다. 그런데 계층을 하나 뺐을 때 얼마나 나빠지는지 잰 실험은 없었다. 이 논문의 ablation이 그걸 보여준다.
 
-다만 이 논문은 앞의 여덟 편보다 근거가 약하다. 확인이 안 되는 부분을 먼저 적어두고 읽는다.
+다만 이 논문은 앞의 논문들보다 근거가 약하다. 확인이 안 되는 부분을 먼저 적어두고 읽는다.
 
 좀 더 자세히 알아보자.
 
@@ -128,7 +129,7 @@ semantic 계층이 1순위라는 건 Zep, Mem0랑 맞는다. 둘 다 엔티티�
 
 앞에서 본 [Experience-Following 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)에서는 과거 실행 경험이 행동을 직접 바꿨는데, 여기 ablation에는 experiential 계층이 아예 없다. 사실 기억만 다룬 실험이다.
 
-FMR을 따로 재는 건 가져와 볼 만하다. 앞의 논문들은 거짓 기억률을 따로 보고하지 않았다.
+FMR을 따로 재는 건 가져와 볼 만하다.
 
 -> 정확도가 같아도 지어내는 비율은 다를 수 있다. 업무용 챗봇에서는 지어내는 쪽이 더 큰 문제다.
 
@@ -140,10 +141,12 @@ conclusion 부분을 보면, 계층적 메모리 분해에 adaptive retrieval ga
 
 그리고 ablation으로 semantic consolidation(의미 통합)이랑 보존 통제가 장기 성능에 기여한다는 걸 확인했다고 한다.
 
-한계 절은 없다. 8쪽에 Limitations도 Future Work도 없다. 앞의 여덟 편은 전부 한계를 적었었다.
+한계 절은 없다. 8쪽에 Limitations도 Future Work도 없다.
 
 여태까지 본 논문들이 계층을 몇 개 둘지 각자 정해서 썼다면, 이 논문은 계층을 하나씩 빼보면서 어떤 계층이 얼마나 기여하는지를 쟀다.
 
+앞에서 본 [SYNAPSE](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)가 episodic이랑 semantic을 잇는 방식까지 다뤘다면, 이 논문은 두 계층을 나란히 두기만 한다.
+
 -> 검증이 안 되는 부분이 많아서 계층 ablation 표 하나 말고는 가져오기 어렵다. 그래도 그 표는 다른 데서 못 본 수치라서 읽었다.
 
-다음은 [SYNAPSE](https://arxiv.org/abs/2601.02744)다. episodic이랑 semantic을 연결하는 방식을 다루는데, 이 논문이 두 계층을 나란히 두기만 한 것에서 한 걸음 더 간다.
+다음은 [MemMachine](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)이다. 원문을 그대로 보관하고 LLM 추출을 최소화하는 개인화 메모리 시스템으로, 저장이 아니라 검색을 손봐야 한다는 걸 ablation으로 보인 논문이다.

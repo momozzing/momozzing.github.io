@@ -1,5 +1,5 @@
 ---
-date: 2026-09-22 09:00:00 +0900
+date: 2026-09-25 09:00:00 +0900
 title: "Memory in the Age of AI Agents Paper review"
 excerpt: "장기기억·단기기억이라는 이분법으로는 지금의 에이전트 메모리를 담을 수 없다. Forms·Functions·Dynamics 세 축으로 다시 짠 107쪽짜리 서베이."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 Memory in the Age of AI Agents: A Survey — Forms, Functions and Dynamics
@@ -24,7 +25,7 @@ Memory in the Age of AI Agents: A Survey — Forms, Functions and Dynamics
 
 예전에 리뷰한 [CoALA](https://momozzing.github.io/paper%20review/CoALA-Paper-review/)가 에이전트 전체 구조를 정리했다면, 이 논문은 그중 메모리만 떼어서 다시 정리했다. CoALA는 기억을 working·episodic·semantic·procedural 네 가지로 나눴는데, 이 논문은 그 분류로는 요즘 시스템들을 다 담을 수 없다고 한다.
 
-메모리 논문들을 읽기 전에 전체 지도를 먼저 보려고 이 논문부터 읽었다. 좀 더 자세히 알아보자.
+앞에서 메모리 논문을 아홉 편 봤는데, 여기서 전체 지도를 한 번 보고 가려고 이 논문을 읽었다. 좀 더 자세히 알아보자.
 
 ![분류 체계 전체 조감도 (논문 Figure 1)](https://momozzing.github.io/assets/images/agent-memory-survey/fig1-taxonomy-overview.png)
 
@@ -527,3 +528,5 @@ abstract를 보면 Functions에 대해 이렇게 말한다.
 *"memory is not merely an auxiliary storage mechanism, but an essential substrate through which agents achieve temporal coherence, continual adaptation, and long-horizon competence"*
 
 개인적으로는 분류보다 2장에서 RAG, 컨텍스트 엔지니어링이랑 경계를 나눈 부분이 더 쓸모 있었다. 내가 하려는 게 어느 쪽인지 정해야 벤치마크도 맞게 고를 수 있다.
+
+다음은 [SYNAPSE](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)다. 벡터 유사도 대신 활성 확산으로 기억 사이의 관련성을 찾고, 모르는 질문에는 모른다고 답하게 만드는 메모리 구조다.

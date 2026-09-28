@@ -1,5 +1,5 @@
 ---
-date: 2026-09-26 09:00:00 +0900
+date: 2026-09-26 15:00:00 +0900
 title: "MemMachine Paper review"
 excerpt: "원문을 그대로 보관하고 LLM 추출을 최소화한다. 저장이 아니라 검색을 손봐야 한다는 걸 6차원 ablation으로 보인 논문."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 
@@ -25,7 +26,7 @@ MemMachine은 MemVerge, Inc.에서 만든 오픈소스 메모리 시스템이다
 
 제목의 ground-truth-preserving은 원문을 그대로 보관한다는 뜻이다. LLM으로 뭔가 뽑아내는 걸 최소한으로 하고, 대신 검색 쪽을 손보는 게 더 효과가 크다고 한다.
 
-앞에서 본 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서는 가역 압축이 비가역보다 낫다고 했고, [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)는 원문을 안 건드려서 이겼는데, 여기서는 그걸 제품으로 만들었다.
+원문 보존은 뒤에서 볼 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)(가역 압축이 비가역보다 낫다)와 [ReFind 리뷰](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)(원문을 안 건드리고 이긴다)에서도 다시 나온다. 여기서는 그걸 제품으로 만들었다.
 
 좀 더 자세히 알아보자.
 
@@ -52,7 +53,7 @@ MemMachine은 MemVerge, Inc.에서 만든 오픈소스 메모리 시스템이다
 3. 클러스터를 cross-encoder 등으로 재랭킹한다
 4. 상위 k개 클러스터를 LLM에 준다
 
-앞에서 본 [ReFind 리뷰](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)의 컨텍스트 창 확장(히트 ±2턴을 블록으로)이랑 거의 같은 장치다. ReFind ablation에서는 이걸 빼면 S에서 −9.2점이었다.
+뒤에서 볼 [ReFind 리뷰](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)의 컨텍스트 창 확장(히트 ±2턴을 블록으로)도 거의 같은 장치다. ReFind ablation에서는 이걸 빼면 S에서 −9.2점이다.
 
 -> 앞 1개, 뒤 2개로 비대칭인 건 대화에서 답이 질문 뒤에 오니까 뒤쪽을 더 보는 것 같다.
 
@@ -83,7 +84,7 @@ LLM 추출은 여기서만 쓴다. 원문은 일화 메모리에 남아 있으�
 - 질의 확장(HyDE), BM25 하이브리드, 청크 재랭킹 : 단일홉 재현율은 올라가지만 여전히 질의 하나로 검색하니까 의존 사슬은 못 푼다
 - 지식그래프 순회 : 정확히 풀긴 하는데 그래프를 미리 만드는 게 비싸고 정보 손실이 있다
 
-[ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)가 반복 검색으로 푼 문제가 이거다. ReFind 실험에서 검색을 1회로 묶으면 M 세트에서 20.4점이 빠졌다.
+나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)도 이 문제를 반복 검색으로 푼다. ReFind 실험에서는 검색을 1회로 묶으면 M 세트에서 20.4점이 빠진다.
 
 해법은 도구 트리다. `ToolSelectAgent`가 질의를 보고 셋 중 하나로 보낸다.
 
@@ -215,4 +216,4 @@ LongMemEvalS ablation에서는 검색 단계 최적화가 저장 단계 변경�
 
 여태까지 나온 메모리 시스템들이 저장 구조로 경쟁했다면, 이 논문은 그 전에 검색부터 손보라고 한다.
 
-다음은 [Does Your Agent's Memory Survive a Model Upgrade?](https://arxiv.org/abs/2609.05339)다. 모델을 바꿨을 때 기억이 살아남는지를 다룬다.
+다음은 [LongMemEval-V2](https://momozzing.github.io/paper%20review/LongMemEval-V2-Paper-review/)다. V1이 사용자 이력을 물었다면 V2는 웹 에이전트가 환경에서 쌓은 경험을 묻는다.

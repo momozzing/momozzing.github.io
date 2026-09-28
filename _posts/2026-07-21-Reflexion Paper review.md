@@ -10,6 +10,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent
 ---
 
 Reflexion: Language Agents with Verbal Reinforcement Learning

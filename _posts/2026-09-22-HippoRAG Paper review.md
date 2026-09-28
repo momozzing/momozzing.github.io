@@ -1,5 +1,5 @@
 ---
-date: 2026-09-27 09:00:00 +0900
+date: 2026-09-22 12:00:00 +0900
 title: "HippoRAG Paper review"
 excerpt: "해마 색인 이론을 RAG에 옮겼다. LLM으로 스키마 없는 지식그래프를 만들고 Personalized PageRank를 돌려 단발 검색으로 다중홉을 푼다."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 
@@ -25,9 +26,9 @@ HippoRAG는 Ohio State University와 Stanford에서 만든 RAG 방법이다.
 
 2024년 5월 23일에 올라왔고 2025년 1월 14일에 v3가 나왔다. 저자 5명에 31쪽이다.
 
-앞에서 본 [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)에서는 RAG 쪽이랑 메모리 쪽 양쪽에서 다 인용되는 논문으로 꼽았고, [ReFind 표](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서는 구조화 메모리 중에 유일하게 BM25-RAG를 넘었다(53.2 vs 48.8).
+뒤에서 볼 [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)에서는 RAG 쪽이랑 메모리 쪽 양쪽에서 다 인용되는 논문으로 꼽고, 나중에 볼 [ReFind 표](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서는 구조화 메모리 중에 유일하게 BM25-RAG를 넘는다(53.2 vs 48.8).
 
-왜 이것만 달랐는지 궁금해서 읽었다. 좀 더 자세히 알아보자.
+왜 이것만 다른지는 6장에서 정리했다. 좀 더 자세히 알아보자.
 
 ## **1. 문제**
 
@@ -95,7 +96,7 @@ Teyler와 Discenna(1986)의 해마 색인 이론에서 설계를 가져왔다.
 
 PPR이 그래프 경로를 탐색하고 관련 부분그래프를 찾아주니까, 한 번의 검색 안에서 다중홉 추론을 하는 셈이라고 한다.
 
-앞에서 본 [SYNAPSE 리뷰](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)의 활성 확산이랑 비슷한 계열이다. SYNAPSE는 PageRank를 전역 사전확률로 썼는데, 여기서는 질의 노드에서 출발하는 PPR로 쓴다.
+뒤에서 볼 [SYNAPSE 리뷰](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)의 활성 확산이랑 비슷한 계열이다. SYNAPSE는 PageRank를 전역 사전확률로 쓰는데, 여기서는 질의 노드에서 출발하는 PPR로 쓴다.
 
 ## **4. 결과**
 
@@ -115,7 +116,7 @@ PPR이 그래프 경로를 탐색하고 관련 부분그래프를 찾아주니�
 
 HotpotQA에서는 진다(77.7 vs 79.3). 논문은 HotpotQA가 지식 통합이 별로 필요 없는 데이터셋이고, 개념과 맥락 사이의 절충 문제도 있다고 한다.
 
--> [ReFind 표](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서는 HippoRAG 2가 SH-QA 76.0으로 높았는데 여기서는 HotpotQA가 약하다. 근데 과제가 다르다. 여기 HotpotQA는 위키 다중홉이고 ReFind의 SH-QA는 대화 단일홉이다.
+-> [ReFind 표](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서는 HippoRAG 2가 SH-QA 76.0으로 높은데 여기서는 HotpotQA가 약하다. 근데 과제가 다르다. 여기 HotpotQA는 위키 다중홉이고 ReFind의 SH-QA는 대화 단일홉이다.
 
 ### **4.2 반복 검색과 결합하면 더 오른다**
 
@@ -205,15 +206,15 @@ PPR을 빼면 16점 넘게 떨어진다.
 2. 스키마가 없다. 논문이 `schemaless knowledge graph`라고 적었다. 스키마를 안 정하니까 뭘 버릴지 미리 정하지 않는다.
 3. 검색 비용이 낮다. 색인은 오프라인이고 질의할 때는 PPR만 돈다. IRCoT보다 6~13배 빠르다.
 
-1번은 앞에서 본 Mem0가 사실만 남기고, A-MEM이 노트로 바꾼 것과 다르다. [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)의 P-rev도 만족한다. 그래프는 색인이고 저장소가 아니다.
+1번은 뒤에서 볼 Mem0가 사실만 남기고, A-MEM이 노트로 바꾸는 것과 다르다. [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)의 P-rev도 만족한다. 그래프는 색인이고 저장소가 아니다.
 
 해마도 기억을 직접 저장하지 않고 신피질의 기억을 가리키는 색인만 갖고 있다고 하니까, 이론을 그대로 옮긴 결과다.
 
-2번은 Zep이 엔티티 타입을 정하고 Mem0g가 노드 타입을 나누는 것과 다르다.
+2번은 뒤에서 볼 Zep이 엔티티 타입을 정하고 Mem0g가 노드 타입을 나누는 것과 다르다.
 
--> 그런데 [Memory Portability 리뷰](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서는 반대로 고정 스키마 KG가 모델 교체에 강했다(∆ 0.0004). 스키마가 없으면 OpenIE를 돌린 모델에 결과가 묶인다. 실제로 REBEL이랑 GPT-3.5의 트리플 수가 두 배 차이 난다. 스키마가 없으면 검색은 좋아지는데 모델을 바꾸면 그래프를 다시 만들어야 하는 거 아닌가??
+-> 그런데 나중에 볼 [Memory Portability 리뷰](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서는 반대로 고정 스키마 KG가 모델 교체에 강했다(∆ 0.0004). 스키마가 없으면 OpenIE를 돌린 모델에 결과가 묶인다. 실제로 REBEL이랑 GPT-3.5의 트리플 수가 두 배 차이 난다. 스키마가 없으면 검색은 좋아지는데 모델을 바꾸면 그래프를 다시 만들어야 하는 거 아닌가??
 
-3번은 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서 잰 MemoryOS의 31초 검색이랑 차이가 크다.
+3번은 뒤에서 볼 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서 잰 MemoryOS의 31초 검색이랑 차이가 크다.
 
 -> 다중홉 질문을 볼 때는 R@k보다 AR(all-recall)을 같이 보는 게 좋을 것 같다.
 
@@ -230,8 +231,8 @@ path-following 다중홉 QA에서 좋은 결과, path-finding에서의 가능성
 - 모든 구성요소를 학습 없이 기성품으로 썼다. 오류를 분석해 보니 대부분 NER과 OpenIE에서 나와서, 파인튜닝하면 좋아질 여지가 크다고 한다
 - 나머지 오류는 그래프 탐색에서 나온다. 단순 PPR보다 나은 방법이 있을 수 있다고 한다
 
-첫 번째는 앞의 리뷰들이랑 이어진다. 쓰기 단계에서 LLM 추출 품질이 전체를 좌우한다는 것이고, [Anatomy](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서 형식 오류율 30%로 잰 부분이다.
+첫 번째는 뒤에서 볼 리뷰들이랑 이어진다. 쓰기 단계에서 LLM 추출 품질이 전체를 좌우한다는 것이고, [Anatomy](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서 형식 오류율 30%로 잰 부분이다.
 
 여태까지 다중홉은 검색을 여러 번 반복해서 풀었다면, 이 방법은 그래프 위에 PPR을 돌려서 한 번의 검색으로 푼다.
 
-다음은 [The Past Is Prologue](https://arxiv.org/abs/2606.31121)다. 순차적으로 바뀌는 메모리에서 선택적 갱신을 다룬다.
+다음은 [LongMemEval](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)이다. 장기기억을 다섯 능력으로 쪼개고, 메모리 설계를 indexing·retrieval·reading 세 단계 네 제어점으로 나눈 벤치마크다.

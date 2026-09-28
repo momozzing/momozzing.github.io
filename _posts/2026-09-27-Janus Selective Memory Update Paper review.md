@@ -1,5 +1,5 @@
 ---
-date: 2026-09-27 12:00:00 +0900
+date: 2026-09-27 15:00:00 +0900
 title: "The Past Is Prologue Paper review"
 excerpt: "메모리 갱신을 '배포 결정'으로 다룬다. 후보 갱신을 무조건 받아들이는 대신 옛 메모리와 붙여 보고 나은 쪽을 남기는 플러그인 컨트롤러."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 
@@ -152,7 +153,7 @@ DC-RS와 ExpeL 둘 다 갱신을 전부 받으면 초중반에는 좋아지다�
 
 앞의 셋은 LLM 판단을 그대로 믿는다. Janus는 그 결과를 재보고 나쁘면 되돌린다.
 
--> 되돌리려면 이전 메모리가 남아 있어야 한다. 메모리를 그 자리에서 덮어쓰면 안 된다. 앞에서 본 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)의 가역성이 여기서도 필요하다. 버전을 남기든지 적어도 직전 상태는 들고 있어야 할 것 같다.
+-> 되돌리려면 이전 메모리가 남아 있어야 한다. 메모리를 그 자리에서 덮어쓰면 안 된다. 바로 다음에 볼 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)의 가역성이 여기서도 필요하다. 버전을 남기든지 적어도 직전 상태는 들고 있어야 할 것 같다.
 
 -> 세 평가 집합 중에 boundary는 직접 만들기 어려울 것 같다. 메모리가 바뀌면 답이 달라질 만한 질의를 어떻게 골라야 하는지?? fresh는 안 본 질의를 조금 떼어두면 되니까 쉽고, 기여도 제일 컸다.
 
@@ -179,4 +180,4 @@ DC-RS와 ExpeL 둘 다 갱신을 전부 받으면 초중반에는 좋아지다�
 
 여태까지 메모리 갱신은 LLM이 제안하면 그대로 반영했다면, 이 방법은 옛 메모리와 비교해서 나을 때만 반영한다.
 
-다음은 [What Deserves Memory](https://arxiv.org/abs/2508.03341)다. 무엇을 기억할지를 증류 관점에서 다룬다.
+다음은 [What to Keep, What to Forget](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)이다. KV 캐시 축출, 프롬프트 압축, 에이전트 메모리 요약을 하나의 rate-distortion 문제로 묶은 서베이다.

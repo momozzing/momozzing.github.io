@@ -1,5 +1,5 @@
 ---
-date: 2026-09-22 12:00:00 +0900
+date: 2026-09-28 02:00:00 +0900
 title: "ReFind Paper review"
 excerpt: "구조화 메모리의 이득이 정말 구조에서 오는가. 원본 대화 로그를 그대로 두고 BM25 검색만 잘 시켰더니 그래프·트리 기반 시스템을 전부 넘었다는 반대 증거."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 When Your Agent Opens the Chat App: Agent-Controlled Search over Raw Chat Logs Rivals Structured Memory
@@ -233,4 +234,4 @@ HippoRAG 2랑 차이가 GPT-4o-mini 때는 0.6점이었는데 여기서는 13.2(
 
 여태까지 메모리 시스템들이 미리 구조를 만들어두고 검색했다면, 이 방법은 원본을 그대로 두고 질문이 올 때 에이전트가 검색을 여러 번 하면서 찾는다.
 
-다음은 [LongMemEval](https://arxiv.org/abs/2410.10813)이다. ReFind가 93.2를 찍은 벤치마크가 뭘 어떻게 재는지 보자.
+다음은 [Does Your Agent's Memory Survive a Model Upgrade?](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)다. 같은 메모리 저장소를 그대로 두고 모델만 바꿨을 때 에이전트가 잊는지를 잰 논문이다.

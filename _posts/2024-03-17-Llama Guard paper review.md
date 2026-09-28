@@ -14,6 +14,7 @@ last_modified_at: 2024-03-17T08:06:00-05:00
 mathjax: true
 toc: true
 toc_sticky: true
+field: llm
 ---
 
 Llama Guard는 Meta에서 발표한 논문이며, Large Language Model에서 사람과 인공지능 사이의 대화에서 Safeguard를 학습시키는 전략에 대해 설명한 논문이다.

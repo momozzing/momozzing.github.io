@@ -1,5 +1,5 @@
 ---
-date: 2026-09-23 12:00:00 +0900
+date: 2026-09-23 15:00:00 +0900
 title: "Mem0 Paper review"
 excerpt: "대화에서 사실을 뽑아 ADD·UPDATE·DELETE·NOOP 중 하나로 반영한다. LOCOMO에서 full-context 대비 p95 지연 91% 감소, 토큰 90% 절감."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory
@@ -24,7 +25,7 @@ Mem0는 Mem0 팀(`research@mem0.ai`)에서 만든 장기 메모리 시스템이�
 
 대화에서 사실을 뽑아서 메모리에 추가, 수정, 삭제하는 방식이고, 제목에 production-ready가 들어간 것처럼 정확도보다 지연이랑 비용을 앞에 내세운다.
 
-[앞에서 본 Rate-Distortion 논문](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서는 되돌릴 수 없는 압축을 문제로 봤는데, Mem0가 딱 요약으로 덮어쓰는 비가역 설계다. ReFind 비교표에서 25.1로 낮게 나온 것도 이거랑 관련이 있을 것 같다.
+[나중에 볼 Rate-Distortion 논문](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서는 되돌릴 수 없는 압축을 문제로 보는데, Mem0가 딱 요약으로 덮어쓰는 비가역 설계다. ReFind 비교표에서 25.1로 낮게 나오는 것도 이거랑 관련이 있을 것 같다.
 
 좀 더 자세히 알아보자.
 
@@ -135,10 +136,10 @@ Mem0 논문만 보면 좋은 시스템이다. 그런데 [ReFind](https://momozzi
 왜 이렇게 다른지 생각해보면,
 
 1. 벤치마크가 다르다. Mem0 논문은 LOCOMO 하나로만 평가했다. ReFind는 여섯 개를 썼고, FC-MH(다중홉 사실 통합)에서 Mem0는 2.0이었다. LOCOMO는 대화 QA 위주라 Mem0가 잘하는 단일홉 사실 찾기랑 잘 맞는다.
-2. 되돌릴 수 없는 설계다. Mem0는 대화에서 사실만 뽑고 원문은 남기지 않는다. 앞에서 본 Rate-Distortion 논문 용어로 하면 P-rev 위반이고, 질문이 오기 전에 뭐가 중요한지 LLM이 정하니까 P-q도 위반이다. 추출에서 빠진 세부는 나중에 복구가 안 된다.
+2. 되돌릴 수 없는 설계다. Mem0는 대화에서 사실만 뽑고 원문은 남기지 않는다. Rate-Distortion 논문 용어로 하면 P-rev 위반이고, 질문이 오기 전에 뭐가 중요한지 LLM이 정하니까 P-q도 위반이다. 추출에서 빠진 세부는 나중에 복구가 안 된다.
 3. 대신 지연은 확실히 빠르다. 검색 p95 0.2초다. Zep 0.778초, A-Mem 1.485초다. 매 턴 메모리를 봐야 하는 챗봇에서는 무시하기 어려운 차이다.
 
--> DELETE가 특히 걸린다. 모순이라고 판단해서 지웠는데 그 판단이 틀렸으면 되돌릴 방법이 있나??
+-> DELETE가 특히 걸린다. 모순이라고 판단해서 지웠는데 그 판단이 틀렸으면 되돌릴 방법이 있나?? 앞에서 본 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)은 지우지 않고 `t_invalid`를 찍는 쪽으로 풀었다.
 
 정리하면 Mem0가 맞는 곳은 이렇다.
 
@@ -152,7 +153,7 @@ Mem0 논문만 보면 좋은 시스템이다. 그런데 [ReFind](https://momozzi
 - 여러 사실을 엮어야 하는 다중홉 질문
 - 잘못 지우면 큰일 나는 도메인
 
--> 둘을 섞으면 어떨까 싶다. Mem0로 뽑은 사실은 빠르게 쓰고, 원문은 따로 보관해뒀다가 사실로 답이 안 나오면 원문을 검색하는 식이다. 앞에서 본 다중 충실도(P-fid)가 이런 모양이었다. Mem0의 추출을 버리는 게 아니라 되돌릴 수 있게 만드는 것이다.
+-> 둘을 섞으면 어떨까 싶다. Mem0로 뽑은 사실은 빠르게 쓰고, 원문은 따로 보관해뒀다가 사실로 답이 안 나오면 원문을 검색하는 식이다. Rate-Distortion 논문의 다중 충실도(P-fid)가 이런 모양이다. Mem0의 추출을 버리는 게 아니라 되돌릴 수 있게 만드는 것이다.
 
 ## **5. Conclusion**
 
@@ -164,4 +165,4 @@ LOCOMO 기준으로 단일홉 5%, 시간 11%, 다중홉 7% 상대 개선이고, 
 
 여태까지 메모리 시스템들이 정확도를 올리는 데 집중했다면, 이 논문은 J 6점을 내주고 지연을 12배 줄이는 쪽을 택했다. 그게 맞는지는 서비스마다 다를 것 같다. 초당 수천 건을 처리해야 하면 맞고, 정확도가 먼저면 아니다.
 
-다음은 [Zep](https://arxiv.org/abs/2501.13956)이다. 위 표에서 open-domain이 제일 높았던 시스템이고, temporal knowledge graph로 사실 무효화(fact invalidation)를 다룬다. Mem0의 DELETE는 되돌릴 수 없는 삭제인데 Zep은 어떻게 하는지 보자.
+다음은 [From Human Memory to AI Memory](https://momozzing.github.io/paper%20review/From-Human-Memory-to-AI-Memory-Paper-review/)다. 사람의 기억 분류에서 출발해서, AI 메모리를 대상·형태·시간 세 축으로 8분면에 나누는 서베이다.

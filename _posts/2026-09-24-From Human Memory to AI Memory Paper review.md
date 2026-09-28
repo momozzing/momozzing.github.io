@@ -1,5 +1,5 @@
 ---
-date: 2026-09-28 02:00:00 +0900
+date: 2026-09-24 09:00:00 +0900
 title: "From Human Memory to AI Memory Paper review"
 excerpt: "대상·형태·시간 세 축으로 AI 메모리를 8분면에 나눈다. 2026년 서베이와 교차 검증해보면 1년 사이 무엇이 달라졌는지가 보인다."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 From Human Memory to AI Memory: A Survey on Memory Mechanisms in the Era of LLMs
@@ -24,7 +25,7 @@ From Human Memory to AI Memory는 Huawei Noah's Ark Lab에서 쓴 LLM 메모리 
 
 2025년 4월 22일에 나왔고 4월 23일에 v2가 올라왔다. 저자 8명, 26쪽이다.
 
-이 시리즈 처음에 본 [2026년 서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)보다 8개월 먼저 나왔다. 같은 대상을 다르게 나눴다. 두 서베이를 비교해서 1년 사이에 뭐가 달라졌는지 보려고 읽었다.
+뒤에서 볼 [2026년 서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)보다 8개월 먼저 나왔다. 같은 대상을 다르게 나눈다. 5장에서 두 서베이를 비교해서 1년 사이에 뭐가 달라졌는지 정리했다.
 
 좀 더 자세히 알아보자.
 
@@ -45,7 +46,7 @@ Atkinson-Shiffrin 다중저장 모델로 단기와 장기를 나눈다.
 - 감각 기억 : 바깥에서 들어온 감각 정보를 잠깐 저장. 시각(iconic), 청각(echoic), 촉각(haptic). 수 밀리초에서 수 초
 - 작업 기억 : 문제 풀기나 학습 같은 걸 하려고 정보를 직접 처리하고 조작
 
-앞에서 본 [2026 서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)도 7.8절에서 Atkinson-Shiffrin과 Tulving을 가져왔는데, 거기서는 마지막 절에 두었고 여기서는 시작점에 둔다.
+뒤에서 볼 [2026 서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)도 7.8절에서 Atkinson-Shiffrin과 Tulving을 가져오는데, 거기서는 마지막 절에 두고 여기서는 시작점에 둔다.
 
 ## **3. 3D-8Q 분류**
 
@@ -76,9 +77,9 @@ Personal memory는 모델이 환경에서 보고 들은 개별 데이터이고, 
 
 -> 실무에서는 이 구분이 쓸모 있을 것 같다. 사용자 정보와 에이전트 자기 작업 기록은 수명도 삭제 정책도 다르다. 개인정보 삭제 요청이 오면 personal만 지우면 되고 system은 남긴다.
 
-### **3.2 앞 리뷰들을 8분면에 넣으면**
+### **3.2 이 시리즈 논문들을 8분면에 넣으면**
 
-앞에서 본 논문들을 넣어보면 이렇다.
+이 시리즈에서 다루는 논문들을 넣어보면 이렇다. 아직 안 본 논문도 섞여 있는데, 뒤에서 하나씩 나온다.
 
 - I (personal·비파라미터·단기) : MemGPT의 FIFO 큐, 세션 히스토리
 - II (personal·비파라미터·장기) : Mem0, Zep, A-MEM, MemMachine. 제일 많이 몰린 칸
@@ -88,7 +89,7 @@ Personal memory는 모델이 환경에서 보고 들은 개별 데이터이고, 
 - VII (system·파라미터·단기) : KV 캐시 압축 (SnapKV, H2O)
 - VIII (system·파라미터·장기) : 모델 가중치, 지식 편집
 
-열일곱 편 중 대부분이 II와 VI 두 칸에 몰려 있다. III·IV(개인화된 파라미터 메모리)는 아직 비어 있다.
+이 시리즈 논문들 대부분이 II와 VI 두 칸에 몰려 있다. III·IV(개인화된 파라미터 메모리)는 아직 비어 있다.
 
 -> 이렇게 칸을 나눠두니 어디가 비어 있는지 보인다.
 
@@ -122,9 +123,9 @@ Personal memory는 모델이 환경에서 보고 들은 개별 데이터이고, 
 
 남은 것과 빠진 것을 보면 이렇다.
 
-1. personal vs system 구분은 남는다. 2026 서베이에는 이 축이 없는데 실무에서는 필요하다. 삭제 정책, 접근 제어, 보관 기간이 다 다르다. 앞에서 본 [Memory Portability 리뷰](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서 "전체 이력 보존은 프라이버시·보안·보관·삭제 의무를 만든다"고 했는데, 그게 personal 쪽에만 걸린다.
+1. personal vs system 구분은 남는다. 2026 서베이에는 이 축이 없는데 실무에서는 필요하다. 삭제 정책, 접근 제어, 보관 기간이 다 다르다. 나중에 볼 [Memory Portability 리뷰](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서 "전체 이력 보존은 프라이버시·보안·보관·삭제 의무를 만든다"고 하는데, 그게 personal 쪽에만 걸린다.
 2. 시간 축은 밀려났다. 2026 서베이는 하나의 저장소 안에서 쓰임새에 따라 장기·단기가 갈린다고 정의한다.
-3. 두 서베이 모두 parametric memory를 하나의 축으로 다룬다. 이 논문의 III·IV·VII·VIII 네 분면, 2026 서베이의 Forms 3.2절이다. 그런데 이 시리즈 열일곱 편 중에서 parametric을 실제로 구현한 시스템은 하나도 없다.
+3. 두 서베이 모두 parametric memory를 하나의 축으로 다룬다. 이 논문의 III·IV·VII·VIII 네 분면, 2026 서베이의 Forms 3.2절이다. 그런데 이 시리즈 논문들 중에서 parametric을 실제로 구현한 시스템은 하나도 없다.
 
 -> 서베이는 축으로 세웠는데 실제 연구는 거기 없다. 왜 그런지는 잘 모르겠다??
 
@@ -142,4 +143,4 @@ conclusion 부분을 보면, 사람 기억과 LLM 기반 AI 메모리의 관계�
 
 -> 26쪽이라 분량 때문에 뺀 것 같다.
 
-마지막 한 편은 [AMV-L](https://arxiv.org/abs/2603.04443)이다. 지금까지 정확도와 구조를 주로 봤는데, 오래 도는 시스템에서 꼬리 지연을 어떻게 잡는지를 본다.
+다음은 [Experience-Following](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)이다. 메모리에 무엇을 넣고 무엇을 지우는지가 에이전트 행동을 어떻게 바꾸는지를 네 에이전트로 잰 논문이다.

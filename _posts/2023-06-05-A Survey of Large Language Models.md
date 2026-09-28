@@ -15,6 +15,7 @@ mathjax: true
 # classes: wide
 toc: true
 toc_sticky: true
+field: llm
 ---
 
 # **A Survey of Large Language Models 논문 리뷰**

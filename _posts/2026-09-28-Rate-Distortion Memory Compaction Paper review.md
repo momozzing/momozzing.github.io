@@ -1,5 +1,5 @@
 ---
-date: 2026-09-23 09:00:00 +0900
+date: 2026-09-28 01:00:00 +0900
 title: "What to Keep What to Forget Paper review"
 excerpt: "KV 캐시 축출, 프롬프트 압축, 상태 압축, 에이전트 메모리 요약. 네 커뮤니티가 각자 풀던 게 사실 하나의 rate-distortion 문제였다는 서베이."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 What to Keep, What to Forget: A Rate–Distortion View of Memory Compaction in LLMs and Agents
@@ -147,14 +148,14 @@ needle 태스크는 필요한 정보가 토큰 몇 개에 몰려 있어서, 예�
 
 이 논문에서 가져갈 건 되돌릴 수 있게 만들라는 것 같다.
 
-앞에서 본 리뷰들이랑 이어 보면 이렇다.
+이 시리즈 다른 리뷰들이랑 이어 보면 이렇다.
 
 - Survey (5.2.3) : Forgetting을 따로 항목으로 올렸고, 기준은 time/frequency/importance 셋
 - 이 논문 : 그 셋이 다 비가역이라는 게 문제. 가역이면 예산이 같아도 이긴다
-- ReFind : 원본을 안 건드리고 검색만 함. 완전 가역이라서 이겼다
+- ReFind (다음 리뷰) : 원본을 안 건드리고 검색만 함. 완전 가역이라서 이긴다
 - LongMemEval : 사실 단위로 압축하면 정보가 빠져서 전체 성능이 떨어짐
 
-앞에서 본 ReFind에서는 구조화 메모리가 졌는데, 여기서 보면 구조가 나빠서라기보다 질의를 알기 전에 비가역으로 버렸기 때문인 것 같다. P-rev + P-q를 같이 어긴 경우다.
+바로 다음에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서는 구조화 메모리가 지는데, 여기서 보면 구조가 나빠서라기보다 질의를 알기 전에 비가역으로 버렸기 때문인 것 같다. P-rev + P-q를 같이 어긴 경우다.
 
 -> 요약으로 덮어쓰지 말고 원본을 남겨두면 되는 건가? 저장 비용은 올라가지만 이 실험 기준으로는 recall 0.5 차이다. 세션 히스토리를 N턴으로 자르고 있다면 자른 걸 버리지 말고 아카이브로 옮기는 정도는 해볼 만한 것 같다.
 
@@ -184,4 +185,4 @@ conclusion 부분을 보면 네 층을 하나의 틀로 보면 세 가지를 얻
 
 여태까지 KV 압축, 프롬프트 압축, 에이전트 요약이 따로 연구됐다면, 이 논문은 그걸 하나의 예산 축 위에 올려놓고 되돌릴 수 있느냐로 비교한다.
 
-다음은 [Mem0](https://arxiv.org/abs/2504.19413)다. 계층 간 승격을 다루는 쪽이고, 앞의 ReFind 표에서 25.1로 낮게 나온 그 시스템이다. 왜 낮았는지 확인해보자.
+다음은 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)다. 원본 대화 로그를 그대로 두고 BM25 검색만 에이전트가 잘 돌리게 했더니 구조화 메모리 시스템들보다 잘 나왔다는 논문이다.

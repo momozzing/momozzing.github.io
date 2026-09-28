@@ -1,5 +1,5 @@
 ---
-date: 2026-09-28 03:00:00 +0900
+date: 2026-09-26 09:00:00 +0900
 title: "AMV-L Paper review"
 excerpt: "TTL은 항목의 수명을 제한하지 계산량을 제한하지 않는다. 검색 후보군 크기를 직접 묶어 2초 초과 요청을 13.8%에서 0.007%로 줄인 논문."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 AMV-L: Lifecycle-Managed Agent Memory for Tail-Latency Control in Long-Running LLM Systems
@@ -24,7 +25,7 @@ AMV-L은 Georgia Tech에서 만든 에이전트 메모리 관리 방법이다.
 
 2026년 2월 22일에 나왔고, 저자 1명에 15쪽이다.
 
-이 시리즈 마지막 편이다. 앞의 열여덟 편이 무엇을 어떻게 기억할지를 다뤘다면, 이 논문은 그게 서비스 지연에 어떤 영향을 주는지를 본다. 시스템 쪽 논문이라 다른 논문들과 좀 다르다.
+앞의 논문들이 주로 무엇을 어떻게 기억할지를 다뤘다면, 이 논문은 그게 서비스 지연에 어떤 영향을 주는지를 본다. 시스템 쪽 논문이라 다른 논문들과 좀 다르다.
 
 좀 더 자세히 알아보자.
 
@@ -54,7 +55,7 @@ TTL은 항목이 얼마나 오래 남을지는 제한하지만, 요청이 들어
 
 보관은 하지만 검색 대상은 아닌 것이다.
 
-앞에서 본 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서는 "원본을 남겨라"(가역성)였는데, 여기서도 원본은 남긴다. 검색 대상에서만 뺀다.
+나중에 볼 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)는 "원본을 남겨라"(가역성)인데, 여기서도 원본은 남긴다. 검색 대상에서만 뺀다.
 
 ### **2.2 값 갱신**
 
@@ -138,9 +139,9 @@ TTL에서는 p95 후보군이 4,824개까지 커진다. AMV-L은 690으로 85.7%
 
 ## **4. 지금 관점: 우리가 놓친 축**
 
-이 시리즈 열아홉 편이 주로 본 건 정확도였다. 이 논문만 지연이 얼마나 예측 가능한지를 본다.
+이 시리즈 논문들이 주로 보는 건 정확도다. 이 논문만 지연이 얼마나 예측 가능한지를 본다.
 
-앞 리뷰들에서 본 지연 수치를 이 논문 기준으로 다시 보면 이렇다.
+이 시리즈 리뷰들에 나오는 지연 수치를 이 논문 기준으로 다시 보면 이렇다. LME-V2는 뒤에서 볼 논문이다.
 
 - MemoryOS ([Anatomy](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)) : 검색 31.2s. 후보군 제한이 없음
 - LangMem ([Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)) : p95 59.8s. 토큰은 127개인데 검색이 느림
@@ -151,7 +152,7 @@ TTL에서는 p95 후보군이 4,824개까지 커진다. AMV-L은 690으로 85.7%
 
 LangMem이 이 논문에서 말하는 경우에 딱 맞는 것 같다. 메모리 토큰을 127개까지 줄였는데 검색에 60초가 걸린다. 넣는 양은 묶었는데 후보군은 안 묶어서 그런 것 같다.
 
-실제로 쓴다면, 원본은 지우지 않고 검색 대상에서만 빼는 계층을 두면 될 것 같다. 앞 리뷰들에서 "원본을 남겨라"라고 했는데, 남긴 걸 전부 검색 대상으로 두면 이 논문의 문제가 생긴다. 남기되 hot에는 안 두는 것이다.
+실제로 쓴다면, 원본은 지우지 않고 검색 대상에서만 빼는 계층을 두면 될 것 같다. 이 시리즈에서 "원본을 남겨라"라는 얘기가 여러 번 나오는데, 남긴 걸 전부 검색 대상으로 두면 이 논문의 문제가 생긴다. 남기되 hot에는 안 두는 것이다.
 
 -> 보통 응답 지연만 모니터링하는데, `|R|`(검색 후보군 크기)을 따로 재면 원인 찾기가 쉬울 것 같다. p95가 수천 개면 TTL 문제다.
 
@@ -178,11 +179,13 @@ p95, p99 지연을 최대 2~3자릿수 줄이면서 밀리초 단위 중앙값�
 
 ---
 
-## **시리즈를 닫으며**
+## **여기까지 적어두는 것**
 
-열아홉 편을 읽고 남은 것들을 적어둔다.
+여기까지 보고 남은 것들을 적어둔다. 뒤에서 볼 논문들에서 이어지는 얘기도 같이 표시해둔다.
 
-1. 원본을 남기는 쪽이 계속 이겼다. [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)은 같은 예산에서 가역이 비가역을 이긴다고 했고, [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)는 원본을 안 건드려서 이겼고, [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)은 삭제 대신 무효화로 풀었고, [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)는 원본이 없으면 복구가 48건 전부 실패한다고 했다. 이 논문은 남기되 검색에서만 빼는 방법이다.
-2. 저장보다 검색이 병목인 경우가 많았다. [MemMachine](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)의 ablation(검색 최적화 +4.2%p vs 저장 +0.8%p), [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서 RAG 손실의 81%가 검색이었던 것, 이 논문의 검색 대상 통제가 다 같은 방향이다. 다만 [NEMORI](https://momozzing.github.io/paper%20review/NEMORI-Paper-review/)는 반대로 증류로 이겼다. 그래서 뭐가 병목인지 먼저 재보라는 게 [MemFail](https://momozzing.github.io/paper%20review/MemFail-Paper-review/)의 얘기였다.
-3. 모델을 키워도 안 풀린다. [MemFail](https://momozzing.github.io/paper%20review/MemFail-Paper-review/)의 Q2가 그렇게 말하고, [Anatomy](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 형식 오류율과 [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)의 NOTES 비대칭도 같은 얘기다. 구조 문제라는 것이다.
+1. 원본을 남기는 쪽. 앞에서 본 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)은 삭제 대신 무효화로 풀었고, 이 논문은 남기되 검색에서만 빼는 방법이다. 뒤에서 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)은 같은 예산에서 가역이 비가역을 이긴다고 하고, [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)는 원본을 안 건드려서 이기고, [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)는 원본이 없으면 복구가 48건 전부 실패한다고 한다.
+2. 저장보다 검색이 병목인 경우. 이 논문의 검색 대상 통제가 그쪽이다. 다만 앞에서 본 [NEMORI](https://momozzing.github.io/paper%20review/NEMORI-Paper-review/)는 반대로 증류로 이겼다. 뒤에서 볼 [MemMachine](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)의 ablation(검색 최적화 +4.2%p vs 저장 +0.8%p), [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서 RAG 손실의 81%가 검색이었던 것도 같은 방향이다. 그래서 뭐가 병목인지 먼저 재보라는 게 [MemFail](https://momozzing.github.io/paper%20review/MemFail-Paper-review/)의 얘기다.
+3. 모델을 키워도 안 풀린다. 앞에서 본 [Anatomy](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 형식 오류율이 그렇고, 뒤에서 볼 [MemFail](https://momozzing.github.io/paper%20review/MemFail-Paper-review/)의 Q2와 [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)의 NOTES 비대칭도 같은 얘기다. 구조 문제라는 것이다.
 4. ∆부터 계산해보자. [Anatomy](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 Context Saturation Gap이다. full-context보다 나은 게 없으면 메모리 시스템을 쓰는 이유는 정확도가 아니라 지연과 비용이다.
+
+다음은 [Multi-Layered Memory](https://momozzing.github.io/paper%20review/Multi-Layered-Memory-Paper-review/)다. 대화 이력을 working·episodic·semantic 세 계층으로 나누고, 계층을 하나씩 떼어보는 ablation으로 각 계층이 얼마나 기여하는지 잰 논문이다.

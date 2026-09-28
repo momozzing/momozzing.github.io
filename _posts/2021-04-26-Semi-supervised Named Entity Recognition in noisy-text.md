@@ -11,6 +11,7 @@ tags:
   - NER
 last_modified_at: 2021-04-26T08:06:00-05:00
 mathjax: true
+field: nlp
 ---  
 
 - [깃헙레포링크](https://github.com/napsternxg/TwitterNER)

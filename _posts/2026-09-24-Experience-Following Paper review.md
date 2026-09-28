@@ -1,5 +1,5 @@
 ---
-date: 2026-09-25 09:00:00 +0900
+date: 2026-09-24 12:00:00 +0900
 title: "Experience-Following Paper review"
 excerpt: "메모리에 무엇을 넣고 무엇을 지우는지가 에이전트 행동을 바꾼다. 전부 넣으면 오히려 고정 메모리보다 못하다는 걸 네 에이전트로 실증한 논문."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 How Memory Management Impacts LLM Agents: An Empirical Study of Experience-Following Behavior
@@ -24,7 +25,7 @@ Experience-Following은 Harvard, University of Georgia, Michigan State, Universi
 
 2025년 5월 21일에 나왔고 10월 10일에 v2가 올라왔다. 저자 8명, 21쪽이다.
 
-앞의 일곱 편은 메모리를 어떻게 저장하고 꺼낼지를 다뤘는데, 여기서는 무엇을 넣고 무엇을 지울지를 본다. [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)의 분류로 보면 Experiential memory이고, Dynamics 중에서는 formation이랑 forgetting에 해당한다.
+앞의 일곱 편은 주로 메모리를 어떻게 저장하고 꺼낼지를 다뤘는데, 여기서는 무엇을 넣고 무엇을 지울지를 본다. 뒤에서 볼 [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)의 분류로 보면 Experiential memory이고, Dynamics 중에서는 formation이랑 forgetting에 해당한다.
 
 결론부터 말하면 전부 넣으면 아무것도 안 넣는 것보다 못하다고 한다.
 
@@ -108,7 +109,7 @@ RegAgent는 입력 벡터 `x`랑 근처 입력에 대한 과거 추측들을 받
 
 예외는 AgentDriver의 strict selective addition 하나다. 처음엔 뒤처지다가 점점 따라잡는다.
 
-앞에서 본 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)의 반복 압축 실험에서는 요약이 요약을 낳으면서 사실을 잃었는데, 여기서는 오류가 오류를 낳는다.
+나중에 볼 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)의 반복 압축 실험에서는 요약이 요약을 낳으면서 사실을 잃는데, 여기서는 오류가 오류를 낳는다.
 
 -> 메모리를 다시 쓰는 루프에서는 손실이 계속 쌓이는 것 같다.
 
@@ -180,7 +181,7 @@ RegAgent에서는 이걸 직접 볼 수 있다. 예측값이랑 정답값 차이
 
 -> 그만큼 중복이 쌓인다는 뜻인 것 같다. FIFO로 오래된 것만 지우고 있었다면 이 정도는 거의 손해 없이 얻을 수 있는 셈이다.
 
-앞에서 본 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서는 full-context와 비교할 때의 ∆ 문제가 있었는데, 여기서는 같은 시스템에서 정책만 바꿔가며 재기 때문에 그 문제가 없다.
+뒤에서 볼 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)는 full-context와 비교할 때의 ∆ 문제를 따지는데, 여기서는 같은 시스템에서 정책만 바꿔가며 재기 때문에 그 문제가 없다.
 
 ## **8. Conclusion**
 
@@ -193,10 +194,10 @@ conclusion 부분을 보면, 추가와 삭제로 에이전트 메모리 관리�
 1. 추가와 삭제 두 연산만 본다. 구조 변환, 병합, 요약, 반성 같은 더 복잡한 방식은 뺐다. 그런 갱신 방식을 쓰는 시스템에도 결론이 맞는지는 추가 분석이 필요하다
 2. 실험으로만 보였고 이론적인 증명은 없다
 
-앞에서 본 Mem0(UPDATE/DELETE), Zep(무효화), A-MEM(진화)은 전부 "더 복잡한 방식" 쪽이다.
+앞에서 본 [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)(UPDATE/DELETE), [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)(무효화), [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)(진화)은 전부 "더 복잡한 방식" 쪽이다.
 
 -> 이 결론이 그쪽에도 그대로 맞는지는 모르겠다. 다만 experience-following은 백본을 바꿔도 나오는 성질이라, 무엇을 남기느냐가 행동을 바꾼다는 건 그대로일 것 같다.
 
 여태까지 나온 메모리 논문들이 어떻게 저장하고 꺼낼지를 봤다면, 이 논문은 무엇을 넣고 지우느냐가 에이전트 행동을 바꾼다는 걸 실험으로 보여준다.
 
-다음은 [Multi-Layered Memory Architectures](https://arxiv.org/abs/2603.29194)다. 계층 구성별로 실험 비교한 논문이라, episodic·procedural 계층을 도입할지 판단할 근거를 볼 수 있을 것 같다.
+다음은 [What Deserves Memory(NEMORI)](https://momozzing.github.io/paper%20review/NEMORI-Paper-review/)다. 무엇을 남길지를 중요도 점수가 아니라 "예측 실패"로 정하는 논문이다.

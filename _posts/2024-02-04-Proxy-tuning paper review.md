@@ -14,6 +14,7 @@ mathjax: true
 # classes: wide
 toc: true
 toc_sticky: true
+field: llm
 ---
 
 Proxy tuning은 Allen AI에서 발표한 논문이며, 계속 커져나가는 Large Language model에서 모델 튜닝을

@@ -1,5 +1,5 @@
 ---
-date: 2026-09-27 15:00:00 +0900
+date: 2026-09-24 15:00:00 +0900
 title: "What Deserves Memory Paper review"
 excerpt: "무엇을 남길지를 중요도 점수가 아니라 '예측 실패'로 정한다. 기존 지식으로 예상한 것과 실제가 어긋난 만큼만 기억으로 증류하는 프레임워크."
 categories:
@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 What Deserves Memory: Adaptive Memory Distillation for LLM Agents
@@ -24,7 +25,7 @@ NEMORI는 Fudan University, Shanda Group, Beihang University 등에서 만든 �
 
 2025년 8월 5일에 나왔고 2026년 4월 16일에 v4가 올라왔다. 저자 4명, 24쪽이다.
 
-[앞 리뷰](https://momozzing.github.io/paper%20review/Janus-Selective-Memory-Update-Paper-review/)의 Janus가 넣은 뒤에 검증하는 쪽이었다면, 이 논문은 처음에 무엇을 뽑을지를 다룬다.
+[앞 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)에서는 무엇을 넣고 지우느냐가 에이전트 행동을 바꾼다는 걸 봤는데, 이 논문은 처음에 무엇을 뽑을지를 다룬다. 뒤에서 볼 [Janus](https://momozzing.github.io/paper%20review/Janus-Selective-Memory-Update-Paper-review/)가 넣은 뒤에 검증하는 쪽이라면 이쪽은 넣기 전이다.
 
 좀 더 자세히 알아보자.
 
@@ -39,7 +40,7 @@ LLM 에이전트 메모리는 어떤 정보를 남길 가치가 있는지 정하
 1. 주관적 편향 : 증류 단계에서 한 번 잘못 뽑으면 되돌릴 수 없는 정보 왜곡이 생길 수 있다
 2. 시스템 비대화 : 그 왜곡을 피하려고 이것저것 다 저장하게 되고, 결국 검색 잡음이 커진다
 
-앞에서 본 [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)에 나온 Generative Agents의 recency·relevance·importance 3점수 회상이 딱 이런 휴리스틱이다. importance를 LLM한테 1~10점으로 매기게 하는 방식이 여기서 말하는 설계다.
+앞에서 본 [Generative Agents](https://momozzing.github.io/paper%20review/Generative-Agents-Paper-review/)의 recency·relevance·importance 3점수 회상이 딱 이런 휴리스틱이다. importance를 LLM한테 1~10점으로 매기게 하는 방식이 여기서 말하는 설계다.
 
 ## **2. 예측 부호화에서 가져온 기준**
 
@@ -92,7 +93,7 @@ Predictive Coding Theory(Rao & Ballard 1999, Friston 2010, Clark 2013)에서 기
 
 Full Context도 두 모델 모두에서 조금 넘는다고 한다(80.8 vs 80.6, 73.0 vs 72.3).
 
-앞에서 본 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 ∆(Context Saturation Gap)로 보면 +0.2 ~ +0.7이다. 양수지만 작다.
+뒤에서 볼 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 ∆(Context Saturation Gap)로 보면 +0.2 ~ +0.7이다. 양수지만 작다.
 
 LoCoMo는 평균 24K 토큰이라 전부 넣어도 되는 벤치마크라서 그렇다. 논문도 이걸 알고 바로 더 긴 벤치마크로 넘어간다.
 
@@ -177,7 +178,7 @@ NEMORI를 다른 메모리 시스템 앞단의 증류 모듈로 붙여본다.
 
 ## **5. 지금 관점: importance 점수를 대체할 수 있나**
 
-앞에서 본 시스템들이 뭘 기준으로 남길지 정했는지 모아보면 이렇다.
+이 시리즈에서 다루는 시스템들이 뭘 기준으로 남길지 정했는지 모아보면 이렇다.
 
 - Generative Agents : recency + relevance + importance (LLM이 1~10점)
 - Mem0 : LLM이 "salient"한지 판단
@@ -206,8 +207,8 @@ conclusion 부분을 보면, 인지과학에서 아이디어를 가져와 증류
 
 여태까지 나온 방법들이 무엇을 남길지를 점수나 LLM 판단으로 정했다면, 이 방법은 기존 지식으로 예측해보고 틀린 부분만 남긴다.
 
-앞에서 본 [MemMachine 리뷰](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)에서는 "저장보다 검색을 손봐라"였는데, 여기서는 반대로 증류에 집중하고 검색은 단순하게 간다. 둘 다 각자 벤치마크에서 이긴다.
+나중에 볼 [MemMachine 리뷰](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)는 "저장보다 검색을 손봐라"인데, 여기서는 반대로 증류에 집중하고 검색은 단순하게 간다. 둘 다 각자 벤치마크에서 이긴다.
 
 -> 뭐가 병목인지는 데이터마다 다른 것 같다.
 
-다음은 [MemFail](https://arxiv.org/abs/2605.26667)이다. 메모리 시스템이 어디서 실패하는지 스트레스 테스트하는 논문이다.
+다음은 [Memory in the Age of AI Agents](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)다. 장기기억·단기기억 이분법 대신 Forms·Functions·Dynamics 세 축으로 에이전트 메모리를 다시 정리한 107쪽짜리 서베이다.

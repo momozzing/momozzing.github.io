@@ -12,6 +12,7 @@ tags:
   - Paper review
 toc: true
 toc_sticky: true
+field: agent-memory
 ---
 
 LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory
@@ -22,7 +23,7 @@ LongMemEval은 UCLA, Tencent AI Lab Seattle, UC San Diego에서 만든 챗봇 �
 
 2024년 10월 14일에 나왔고 2025년 3월 4일에 v2가 올라왔다. 저자 6명에 28쪽이고, ICLR 2025에 붙은 논문이다. arXiv 메타데이터에는 발표처가 비어 있고 PDF 1쪽 위에만 적혀 있다.
 
-[앞에서 본 ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)가 93.2를 찍은 벤치마크가 이거다. 서베이에서도 lifelong learning 쪽 대표로 들어가 있었다.
+[나중에 볼 ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)가 93.2를 찍는 벤치마크가 이거다. 뒤에서 볼 서베이에서도 lifelong learning 쪽 대표로 들어가 있다.
 
 벤치마크만 있는 게 아니라, 메모리 시스템을 세 단계와 네 가지 설계 포인트로 나눠서 보는 틀도 같이 내놓았다.
 
@@ -154,7 +155,7 @@ Chain-of-Note(답하기 전에 필요한 내용을 먼저 뽑음)랑 구조화�
 
 ## **6. 지금 관점: ReFind와 겹쳐 읽기**
 
-앞에서 본 ReFind랑 비교해보면,
+나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)랑 비교해보면,
 
 - 저장 단위 : LongMemEval은 round가 제일 낫다고 하고, ReFind는 turn 단위로 BM25 색인을 한다
 - 색인 : LongMemEval은 사실을 뽑아서 키를 늘리고, ReFind는 안 늘리고 원문 단어로만 색인한다
@@ -163,11 +164,11 @@ Chain-of-Note(답하기 전에 필요한 내용을 먼저 뽑음)랑 구조화�
 
 저장 단위는 같은 결론이다. round랑 turn은 거의 같은 크기다. 세션 통째는 너무 크고 사실 단위는 너무 작다는 데서 두 논문이 같다.
 
-시간 처리도 둘 다 따로 챙긴다. 다만 LongMemEval은 인덱스에 타임스탬프 이벤트를 넣어두고, ReFind는 질문할 때 에이전트가 범위를 정한다. ReFind에서 본 "미리 정하느냐, 나중으로 미루느냐"가 여기서도 나온다.
+시간 처리도 둘 다 따로 챙긴다. 다만 LongMemEval은 인덱스에 타임스탬프 이벤트를 넣어두고, ReFind는 질문할 때 에이전트가 범위를 정한다. ReFind에서 나오는 "미리 정하느냐, 나중으로 미루느냐"가 여기서도 나온다.
 
 다른 건 키 확장이다. LongMemEval은 사실을 뽑아서 키를 늘려 recall을 +9.4%p 올렸는데, ReFind는 그런 LLM 전처리를 다 없애고도 점수가 더 높았다.
 
--> 둘 다 맞을 수도 있을 것 같다. LongMemEval 실험은 검색을 한 번만 하는 설정이고, ReFind는 여러 번 검색하면서 키 확장이 하던 일을 대신한 게 아닐까. ReFind에서 검색을 1회로 줄이면 M에서 20.4점이 빠졌었다.
+-> 둘 다 맞을 수도 있을 것 같다. LongMemEval 실험은 검색을 한 번만 하는 설정이고, ReFind는 여러 번 검색하면서 키 확장이 하던 일을 대신한 게 아닐까. ReFind에서 검색을 1회로 줄이면 M에서 20.4점이 빠진다.
 
 그렇다면 여러 번 검색할 수 있으면 키 확장이 덜 필요하고, 한 번만 검색한다면 키 확장이 필요할 것 같다. 매 턴 답해야 하는 챗봇에서 검색을 2~3회 돌릴 시간이 있는지가 관건이다.
 
@@ -183,6 +184,6 @@ CP 4의 10점은 바로 써볼 수 있다. 검색을 어떻게 짜든 읽는 단
 
 개인적으로는 벤치마크보다 네 제어점 틀이 더 오래 쓰일 것 같다. "Value를 어떻게 잡았고 Key를 어떻게 늘렸나"로 물으면 아홉 개 시스템이 한 표에 들어간다.
 
-앞에서 본 서베이가 Forms·Functions·Dynamics로 분류했다면, 이 논문은 구현할 때 정해야 하는 지점으로 나눴다.
+뒤에서 볼 [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)가 Forms·Functions·Dynamics로 분류한다면, 이 논문은 구현할 때 정해야 하는 지점으로 나눴다.
 
-다음은 [LongMemEval-V2](https://arxiv.org/abs/2605.12493)다. 같은 저자가 1년 반 뒤에 낸 후속인데, 평가 기준을 V2로 옮겨야 할지 보려고 한다.
+다음은 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)이다. 사실을 지우지 않고 무효화하는 방식이고, 네 개의 타임스탬프로 무엇이 언제 참이었는지와 언제 그렇게 알았는지를 함께 남기는 지식그래프다.

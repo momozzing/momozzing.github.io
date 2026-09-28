@@ -1,0 +1,21 @@
+---
+layout: archive
+---
+{% assign field = site.data.paper_fields | where: "key", page.field | first %}
+<p class="paper-field__desc">{{ field.desc }}</p>
+<p class="paper-field__back"><a href="{{ '/categories/Paper_review/' | relative_url }}">← 논문리뷰 분야 목록</a></p>
+
+{{ content }}
+
+{% assign posts = site.posts | where: "field", page.field | sort: "date" %}
+{% if field.order == "desc" %}{% assign posts = posts | reverse %}{% endif %}
+<ol class="paper-field__list">
+{% for post in posts %}
+  {% unless post.hidden %}
+  <li class="paper-field__item{% unless post.categories contains 'Paper review' %} paper-field__item--extra{% endunless %}">
+    <a class="paper-field__title" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+    {% if post.excerpt %}<p class="paper-field__excerpt">{{ post.excerpt | markdownify | strip_html | truncate: 140 }}</p>{% endif %}
+  </li>
+  {% endunless %}
+{% endfor %}
+</ol>
