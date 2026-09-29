@@ -19,13 +19,11 @@ MemGPT: Towards LLMs as Operating Systems
 
 [https://arxiv.org/abs/2310.08560](https://arxiv.org/abs/2310.08560)
 
-MemGPT는 UC Berkeley에서 만든 LLM 메모리 관리 시스템이다.
+MemGPT는 UC Berkeley에서 만든 LLM 메모리 관리 시스템이다. 2023년 10월에 나온 논문이다.
 
 OS가 메모리와 디스크 사이를 페이징하듯이, LLM이 컨텍스트 창과 외부 저장소 사이에서 정보를 옮기게 한다.
 
-2023년 10월 12일에 나왔고 2024년 2월 12일에 v2가 올라왔다. 저자 7명에 13쪽이고, 학회 발표 없이 arXiv에만 있다.
-
-이후 메모리 논문들에서 계속 베이스라인으로 나오는 시스템이다. 뒤에서 볼 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)이 DMR에서 비교한 상대이고, [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)와 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/) 표에도 나오고, ReFind 표에서는 28.0이다. 시간순으로는 이 계열의 출발점이라 제일 먼저 읽었다.
+이후 메모리 논문들에서 계속 베이스라인으로 나오는 시스템이다. 뒤에서 볼 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)이 DMR에서 비교한 상대이고, [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)와 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/) 표에도 나온다. 시간순으로는 이 계열의 출발점이라 제일 먼저 읽었다.
 
 2023년 논문이라 지금 기준으로는 오래되었다. 그래도 이후 메모리 시스템들이 쓰는 용어가 여기서 많이 나왔다.
 
@@ -35,22 +33,22 @@ OS가 메모리와 디스크 사이를 페이징하듯이, LLM이 컨텍스트 �
 
 introduction 부분을 보면 문제는 단순하다. 고정 길이 컨텍스트 창 때문에 긴 대화나 긴 문서를 다루기 어렵다.
 
-2023년 기준으로 많이 쓰던 오픈소스 LLM은 수십 번 주고받거나 짧은 문서 하나만 넘어가도 최대 입력 길이를 넘었다고 한다.
+2023년 기준으로 많이 쓰던 오픈소스 LLM은 수십 번 주고받거나 짧은 문서 하나만 넘어가도 최대 입력 길이를 넘었다.
 
 컨텍스트를 그냥 늘리면 되는 것도 아니라고 한다. 컨텍스트가 큰 모델은 어텐션이 고르게 가지 않는다. 처음과 끝은 잘 기억하고 중간은 잘 못 한다(lost in the middle).
 
 그래서 가상 컨텍스트 관리(virtual context management)를 제안한다.
 
-운영체제의 계층적 메모리에서 아이디어를 가져왔다고 한다. OS는 물리 메모리와 디스크 사이를 페이징해서 메모리가 더 큰 것처럼 보이게 한다.
+아이디어는 운영체제의 계층적 메모리에서 가져왔다. OS는 물리 메모리와 디스크 사이를 페이징해서 메모리가 더 큰 것처럼 보이게 한다.
 
-LLM이 자기 컨텍스트에 뭘 넣을지 스스로 관리하는 'LLM OS'를 만든다는 것이다.
+LLM이 자기 컨텍스트에 뭘 넣을지 스스로 관리하게 하고, 이걸 'LLM OS'라고 부른다.
 
 ## **2. MemGPT (MemoryGPT)**
 
 메모리를 둘로 나눈다.
 
-- Main context : LLM 프롬프트 토큰. 물리 메모리/RAM에 해당한다. 여기 있는 건 in-context라서 추론할 때 바로 쓸 수 있다
-- External context : 컨텍스트 창 밖의 정보. 디스크에 해당한다. 추론에 쓰려면 main context로 직접 옮겨와야 한다
+- Main context : LLM 프롬프트 토큰. 물리 메모리(RAM)에 해당, 추론할 때 바로 씀
+- External context : 컨텍스트 창 밖의 정보. 디스크에 해당, 쓰려면 main context로 옮겨와야 함
 
 external context는 다시 둘이다.
 
@@ -59,9 +57,7 @@ external context는 다시 둘이다.
 
 ![MemGPT 계층 메모리 구조 (논문 Figure 3)](https://momozzing.github.io/assets/images/memgpt/fig3-hierarchy.png)
 
-위쪽 점선 안이 main context(프롬프트 토큰)이고, 아래 두 저장소가 external context다.
-
--> 구역마다 읽기/쓰기 권한과 누가 쓰는지가 붙어 있다.
+위쪽 점선 안이 main context(프롬프트 토큰)이고, 아래 두 저장소가 external context다. 구역마다 읽기/쓰기 권한과 누가 쓰는지가 붙어 있다.
 
 ### **2.1 Main context (prompt tokens)**
 
@@ -71,7 +67,7 @@ external context는 다시 둘이다.
 2. Working Context : 읽기·쓰기, 함수로 씀. 에이전트가 직접 관리하는 사실
 3. FIFO Queue : 읽기·쓰기, 큐 매니저가 씀. 최근 메시지, 시스템 경고, 함수 입출력
 
-FIFO 큐의 첫 인덱스에는 큐에서 밀려난 메시지들을 재귀적으로 요약한 시스템 메시지가 들어간다. 밀려나도 흔적은 남기는 것이다.
+FIFO 큐의 첫 인덱스에는 큐에서 밀려난 메시지들을 재귀적으로 요약한 시스템 메시지가 들어간다. 밀려나도 요약으로 흔적은 남는다.
 
 ### **2.2 Queue Manager**
 
@@ -91,9 +87,9 @@ Figure 4는 갱신하는 예시다. 사용자가 헤어졌다고 하니 `working
 
 ![working context를 갱신하는 예시 (논문 Figure 4)](https://momozzing.github.io/assets/images/memgpt/fig4-update-context.png)
 
-갱신되는 정보는 프롬프트 토큰 안의 working context에 들어 있다고 한다.
+갱신되는 정보는 프롬프트 토큰 안의 working context에 들어 있다.
 
-replace로 덮어쓴다. 뒤에서 볼 Mem0의 UPDATE·DELETE는 이쪽이고, Zep은 무효화로 처리해서 여기서 갈린다.
+replace로 덮어쓰니까 working context에서는 이전 값이 사라진다. 원래 대화는 recall storage에 남아 있다.
 
 ### **2.3 Function executor (handling of completion tokens)**
 
@@ -107,7 +103,7 @@ LLM이 출력에 `request_heartbeat=true`라는 인자를 넣으면 바로 다�
 
 이 플래그가 없으면(yield) 다음 외부 이벤트(사용자 메시지나 예약된 인터럽트)가 올 때까지 LLM을 돌리지 않는다.
 
--> ReAct 루프랑 거의 같은 구조다. 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서는 반복 검색이 M 세트에서 20.4점을 차지하는데, MemGPT도 2023년에 이미 반복 검색을 하고 있었다. 그런데 ReFind 표에서 MemGPT가 28.0에 그친 건 검색 인터페이스가 세션·시간·중복을 몰라서인 것 같다.
+-> 앞에서 본 [ReAct](https://momozzing.github.io/paper%20review/ReAct-Paper-review/) 루프랑 거의 같은 구조다. 2023년에 이미 에이전트가 검색을 여러 번 이어서 하고 있었다.
 
 ## **3. Experiments**
 
@@ -115,7 +111,9 @@ LLM이 출력에 `request_heartbeat=true`라는 인자를 넣으면 바로 다�
 
 #### **3.1.1 Deep memory retrieval task (consistency)**
 
-이전 대화(세션 1~5)에서 나온 주제에 대해 구체적으로 물어본다.
+이전 대화(세션 1~5)에서 나온 주제에 대해 구체적으로 물어본다. 데이터는 MSC(Multi-Session Chat)이고, 대화마다 세션 5개, 세션당 메시지 열두 개 안팎이다.
+
+아래는 MemGPT를 백본별로 돌린 결과다(논문 Table 2). 모델 이름만 있는 줄이 MemGPT 없이 그 모델만 쓴 베이스라인이다.
 
 | 모델 | 정확도 | ROUGE-L |
 |---|---:|---:|
@@ -126,13 +124,17 @@ LLM이 출력에 `request_heartbeat=true`라는 인자를 넣으면 바로 다�
 | GPT-4 Turbo | 35.3% | 0.359 |
 | + MemGPT | 93.4% | 0.827 |
 
-고정 컨텍스트 베이스라인보다 훨씬 높다. GPT-4에서 32.1% → 92.5%다.
+베이스라인은 지난 다섯 세션을 손실 있게 요약한 것만 본다. 논문은 이걸 재귀 요약(recursive summarization)을 흉내 낸 설정이라고 한다. MemGPT는 대화 이력 전체를 recall storage에 두고 검색해서 꺼내 쓴다.
 
--> 그런데 뒤에서 볼 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)에서 잰 full-conversation 베이스라인이 94.4%다. MemGPT의 93.4%는 대화를 통째로 넣은 것보다 낮다. MemGPT가 비교한 건 잘린 컨텍스트였지 전체 컨텍스트가 아니었다.
+GPT-4에서 32.1% → 92.5%다.
+
+-> 베이스라인이 요약만 보는 설정이라, 대화를 통째로 넣은 것과 비교한 건 아니다. 그 비교는 뒤에서 볼 Zep이 한다.
 
 #### **3.1.2 Conversation opener task (engagement)**
 
 에이전트가 먼저 말을 거는 품질을 본다. 페르소나 라벨과의 유사도(SIM-1/3), 사람이 쓴 오프너와의 유사도(SIM-H)로 잰다.
+
+아래도 MemGPT를 백본별로 돌린 결과다(논문 Table 3). Human 줄만 사람이 쓴 오프너다.
 
 | 방법 | SIM-1 | SIM-3 | SIM-H |
 |---|---:|---:|---:|
@@ -147,45 +149,29 @@ LLM이 출력에 `request_heartbeat=true`라는 인자를 넣으면 바로 다�
 
 문서 QA에서는 컨텍스트 한계를 훨씬 넘는 문서를 처리한다.
 
-그리고 중첩 key-value 검색 과제를 새로 만들었다. 여러 데이터 출처에 걸친 정보를 찾아야 하는 다중홉 검색을 본다.
+고정 컨텍스트 베이스라인은 검색기가 가져온 상위 K개 문서만 보니까, 성능이 검색기 성능에 묶인다. 문서를 더 넣으려고 잘라 넣으면 정확도가 떨어진다. MemGPT는 archival storage를 페이지 단위로 여러 번 검색하니까 문서 수가 늘어도 성능이 유지된다(논문 Figure 5).
+
+다만 MemGPT도 검색 결과를 끝까지 넘기지 않고 중간에 멈출 때가 많았고, GPT-3.5에서는 함수 호출 능력이 부족해서 크게 떨어진다.
+
+그리고 중첩 key-value 검색 과제를 새로 만들었다. 값이 다시 키가 되는 구조라 여러 번 찾아 들어가야 하는 다중홉 검색이다.
+
+GPT-3.5는 중첩 1단계에서, GPT-4와 GPT-4 Turbo는 3단계에서 정확도 0%가 된다. GPT-4 기반 MemGPT는 중첩 단계가 늘어도 떨어지지 않는다(논문 Figure 7).
 
 Wikipedia 2천만 문서 임베딩 데이터셋도 같이 공개했다.
 
 ## **4. 지금 관점: 이후 시스템에 남은 것들**
 
-벤치마크 숫자보다는 여기서 나온 용어들이 이후에 계속 쓰인다.
+벤치마크 숫자보다 여기서 나온 용어가 더 오래 남았다. main context와 external context를 나누는 구도는 뒤에 나오는 시스템 대부분이 그대로 쓴다. LLM이 함수 호출로 자기 메모리를 고치는 것도 뒤에서 볼 Mem0의 추가·수정·삭제 연산으로 이어진다.
 
-- main / external context : 거의 모든 시스템의 기본 구도
-- working context : Mem0의 추출된 사실, A-MEM의 노트
-- recall storage : Zep의 episode subgraph
-- archival storage : ReFind의 원본 아카이브
-- 함수로 자기 메모리 관리 : Mem0의 tool call 4연산
-- `request_heartbeat` 연쇄 : ReFind의 ReAct 반복 검색
-- 메모리 압력 경고 : 모든 압축 트리거
+MemGPT 안에는 원본이 남는 부분과 안 남는 부분이 섞여 있다. recall storage와 archival storage에는 원본이 남는다. FIFO 큐에서 밀려난 메시지의 재귀 요약과 working context의 `replace`는 원본을 덮는다. 요약이 또 요약되면서 오차가 쌓이는 문제는 나중에 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 따로 다룬다.
 
-나중에 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 가역 방식 예로 "Quest와 MemGPT-archival 방식"을 드는데, 여기서 온 것이다. archival storage에 원본을 두고 질의할 때 꺼내니까 P-rev를 만족한다.
-
-그런데 MemGPT 안에는 가역과 비가역이 섞여 있다.
-
-- 가역 : recall storage, archival storage. 원본이 남는다
-- 비가역 : FIFO 큐에서 밀려난 메시지의 재귀 요약, working context의 `replace`
-
-재귀 요약은 큐에서 밀린 메시지가 요약되고, 그 요약이 또 요약된다. Rate-Distortion 실험 2에서 다루는 반복 압축 오차 누적이 이 부분이다.
-
-다만 MemGPT는 recall storage에 원본을 남기니까 요약에서 빠진 걸 검색으로 다시 찾을 수는 있다.
+그래도 recall storage에 원본을 남기니까 요약에서 빠진 걸 검색으로 다시 찾을 수는 있다.
 
 -> 설계는 되어 있는데, 에이전트가 검색을 안 하면 소용없는 거 아닌가??
 
--> 세 구역 나누는 건 지금 봐도 쓸 만한 것 같다. 시스템 지시(정적) / 에이전트가 관리하는 사실(함수로 씀) / 최근 메시지(자동으로 씀). 쓰는 주체를 나누면 프롬프트 관리가 깔끔해진다.
+지금 봐도 쓸 만한 건 프롬프트를 세 구역으로 나눈 것이다. 시스템 지시(정적), 에이전트가 관리하는 사실(함수로 씀), 최근 메시지(자동으로 씀)로 쓰는 주체를 나누면 프롬프트 관리가 깔끔해진다. 토큰이 차면 그냥 자르지 않고 메모리 압력 경고로 LLM한테 알려서 뭘 남길지 판단하게 하는 것도 괜찮아 보인다.
 
--> 메모리 압력을 이벤트로 알려주는 것도 괜찮아 보인다. 토큰이 차면 그냥 자르는 게 아니라 LLM한테 알려서 뭘 남길지 판단하게 하는 것.
-
--> 큐 매니저가 들어온 메시지랑 생성된 출력을 둘 다 recall storage에 쓰는 것도 중요해 보인다. 잘라낸 히스토리를 버리지 않고 검색할 수 있는 곳에 두면 되돌릴 수 있다.
-
-한계도 있다.
-
-1. 전부 LLM 판단에 달려 있다. 언제 저장할지, 뭘 검색할지, 언제 함수를 연쇄할지 다 모델이 정한다. 2023년 GPT-4 기준으로 설계됐고, 뒤에서 볼 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)의 Qwen2.5-3b 결과를 보면 약한 모델에서는 잘 안 돌아간다(순위 2.4).
-2. 토큰을 많이 쓴다. A-MEM 표에서 MemGPT는 16,900~17,000토큰을 쓰는데, A-MEM은 1,200~2,500이다. main context에 FIFO 큐를 통째로 들고 있어서다.
+한계는 전부 LLM 판단에 달려 있다는 점이다. 언제 저장할지, 뭘 검색할지, 언제 함수를 연쇄할지 다 모델이 정한다. 2023년 GPT-4 기준으로 설계됐고, 이 논문에서도 GPT-3.5로 돌리면 문서 QA가 크게 떨어졌다. 뒤에서 볼 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/) 논문의 비교에서도 작은 모델에서 MemGPT가 약하고 토큰을 많이 쓰는 쪽으로 나온다. 토큰을 많이 쓰는 이유는 main context에 FIFO 큐를 들고 가는 구조 때문일 것 같은데, 논문에서 따로 재지는 않았다. 반복 검색을 하는 구조가 나중에 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서 어떻게 다시 나오는지도 뒤에서 본다.
 
 ## **5. Conclusion**
 
