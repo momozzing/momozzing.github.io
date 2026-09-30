@@ -18,7 +18,7 @@ Voyager: An Open-Ended Embodied Agent with Large Language Models
 
 [https://arxiv.org/abs/2305.16291](https://arxiv.org/abs/2305.16291) / [데모 사이트](https://voyager.minedojo.org/)
 
-Voyager는 NVIDIA, Caltech 등에서 만든 마인크래프트 에이전트다. 2023년 5월에 나온 논문이다.
+Voyager는 NVIDIA, Caltech 등에서 만든 마인크래프트 에이전트다. 2023년 5월 arXiv에 올라온 논문이다.
 
 [Generative Agents](https://momozzing.github.io/paper%20review/Generative-Agents-Paper-review/)는 에이전트의 경험을 자연어 기억으로 쌓았는데, Voyager는 성공한 행동을 실행 가능한 코드로 쌓는다.
 
@@ -183,7 +183,7 @@ Voyager는 화면을 못 본다. 논문을 쓸 당시 GPT-4 API가 텍스트만 
 3. 자기 검증 실패 : 거미를 잡았다는 신호인 거미줄을 성공으로 알아보지 못하는 경우
 4. 시각 없음 : 3.5절에서 본 것처럼 봇 API의 텍스트 상태만 읽음
 
-## **5. 지금 관점: 기억을 코드로 남길 때**
+## **지금 관점: 기억을 코드로 남길 때**
 
 앞에서 본 Reflexion은 실패의 교훈을 자연어 반성문으로, Generative Agents는 경험을 자연어 관찰과 반성으로 저장했다. Voyager는 실행 가능한 코드로 저장한다.
 

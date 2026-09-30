@@ -219,7 +219,7 @@ HotpotQA는 검증셋에서 무작위로 뽑은 500문제로 따로 잰 것이�
 
 instruction following으로 파인튜닝된 모델이라 그럴 수 있다고 추정하고, ReAct가 특정 모델에만 통하는 방법은 아니라는 근거로 든다.
 
-## **5. 지금 관점: LangChain create_agent와 비교**
+## **지금 관점: LangChain create_agent와 비교**
 
 논문의 Thought → Action → Observation 루프가 코드로는 어떻게 되어 있는지 보자.
 
@@ -252,7 +252,7 @@ result = agent.invoke(
 
 논문의 `finish[answer]`는 tool로 안 만들어도 된다. 이유는 뒤에 나온다.
 
-### **5.1 내부 루프**
+### **내부 루프**
 
 create_agent는 model 노드와 tools 노드를 가진 graph를 만든다.
 
@@ -279,7 +279,7 @@ def agent_loop(messages):
                                              # Observation 추가
 ```
 
-### **5.2 논문 ↔ 구현 매핑**
+### **논문 ↔ 구현 매핑**
 
 - Thought : AIMessage의 `content` (tool_calls와 같이 생성됨)
 - Action : AIMessage의 `tool_calls`
@@ -287,7 +287,7 @@ def agent_loop(messages):
 - `finish[answer]` : tool_calls 없는 AIMessage = 루프 종료 조건
 - trajectory (context 누적) : `messages` 리스트
 
-### **5.3 논문과 달라진 점**
+### **논문과 달라진 점**
 
 원논문(2022)은 function calling이 없던 시절이라 순수 텍스트로 동작했다.
 

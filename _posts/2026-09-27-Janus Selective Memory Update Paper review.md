@@ -19,7 +19,7 @@ The Past Is Prologue: A Plug-in Controller for Selective Updates in Sequentially
 
 [https://arxiv.org/abs/2606.31121](https://arxiv.org/abs/2606.31121)
 
-Janus는 University of Virginia, Princeton, UCF에서 만든 메모리 갱신 컨트롤러다. 2026년 6월에 나온 논문이다.
+Janus는 University of Virginia, Princeton, UCF에서 만든 메모리 갱신 컨트롤러다. 2026년 6월 arXiv에 올라온 논문이다.
 
 논문 제목은 The Past Is Prologue이고, 제안하는 방법 이름이 Janus다.
 
@@ -57,7 +57,7 @@ Figure 1 그래프를 보면 태스크가 진행되면서 테스트 정확도가
 
 ## **2. Method**
 
-### **2.1 Janus: Plug-in Memory Control**
+### **2.2 Janus: Plug-in Memory Control**
 
 ExpeL, DC-RS 같은 기존 갱신기를 감싸는 플러그인이다. 갱신 규칙 자체는 안 바꾼다.
 
@@ -74,7 +74,7 @@ ExpeL, DC-RS 같은 기존 갱신기를 감싸는 플러그인이다. 갱신 규
 1. 언제 비교할 것인가 (when to compare)
 2. 무엇으로 비교할 것인가 (what to compare)
 
-#### **2.1.1 Memory Momentum Trigger (MMT)**
+#### **Memory Momentum Trigger (MMT)**
 
 언제 비교할지를 정하는 부분이다.
 
@@ -90,7 +90,7 @@ ExpeL, DC-RS 같은 기존 갱신기를 감싸는 플러그인이다. 갱신 규
 
 갱신들이 대체로 같은 방향으로 가면 조금씩 다듬는 중이라 비교해 봐야 얻을 게 적고, 방향이 확 틀어지면 쓸 만한 새 지식일 수도 있고 최근 태스크 내용으로 덮어쓰는 중일 수도 있어서 그때 확인한다.
 
-#### **2.1.2 Hybrid Trigger-Time Evaluation Set**
+#### **Hybrid Trigger-Time Evaluation Set**
 
 무엇으로 비교할지를 정하는 부분이다.
 
@@ -207,7 +207,7 @@ DC-RS와 ExpeL 둘 다 갱신을 전부 받으면 초중반에는 좋아지다�
 
 앞에서 본 [Experience-Following 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)의 Add all 결과랑 같은 모양이다. 거기서는 최종 성능만 봤는데, 여기서는 곡선이 꺾이는 지점까지 보여준다.
 
-## **4. 지금 관점: 갱신 전에 옛 버전과 비교하기**
+## **지금 관점: 갱신 전에 옛 버전과 비교하기**
 
 앞에서 본 Mem0, Zep, A-MEM은 갱신할 때 LLM 판단을 그대로 믿었다. 추가·수정·삭제를 LLM이 고르거나, 모순을 LLM이 판단해서 옛 사실을 무효화하거나, 이웃 메모리를 LLM이 고쳐 쓴다. 고친 다음에 그게 나아졌는지 재보는 단계는 없었다.
 

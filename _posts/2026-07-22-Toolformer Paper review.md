@@ -17,7 +17,7 @@ Toolformer: Language Models Can Teach Themselves to Use Tools
 
 [https://arxiv.org/abs/2302.04761](https://arxiv.org/abs/2302.04761)
 
-Toolformer는 Meta AI에서 만든, 도구 쓰는 법을 스스로 배우는 언어모델이다. 2023년 2월에 나왔고 NeurIPS 2023에 실렸다.
+Toolformer는 Meta AI에서 만든, 도구 쓰는 법을 스스로 배우는 언어모델이다. 2023년 2월 arXiv에 올라온 논문이다.
 
 [ReAct](https://momozzing.github.io/paper%20review/ReAct-Paper-review/)와 [Reflexion](https://momozzing.github.io/paper%20review/Reflexion-Paper-review/)은 프롬프팅으로 도구를 쓰게 했는데, Toolformer는 파인튜닝으로 모델이 도구를 쓰게 만든다.
 
@@ -179,7 +179,7 @@ GPT-2 계열 작은 모델들(124M~1.6B)로 같은 실험을 해보면, 도구�
 
 그리고 모델이 커져도 도구 유무에 따른 차이는 크게 남는다.
 
-## **5. Limitations**
+## **7. Limitations**
 
 1. 도구를 연쇄(chain)할 수 없다.
 2. 검색 결과를 훑어보거나 다시 질의하는 상호작용이 안 된다.
@@ -193,7 +193,7 @@ GPT-2 계열 작은 모델들(124M~1.6B)로 같은 실험을 해보면, 도구�
 
 sample-inefficient는 계산기에서 특히 심하다. 문서 100만 개 이상을 처리해도 쓸모 있는 계산기 호출은 몇천 개만 나온다고 한다.
 
-## **6. 지금 관점: function calling과 비교**
+## **지금 관점: function calling과 비교**
 
 요즘 모델들이 기본으로 갖고 있는 native function calling은 도구 호출 데이터로 학습한 결과다.
 
@@ -203,7 +203,7 @@ sample-inefficient는 계산기에서 특히 심하다. 문서 100만 개 이상
 
 한계였던 연쇄와 상호작용은 ReAct나 Reflexion 같은 프롬프팅 루프 쪽이 채웠다. 지금 agent는 파인튜닝으로 배운 function calling을 프롬프팅 루프가 돌리는 모양이라, 두 계열이 합쳐진 것 같다.
 
-## **7. Conclusion**
+## **8. Conclusion**
 
 사람 어노테이션 없이, "이 도구 호출이 다음 토큰 예측을 쉽게 하는가"라는 필터 하나로 도구 사용 학습 데이터를 만들 수 있다는 걸 보여준다.
 

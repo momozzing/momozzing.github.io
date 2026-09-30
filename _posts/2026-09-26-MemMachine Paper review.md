@@ -20,7 +20,7 @@ MemMachine: A Ground-Truth-Preserving Memory System for Personalized AI Agents
 
 [https://arxiv.org/abs/2604.04853](https://arxiv.org/abs/2604.04853)
 
-MemMachine은 MemVerge, Inc.에서 만든 오픈소스 메모리 시스템이다. 2026년 4월에 나온 논문이다.
+MemMachine은 MemVerge, Inc.에서 만든 오픈소스 메모리 시스템이다. 2026년 4월 arXiv에 올라온 논문이다.
 
 제목의 ground-truth-preserving은 대화 원문을 그대로 보관한다는 뜻이다. LLM으로 뭔가 뽑아내는 건 최소한으로 하고, 대신 검색 쪽을 손보는 게 더 효과가 크다고 한다.
 
@@ -36,7 +36,7 @@ MemMachine은 MemVerge, Inc.에서 만든 오픈소스 메모리 시스템이다
 
 원시 대화 에피소드를 그대로 저장하고, LLM으로 추출하는 건 최소화한다. 아예 안 쓰는 건 아니고, 프로필 메모리는 여전히 LLM으로 추출한다.
 
-## **2. MemMachine Architecture**
+## **4. MemMachine Architecture**
 
 전체 구조는 이렇다.
 
@@ -48,7 +48,7 @@ MemMachine은 MemVerge, Inc.에서 만든 오픈소스 메모리 시스템이다
 
 논문은 단기 쪽을 STM(Short-Term Memory), 장기 쪽을 LTM(Long-Term Memory)이라고 부른다. STM은 최근 에피소드를 정해진 개수만큼 들고 있으면서 세션 요약을 만들고, 창을 벗어난 에피소드는 LTM으로 넘어가 문장 단위로 임베딩해서 검색할 수 있게 저장된다.
 
-### **2.1 Contextualization**
+### **4.6 Contextualization**
 
 대화 메모리 검색이 어려운 이유를 이렇게 설명한다.
 
@@ -69,7 +69,7 @@ MemMachine은 MemVerge, Inc.에서 만든 오픈소스 메모리 시스템이다
 
 -> 앞 1개, 뒤 2개로 비대칭인 건 대화에서 답이 질문 뒤에 오니까 뒤쪽을 더 보는 것 같다. 이웃 턴을 같이 꺼내는 장치는 뒤에서 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서도 다시 나온다.
 
-### **2.2 Profile Memory (Semantic Memory)**
+### **4.7 Profile Memory (Semantic Memory)**
 
 일화 메모리가 원시 상호작용을 그대로 두는 거라면, 프로필 메모리는 사용자 속성을 요약해서 모아둔다.
 
@@ -81,11 +81,11 @@ LLM 추출은 여기서만 쓴다. 원문은 일화 메모리에 남아 있으�
 
 앞에서 본 Mem0에서는 사실만 남기고 원문을 버렸는데, 여기서는 원문을 남긴다.
 
-## **3. Retrieval Agent**
+## **5. Retrieval Agent**
 
 다중홉 질의를 위해서 에이전트를 따로 둔다.
 
-### **3.1 The Late Binding Problem**
+### **5.1 The Late Binding Problem**
 
 논문 예시는 이렇다. Acme의 CEO(Person X)를 찾고, 그 배우자 Person Y를 찾고, Person Y의 고용주 Company Z를 찾아야 한다.
 
@@ -100,7 +100,7 @@ LLM 추출은 여기서만 쓴다. 원문은 일화 메모리에 남아 있으�
 
 반복 검색으로 이 문제를 푸는 방식은 뒤에서 볼 ReFind에서도 나온다.
 
-### **3.2 Architecture**
+### **5.2 Architecture**
 
 해법은 도구 트리다. `ToolSelectAgent`가 질의를 보고 셋 중 하나로 보낸다.
 
@@ -112,7 +112,7 @@ LLM 추출은 여기서만 쓴다. 원문은 일화 메모리에 남아 있으�
 
 세 전략 모두 같은 DeclarativeMemory 검색(벡터 검색 + 재랭커)을 부른다. 그래서 인덱스나 재랭커를 개선하면 세 경로에 다 반영된다고 한다.
 
-### **3.3 Benchmark Results**
+### **5.6 Benchmark Results**
 
 다중홉 에이전트 결과다. 정확도는 LLM 판정 점수이고, 세 가지 방식을 비교한다. 메모리 없이 전체 텍스트를 LLM에 넣는 베이스라인, 기본 MemMachine 검색, Retrieval Agent다.
 
@@ -122,9 +122,9 @@ WikiMultiHop에서 질문들의 문맥을 한 저장소에 무작위로 섞어 �
 
 -> 에이전트가 기본 검색보다는 확실히 낫지만, 문맥이 창에 다 들어가는 이 벤치마크들에서는 전체 텍스트를 넣는 쪽이 비슷하거나 더 높다.
 
-## **4. Results and Analysis**
+## **8. Results and Analysis**
 
-### **4.1 LoCoMo Benchmark Results**
+### **8.1 LoCoMo Benchmark Results**
 
 LoCoMo 점수는 judge LLM(gpt-4o-mini)이 답을 정답과 비교해 0/1로 매긴 점수의 평균이다. 논문 Table 10에서 답변 모델과 모드별 전체 점수와 Temporal 점수만 옮겼다.
 
@@ -137,7 +137,7 @@ LoCoMo 점수는 judge LLM(gpt-4o-mini)이 답을 정답과 비교해 0/1로 매
 
 abstract에 나온 0.9169는 제일 좋은 조합(gpt-4.1-mini, agent 모드) 점수다.
 
-### **4.2 Comparative Analysis**
+### **8.2 Comparative Analysis**
 
 다른 시스템과는 gpt-4o-mini, memory 모드로 비교한다. 발표된 베이스라인들이 gpt-4o-mini 기준이라서다. 논문 Table 11에서 MemMachine과 차순위 Memobase만 옮겼다.
 
@@ -154,7 +154,7 @@ Temporal만 진다. Memobase가 0.8505로 더 높다.
 
 논문은 타임스탬프를 고려한 검색으로 개선할 수 있다고 본다. 그리고 gpt-4.1-mini agent 모드에서는 Temporal이 0.9159까지 올라가서, 시간 추론은 답변 모델 능력에 많이 좌우된다고 한다.
 
-### **4.3 Efficiency Analysis**
+### **8.3 Efficiency Analysis**
 
 효율도 같이 보고한다.
 
@@ -164,7 +164,7 @@ Temporal만 진다. Memobase가 0.8505로 더 높다.
 
 속도 두 개는 다른 시스템이 아니라 자기 이전 버전과 비교한 수치다.
 
-### **4.4 LongMemEvalS Ablation Study**
+### **8.4 LongMemEvalS Ablation Study**
 
 LongMemEval_S는 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서 질문마다 약 115k 토큰짜리 대화 이력을 붙인 버전이다. 500문항 전체에서 설정을 하나씩 바꿔가며 쟀고, 최고 점수는 93.0%다.
 
@@ -193,9 +193,9 @@ LongMemEval_S는 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%2
 
 이유는 모델과 프롬프트를 같이 맞춰야 해서라고 본다. 최종 프롬프트는 chain-of-thought 없이 간결하게 지시하는 형태인데, GPT-5는 자체 추론이 이런 명시적 추론 지시와 부딪힐 수 있다고 한다.
 
-## **5. Discussion**
+## **9. Discussion**
 
-### **5.1 Architectural Design Tensions**
+### **9.8 Architectural Design Tensions**
 
 논문 Table 16은 여러 메모리 시스템을 설계 속성별로 비교한다. 아래는 그중 일부 행과 열만 옮겼다.
 
@@ -211,7 +211,7 @@ LongMemEval_S는 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%2
 
 앞에서 본 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서는 A-Mem 구축에 15시간, Nemori 형식 오류 30%가 나왔는데, 둘 다 쓰기 단계 LLM 호출에서 생긴 문제였다. 호출이 적으면 이런 위험도 줄어든다.
 
-### **5.2 When Memory Helps (and When It Doesn’t)**
+### **9.9 When Memory Helps (and When It Doesn’t)**
 
 논문이 이걸 절을 따로 두고 적었다.
 
@@ -228,7 +228,7 @@ LongMemEval_S는 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%2
 - 양은 많고 개인화는 적은 작업 (배치 처리, 데이터 추출)
 - 개인정보 제약 때문에 상호작용 이력을 저장하면 안 되는 경우
 
-## **6. 지금 관점: 저장 구조를 안 바꾸고 할 수 있는 것**
+## **지금 관점: 저장 구조를 안 바꾸고 할 수 있는 것**
 
 이 논문에서 가져올 만한 건 대부분 저장 구조를 안 바꾸고도 해볼 수 있다. 여섯 가지 중에 제일 큰 게 `k`를 20→30으로 올린 +4.2%p인데, 파라미터 하나 바꾼 거다. 다만 GPT-5에서는 k=50이 오히려 0.890으로 떨어졌으니 무조건 늘린다고 좋은 것도 아니다.
 
@@ -236,9 +236,9 @@ LongMemEval_S는 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%2
 
 모델을 바꿀 때 프롬프트도 다시 봐야 한다. CoT 제거 +1.6%p, GPT-5-mini가 GPT-5보다 +2.6%p였다. 추출·그래프를 쓰는 무거운 메모리 시스템을 들이기 전에 이런 것부터 해보는 게 순서일 것 같다.
 
-그런데 3.3절 표를 보면 문맥이 창에 다 들어가는 벤치마크에서는 전체 텍스트를 넣는 베이스라인이 MemMachine보다 높은 경우가 꽤 있다. LoCoMo에서도 gpt-5-mini 기준으로 전체 텍스트 91.7%, MemMachine 90.5%다. 메모리를 쓰는 이유가 정확도보다는 토큰과 지연 쪽일 수 있다.
+그런데 5.6절 표를 보면 문맥이 창에 다 들어가는 벤치마크에서는 전체 텍스트를 넣는 베이스라인이 MemMachine보다 높은 경우가 꽤 있다. LoCoMo에서도 gpt-5-mini 기준으로 전체 텍스트 91.7%, MemMachine 90.5%다. 메모리를 쓰는 이유가 정확도보다는 토큰과 지연 쪽일 수 있다.
 
-## **7. Conclusion**
+## **11. Conclusion**
 
 원문 보존, 비용 효율, 개인화를 우선으로 둔 오픈소스 메모리 시스템이다.
 

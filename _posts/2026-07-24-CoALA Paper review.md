@@ -324,7 +324,7 @@ GPT-N이 기억, grounding, 의사결정을 통째로 컨텍스트 안에서 시
 
 -> 프레임워크 논문이 자기 프레임워크가 덜 중요해지는 조건을 직접 적어둔 게 재밌다.
 
-## **8. 지금 관점: Planning/Memory/Tool Use 분류와 비교**
+## **지금 관점: Planning/Memory/Tool Use 분류와 비교**
 
 이 논문에는 벤치마크 수치가 없다. 기여는 전부 개념 정리다.
 
@@ -336,7 +336,7 @@ Planning도 마찬가지다. ReAct와 ToT는 둘 다 "Planning 함"인데, 하�
 
 7장의 경계 질문은 오히려 더 어려워진 것 같다. function calling과 긴 컨텍스트가 모델에 들어가면서 working memory와 외부 기억의 경계, reasoning과 grounding의 경계가 논문이 쓰일 때보다 흐려졌다.
 
-## **9. Conclusion**
+## **8. Conclusion**
 
 에이전트 연구가 각자 만들어내던 개념들(기억, 스킬, 반성, 계획)이 인지 아키텍처가 수십 년 전에 정리한 구조와 거의 그대로 맞아떨어진다.
 

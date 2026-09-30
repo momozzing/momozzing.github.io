@@ -108,9 +108,9 @@ Figure 3은 생애주기 축을 그린 그림이다. 맨 왼쪽 Mamba, RMT(아�
 
 단계마다 대상과 시간 규모는 다르지만 남길지 버릴지는 똑같이 정한다.
 
-## **4. The Inference ↔ Agent-Memory Bridge**
+## **10. The Inference ↔ Agent-Memory Bridge**
 
-층 간 이전을 다룬다. 논문에서는 10장이다.
+층 간 이전을 다룬다.
 
 같은 틀로 보면 한 층의 기법을 다른 층으로 옮길 수 있다고 한다. 예시가 세 개다.
 
@@ -122,11 +122,11 @@ Figure 3은 생애주기 축을 그린 그림이다. 맨 왼쪽 Mamba, RMT(아�
 
 두 번째는 Quest가 KV를 버리지 않고 질의에 맞는 페이지만 꺼내 쓰듯, 에이전트도 요약해서 덮어쓰지 말고 아카이브에서 꺼내 쓰라는 얘기다. 세 번째는 Ada-KV의 출력 오차 상한처럼, 요약도 정해진 주기가 아니라 오차 추정치가 한계에 닿을 때까지만 하라는 것이다.
 
-## **5. A Reference Experiment**
+## **14. A Reference Experiment**
 
 주장을 뒷받침하려고 작은 실험 두 개를 돌린다. 규모가 작다는 건 논문도 인정하고, 절대값보다 곡선 모양을 보라고 한다.
 
-### **5.1 Experiment 1: the unified accuracy–budget frontier**
+### **14.1 Experiment 1: the unified accuracy–budget frontier**
 
 needle-in-a-haystack 검색이다.
 
@@ -154,7 +154,7 @@ needle 태스크는 필요한 정보가 토큰 몇 개에 몰려 있어서, 예�
 
 다만 이 규모에서는 그 간격이 크지 않고, 방법들 순위도 요점에서 벗어난다. BPT 축으로 비교할 수 있게 된다는 게 요점이라고 한다.
 
-### **5.2 Experiment 2: error accumulation under repeated compaction**
+### **14.2 Experiment 2: error accumulation under repeated compaction**
 
 이쪽은 단일 턴 벤치마크로는 못 돌리는 실험이다.
 
@@ -177,7 +177,7 @@ needle 태스크는 필요한 정보가 토큰 몇 개에 몰려 있어서, 예�
 
 -> 요약을 반복하면 정보가 빠진다는 건 감으로는 알았는데, 숫자로 보니까 차이가 꽤 크다.
 
-## **6. 지금 관점: 무엇을 버릴지 정할 때**
+## **지금 관점: 무엇을 버릴지 정할 때**
 
 이 논문에서 가져갈 건 되돌릴 수 있게 만들라는 것 같다.
 
@@ -195,7 +195,7 @@ needle 태스크는 필요한 정보가 토큰 몇 개에 몰려 있어서, 예�
 
 뒤에서 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)는 원본 대화를 그대로 두고 검색만 하는 쪽이라, 가역 쪽 얘기가 다시 나온다.
 
-## **7. Conclusion**
+## **16. Conclusion**
 
 conclusion 부분을 보면 네 층을 하나의 틀로 보면 세 가지를 얻는다고 한다. 같은 예산 축 위에서 KV 축출기와 에이전트 요약기를 비교할 수 있고, 질의를 모른 채 되돌릴 수 없게 버리는 실패가 모든 층에서 같다는 걸 보고, 한 층의 기법을 다른 층으로 옮길 수 있다.
 

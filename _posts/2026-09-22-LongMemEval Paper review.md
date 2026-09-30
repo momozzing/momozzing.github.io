@@ -37,11 +37,11 @@ introduction 부분을 보면 기존 장기 대화 벤치마크가 못 보던 �
 
 그리고 기존 벤치마크는 대화 이력이 너무 짧고, 실제 과제를 하는 대화랑은 성격이 다르다고 한다.
 
-## **2. LongMemEval**
+## **3. LongMemEval**
 
 벤치마크 설계부터 보자.
 
-### **2.1 LongMemEval: Benchmark Curation**
+### **3.2 LongMemEval: Benchmark Curation**
 
 장기기억을 다섯 가지 능력으로 나눈다.
 
@@ -88,7 +88,7 @@ abstention은 따로 모으지 않고 기존 질문을 틀린 전제로 바꿔�
 
 세션을 더 넣으면 이력을 얼마든지 늘릴 수 있다.
 
-### **2.2 LongMemEval represents a significant challenge**
+### **3.4 LongMemEval represents a significant challenge**
 
 사전 평가로 난이도를 먼저 보여준다.
 
@@ -99,9 +99,9 @@ abstention은 따로 모으지 않고 기존 질문을 틀린 전제로 바꿔�
 
 abstract에서는 이걸 한 줄로 요약한다. 대화가 이어지면서 정보를 기억해야 하는 상황에서 정확도가 약 30% 떨어진다고 한다.
 
-## **3. A Unified View of Long-Term Memory Assistants**
+## **4. A Unified View of Long-Term Memory Assistants**
 
-### **3.1 Long-Term Memory System: Formulation**
+### **4.1 Long-Term Memory System: Formulation**
 
 장기 메모리를 큰 key-value 저장소로 본다.
 
@@ -121,7 +121,7 @@ abstract에서는 이걸 한 줄로 요약한다. 대화가 이어지면서 정�
 
 ChatGPT와 Coze는 알 수 없는 설계 항목을 비워뒀다.
 
-### **3.2 Long-Term Memory System: Design Choices**
+### **4.2 Long-Term Memory System: Design Choices**
 
 여기서 설계할 때 정해야 하는 제어점(CP, control point) 네 개를 뽑는다.
 
@@ -141,11 +141,11 @@ CP 4: Reading Strategy
 
 가져온 걸 어떻게 읽나. 검색을 잘해도 LLM이 긴 컨텍스트를 제대로 읽고 추론한다는 보장이 없다.
 
-## **4. Experiment Results**
+## **5. Experiment Results**
 
 제어점마다 실험을 돌려서 설계 지침을 냈다.
 
-### **4.1 Value: Decomposition improves RAG performance**
+### **5.2 Value: Decomposition improves RAG performance**
 
 저장 단위는 세션보다 라운드가 낫다고 한다(CP 1). 라운드는 사용자 메시지 하나와 그에 대한 어시스턴트 응답 하나를 묶은 단위다.
 
@@ -157,7 +157,7 @@ CP 4: Reading Strategy
 
 Full과 Multi-Session Subset을 나눠서 토큰 수 대비 정확도를 그렸다. Multi-Session Subset에서는 Round Facts(보라색) 점이 위로 올라간다.
 
-### **4.2 Key: Multi-key indexing improves retrieval and RAG**
+### **5.3 Key: Multi-key indexing improves retrieval and RAG**
 
 키를 사실로 늘리면 검색이랑 QA가 같이 오른다(CP 2).
 
@@ -169,7 +169,7 @@ Full과 Multi-Session Subset을 나눠서 토큰 수 대비 정확도를 그렸�
 
 굵게 표시된 K = V + fact 행이 검색과 QA를 같이 올린다. Value = Round에서는 K = fact나 K = keyphrase만 쓰면 검색 지표가 K = V보다 낮다. 값을 키로 그대로 두고 사실을 더해야 오른다.
 
-### **4.3 Query: Time-aware query expansion improves temporal reasoning**
+### **5.4 Query: Time-aware query expansion improves temporal reasoning**
 
 시간을 고려해야 시간 질문을 푼다(CP 3).
 
@@ -179,7 +179,7 @@ Full과 Multi-Session Subset을 나눠서 토큰 수 대비 정확도를 그렸�
 
 질의 확장 모델을 Llama 3.1 8B Instruct로 바꾸면 K = V보다 낮아지는 칸도 있다.
 
-### **4.4 Improving reading with chain-of-note and structured format**
+### **5.5 Improving reading with chain-of-note and structured format**
 
 잘 꺼내도 잘 읽는 건 따로다(CP 4).
 
@@ -193,7 +193,7 @@ Chain-of-Note(답하기 전에 필요한 내용을 먼저 뽑음)랑 구조화�
 
 -> oracle 설정이라 검색이 완벽할 때 얘기다. 검색까지 붙인 실제 설정에서도 10점이 그대로 나오는지는 이 그림만으로는 모르겠다.
 
-## **5. 지금 관점: 네 제어점으로 보기**
+## **지금 관점: 네 제어점으로 보기**
 
 벤치마크보다 네 제어점 틀이 더 오래 쓰일 것 같다. 새 메모리 시스템이 나오면 "Value를 뭘로 잡았고, Key를 어떻게 늘렸고, 시간은 어디서 처리하고, 읽을 때 뭘 붙였나"로 물어보면 대부분 한 표에 들어간다. 뒤에 나오는 시스템들도 이 네 칸으로 정리해 보려고 한다.
 

@@ -19,7 +19,7 @@ How Memory Management Impacts LLM Agents: An Empirical Study of Experience-Follo
 
 [https://arxiv.org/abs/2505.16067](https://arxiv.org/abs/2505.16067)
 
-Experience-Following은 Harvard, University of Georgia, Michigan State, University of Minnesota에서 같이 쓴 논문이다. 2025년 5월에 나왔다.
+Experience-Following은 Harvard, University of Georgia, Michigan State, University of Minnesota에서 같이 쓴 논문이다. 2025년 5월 arXiv에 올라왔다.
 
 에이전트 메모리에 무엇을 넣고 무엇을 지우느냐에 따라 에이전트 행동이 어떻게 바뀌는지를 실험으로 잰다.
 
@@ -48,9 +48,9 @@ memory addition(추가)이랑 memory deletion(삭제) 두 가지 연산만 본�
 1. Error propagation (오류 전파) : 과거 경험에 있던 오류가 쌓여서 미래 성능을 떨어뜨림
 2. Misaligned experience replay (어긋난 경험 재생) : 제대로 된 실행처럼 보여도 경험으로 다시 쓰면 도움이 안 되거나 잘못 이끎
 
-## **2. Addition of Memory**
+## **3. Addition of Memory**
 
-### **2.1 Setup**
+### **3.1 Setup**
 
 에이전트 네 개를 쓴다. 하나는 통제용으로 만든 합성 에이전트고, 셋은 실제 에이전트다.
 
@@ -76,7 +76,7 @@ RegAgent는 입력 벡터 `x`랑 근처 입력에 대한 과거 추측들을 받
 
 Strict는 사람이 매번 보는 대신 출력을 정답과 비교해서 흉내 낸다.
 
-### **2.2 Execution quality and memory size jointly determine long-term agent performance**
+### **3.2 Execution quality and memory size jointly determine long-term agent performance**
 
 전부 넣으면 나빠진다.
 
@@ -101,7 +101,7 @@ Strict는 사람이 매번 보는 대신 출력을 정답과 비교해서 흉내
 
 C3처럼 판정기를 300개만으로 파인튜닝해도 다른 coarse 평가기나 Add all보다 낫다.
 
-### **2.3 Experience-Following Property**
+### **3.3 Experience-Following Property**
 
 질의마다 검색된 메모리 레코드와의 입력 유사도, 출력 유사도를 둘 다 재고, 질의 스트림 전체에 대해 누적 평균을 낸다.
 
@@ -119,7 +119,7 @@ RegAgent에서는 메모리가 커지면 입력·출력 유사도 상관이 거�
 
 좋은 경험을 넣으면 그대로 따라 하고, 나쁜 경험을 넣어도 그대로 따라 한다.
 
-### **2.4 Error Propagation in Agent Memory**
+### **3.4 Error Propagation in Agent Memory**
 
 잘못됐거나 노이즈가 섞인 레코드가 데모로 검색되면 지금 실행에 영향을 준다. 그 실행이 다시 메모리에 저장되면 오류가 다음 태스크로 넘어간다.
 
@@ -137,9 +137,9 @@ RegAgent에서는 메모리가 커지면 입력·출력 유사도 상관이 거�
 
 -> 메모리를 다시 쓰는 루프에서는 손실이 계속 쌓이는 것 같다. 뒤에서 볼 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 비슷한 이야기가 다시 나온다.
 
-## **3. Deletion of Memory**
+## **4. Deletion of Memory**
 
-### **3.1 Setup for Memory Deletion Experiments**
+### **4.1 Setup for Memory Deletion Experiments**
 
 삭제 전략은 세 가지다.
 
@@ -151,7 +151,7 @@ Periodical의 기간과 기준은 RegAgent 기준 500스텝, 검색 0회다. 한
 
 History-based의 효용은 추가할 때 쓴 평가기를 그대로 쓸 수 있다.
 
-### **3.2 Strategic Memory Deletion Improves the Agent Performance**
+### **4.2 Strategic Memory Deletion Improves the Agent Performance**
 
 아래는 논문 Table 2 중 strict 평가기로 추가한 경우만 옮김(C1 평가기 부분은 뺐다). 삭제 전략별 성능과 최종 메모리 크기다.
 
@@ -170,7 +170,7 @@ History-based의 효용은 추가할 때 쓴 평가기를 그대로 쓸 수 있�
 
 C1 평가기로 추가한 경우에는 History-based가 AgentDriver(36.92 → 34.00)처럼 오히려 떨어지기도 한다. 평가기를 얼마나 믿을 수 있느냐에 따라 결과가 갈린다.
 
-### **3.3 Misaligned Experience Replay**
+### **4.3 Misaligned Experience Replay**
 
 왜 지우면 좋아지는지를 본다.
 
@@ -193,11 +193,11 @@ RegAgent에서는 이걸 직접 볼 수 있다. 예측값이랑 정답값 차이
 
 -> 넣을 때는 좋은 레코드인지 모르지만, 나중에 그 레코드가 검색됐을 때 결과가 어땠는지 기록해두면 라벨이 저절로 쌓인다는 얘기로 읽었다.
 
-## **4. Memory Management under Challenging Scenarios**
+## **5. Memory Management under Challenging Scenarios**
 
 어려운 상황 두 가지를 본다.
 
-### **4.1 Memory Management with Task distribution shift**
+### **5.1 Memory Management with Task distribution shift**
 
 EHRAgent랑 AgentDriver의 테스트셋 순서를 바꿔서 중간에 분포가 바뀌게 만든다.
 
@@ -213,17 +213,17 @@ AgentDriver에서는 엄격한 평가로 추가만 한 버전(strict addition)�
 
 -> 분포가 바뀌면 "예전에 결과가 좋았던 레코드"라는 기준이 흔들리니까 그런 것 같다.
 
-### **4.2 Memory Management with Resource Constraints**
+### **5.2 Memory Management with Resource Constraints**
 
 메모리 용량을 초기 크기(EHRAgent 100, AgentDriver 180)로 고정한다. 주기적 삭제를 먼저 하고, 그래도 넘치면 평균 효용이 제일 낮은 레코드 하나만 지우도록 combined 정책을 바꾼다.
 
 이렇게 하면 고정 메모리 버전보다 성능이 높다. 저장 공간이 작아도 관련 있고 품질 좋은 레코드만 남기면 된다.
 
-## **5. 지금 관점: 넣는 기준과 지우는 기준**
+## **지금 관점: 넣는 기준과 지우는 기준**
 
 경험 메모리를 붙일 때 제일 흔한 첫 구현이 "일단 다 넣자"인데, Add all이 Fixed보다 못하다는 게 네 에이전트에서 다 나왔다. 평가기 차이도 크다. RegAgent에서 Coarse(C1) 63.18이랑 Strict 70.95가 7점 넘게 차이 난다. 무엇을 넣을지 거르는 평가기를 대충 만들면 메모리를 붙인 의미가 없을 것 같다.
 
-3.3의 공짜 품질 라벨은 바로 해볼 만하다. 레코드마다 검색된 횟수랑 그때 결과를 기록해두면 LLM 호출 없이도 나쁜 레코드를 골라낼 수 있다. 다만 3.2에서 C1 평가기로는 History-based가 오히려 떨어진 경우가 있어서, 결과를 판정하는 쪽이 믿을 만해야 한다.
+4.3의 공짜 품질 라벨은 바로 해볼 만하다. 레코드마다 검색된 횟수랑 그때 결과를 기록해두면 LLM 호출 없이도 나쁜 레코드를 골라낼 수 있다. 다만 4.2에서 C1 평가기로는 History-based가 오히려 떨어진 경우가 있어서, 결과를 판정하는 쪽이 믿을 만해야 한다.
 
 지우는 쪽은 상황마다 답이 달랐다. 분포가 안정적이면 History-based가 성능이 제일 좋았고, 분포가 바뀌면 Periodical이 섞인 Combined가 안정적이었다.
 

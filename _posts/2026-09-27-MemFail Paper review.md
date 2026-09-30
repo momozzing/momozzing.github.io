@@ -19,7 +19,7 @@ MemFail: Stress-Testing Failure Modes of LLM Memory Systems
 
 [https://arxiv.org/abs/2605.26667](https://arxiv.org/abs/2605.26667)
 
-MemFail은 UC Berkeley에서 만든 메모리 시스템 진단 벤치마크이다. 2026년 5월에 나왔다.
+MemFail은 UC Berkeley에서 만든 메모리 시스템 진단 벤치마크이다. 2026년 5월 arXiv에 올라왔다.
 
 메모리 시스템을 요약·저장·검색 세 연산으로 나눠서, 틀린 답이 어느 단계에서 나왔는지 찾아낸다.
 
@@ -31,13 +31,13 @@ MemFail은 UC Berkeley에서 만든 메모리 시스템 진단 벤치마크이�
 
 좀 더 자세히 알아보자.
 
-## **1. Background**
+## **3. Background**
 
-### **1.1 Three Operations of a Memory System**
+### **3.1 Three Operations of a Memory System**
 
 메모리 시스템을 요약(summarization), 저장(storage), 검색(retrieval) 세 연산을 이어 붙인 것으로 본다.
 
-### **1.2 Failure Modes**
+### **3.2 Failure Modes**
 
 연산마다 나오는 실패가 있다.
 
@@ -59,11 +59,11 @@ MemFail은 UC Berkeley에서 만든 메모리 시스템 진단 벤치마크이�
 
 기존 연구는 긴 대화 이력을 넣고 사용자 성격이나 선호를 추론하게 하면서, 이 네 가지를 섞어서 평가하고 구분하지 않았다고 한다.
 
-## **2. Benchmark Details**
+## **4. Benchmark Details**
 
 다섯 데이터셋을 네 과제로 묶었다. 과제마다 실패 모드 하나를 일부러 노린다.
 
-### **2.1 Task 1: Conditional-Facts**
+### **Task 1: Conditional-Facts**
 
 요약 실패를 노린다.
 
@@ -84,7 +84,7 @@ Easy와 Hard가 같은 엔티티와 조건을 쓴다. 그래서 성능 차이는
 
 정답 : 아니오
 
-### **2.2 Task 2: Coexisting-Facts**
+### **Task 2: Coexisting-Facts**
 
 저장 + 검색 실패를 노린다.
 
@@ -98,7 +98,7 @@ Easy와 Hard가 같은 엔티티와 조건을 쓴다. 그래서 성능 차이는
 
 정답 : 페도라, 비니, 버킷햇
 
-### **2.3 Task 3: Persona-Retrieval**
+### **Task 3: Persona-Retrieval**
 
 논문은 이 과제가 저장 실패를 노린다고 쓴다. 다른 사람에 대해 물었을 때 저장된 엉뚱한 프로필을 꺼내오는지 본다.
 
@@ -113,7 +113,7 @@ Easy와 Hard가 같은 엔티티와 조건을 쓴다. 그래서 성능 차이는
 
 앞에서 본 [SYNAPSE 리뷰](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)의 "dog 질의가 의미적으로 가까운 Rex와 매칭돼 환각"과 같은 종류의 실패다.
 
-### **2.4 Task 4: Long-Hop**
+### **Task 4: Long-Hop**
 
 검색 실패를 노린다.
 
@@ -127,7 +127,7 @@ Easy와 Hard가 같은 엔티티와 조건을 쓴다. 그래서 성능 차이는
 
 정답 : 풍경 사진을 찍는다
 
-## **3. Experimental Setup**
+## **5. Experimental Setup**
 
 Mem0, A-MEM, SimpleMem, StructMem 네 시스템을 평가한다.
 
@@ -149,9 +149,9 @@ get_all_memories는 채점할 때 쓴다. 필요한 메모리가 저장소에 �
 
 -> 오류 유형은 질문마다 필요한 메모리 N개를 하나씩 분류하는 방식이라, 98.4%는 100개 예시보다는 메모리 개수가 분모인 것 같다. 100개로는 98.4%가 안 나온다.
 
-## **4. Experiments**
+## **6. Experiments**
 
-### **4.1 Q1: How does performance scale with k, the number of retrieved memories?**
+### **Q1: How does performance scale with k, the number of retrieved memories?**
 
 검색 개수 k를 늘리면 어떻게 되는지 본다.
 
@@ -170,7 +170,7 @@ StructMem은 대부분 과제에서 잘하는데 Coexisting-Facts에서 크게 �
 - Persona-Retrieval : 요약 실패(긴 페르소나를 과하게 압축). Mem0만 예외로 처음부터 세부를 다 저장하지 못함
 - Long-Hop : 검색 실패. 멀어 보이는 엔티티 사이의 인과 관계를 못 잡음
 
--> Persona-Retrieval은 2.3에서 저장 실패를 노린다고 했는데, 결과는 요약 실패가 대부분이고 저장 실패는 Mem0에서만 나왔다. 논문도 이 차이를 따로 설명하지는 않는다. 엉뚱한 사람 프로필을 꺼내는 건 검색 쪽 실패 같기도 한데 왜 저장 실패를 노린다고 했는지??
+-> Persona-Retrieval은 4장 Task 3 설명에서 저장 실패를 노린다고 했는데, 결과는 요약 실패가 대부분이고 저장 실패는 Mem0에서만 나왔다. 논문도 이 차이를 따로 설명하지는 않는다. 엉뚱한 사람 프로필을 꺼내는 건 검색 쪽 실패 같기도 한데 왜 저장 실패를 노린다고 했는지??
 
 ![과제·시스템별 오류 유형 (논문 Figure 8)](https://momozzing.github.io/assets/images/memfail/fig8-error-breakdown.png)
 
@@ -183,7 +183,7 @@ Coexisting-Facts와 Long-Hop은 Mem0을 빼면 파란 retrieval이 제일 위에
 
 앞에서 본 [MemMachine 리뷰](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)에서는 k를 20→30으로 올리면 +4.2%p였는데, 그 이득도 어떤 실패가 병목이냐에 따라 달라질 수 있다.
 
-### **4.2 Q2: How does accuracy scale with the strength of the model used by the memory system?**
+### **Q2: How does accuracy scale with the strength of the model used by the memory system?**
 
 더 좋은 모델을 쓰면 어떻게 되는지 본다.
 
@@ -198,7 +198,7 @@ Mem0과 A-MEM도 같은 경향이라 부록으로 뺐다.
 
 앞에서 본 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 백본 민감도, [NEMORI 리뷰](https://momozzing.github.io/paper%20review/NEMORI-Paper-review/)의 "휴리스틱이 문제"와 이어진다.
 
-### **4.3 Q3: What does MEMFAIL reveal about the tradeoff between performance and token consumption?**
+### **Q3: What does MEMFAIL reveal about the tradeoff between performance and token consumption?**
 
 토큰을 더 쓰면 어떻게 되는지 본다.
 
@@ -217,7 +217,7 @@ Coexisting-Facts에서 특히 그런데, 메모리를 크게 저장하면 의미
 
 앞에서 본 [A-MEM 리뷰](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)에서는 토큰 효율이 좋다고 봤는데(1,200~2,500 vs MemGPT 16,900), 그건 질문할 때 넣는 컨텍스트 기준이었다. 여기서 말하는 건 메모리 하나의 크기라서 두 수치는 다른 걸 잰다.
 
-## **5. 지금 관점: 직접 테스트해본다면**
+## **지금 관점: 직접 테스트해본다면**
 
 네 과제는 메모리 시스템을 붙이기 전에 테스트 케이스로 그대로 써볼 수 있을 것 같다. 제일 위험해 보이는 건 조건부 사실이다. "X일 때만 Y"를 저장하고 X가 아닌 상황을 묻는 건데, "이 할인은 회원일 때만 적용된다"가 "이 할인이 적용된다"로 요약되면 답이 반대가 된다. "심하게 알레르기"가 "알레르기"가 되는 것과 같은 종류다.
 
@@ -225,7 +225,7 @@ Coexisting-Facts에서 특히 그런데, 메모리를 크게 저장하면 의미
 
 k를 올릴지 메모리를 크게 만들지는 요약 실패냐 검색 실패냐에 따라 방향이 반대다. 그래서 뭘 바꾸기 전에 틀린 답이 어느 단계에서 나왔는지부터 나눠 봐야 한다. 앞의 시스템 논문들이 낸 좋은 점수 뒤에 어떤 실패가 섞여 있는지도 이런 식으로 봐야 알 수 있다.
 
-## **6. Conclusion**
+## **7. Conclusion**
 
 conclusion 부분을 보면, 지금 시스템들은 구조적인 제약에 묶여 있어서 토큰을 더 쓰거나 더 똑똑한 모델을 쓴다고 해결되지 않는다고 한다.
 

@@ -19,7 +19,7 @@ SYNAPSE: Empowering LLM Agents with Episodic-Semantic Memory via Spreading Activ
 
 [https://arxiv.org/abs/2601.02744](https://arxiv.org/abs/2601.02744)
 
-SYNAPSE는 University of Georgia 외 5개 기관에서 만든 에이전트 메모리 구조다. 2026년 1월에 나온 논문이다.
+SYNAPSE는 University of Georgia 외 5개 기관에서 만든 에이전트 메모리 구조다. 2026년 1월 arXiv에 올라온 논문이다.
 
 벡터 유사도 대신 활성 확산(spreading activation)으로 기억 사이의 관련성을 찾고, 모르는 질문에는 모른다고 답하게 만든다.
 
@@ -41,9 +41,9 @@ RAG(검색 증강 생성)는 이력을 벡터 DB에 넣고 의미 유사도로 �
 
 앞에서 본 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)은 LLM으로 링크를 미리 걸어뒀는데, SYNAPSE는 질의가 올 때 에너지를 흘려서 그때그때 관련된 부분그래프를 찾는다.
 
-## **2. Methodology**
+## **3. Methodology**
 
-### **2.1 Unified Episodic-Semantic Graph**
+### **3.1 Unified Episodic-Semantic Graph**
 
 메모리를 방향 그래프 `G = (V, E)`로 두고, 노드를 두 종류로 나눈다.
 
@@ -69,7 +69,7 @@ RAG(검색 증강 생성)는 이력을 벡터 DB에 넣고 의미 유사도로 �
 
 질의에 없는 "Mark" 노드가 다리 역할로 활성화돼서 "스키 여행"과 "연애"를 잇는다.
 
-### **2.2 Cognitive Dynamics: Spreading Activation**
+### **3.2 Cognitive Dynamics: Spreading Activation**
 
 Collins와 Loftus(1975)의 사람 의미기억 모델에서 가져왔다.
 
@@ -105,7 +105,7 @@ u^(t+1)_i = (1−δ)·a^(t)_i + Σ_{j∈N(i)} S · w_ji · a^(t)_j / fan(j)
 
 위쪽 노드와 차이가 클수록 많이 깎이니까, 1등 근처만 남고 나머지는 약해진다. 이게 뒤에서 적대적 질의를 거절하는 데 쓰인다.
 
-### **2.3 Triple-Signal Hybrid Retrieval**
+### **3.3 Triple-Signal Hybrid Retrieval**
 
 점수는 세 개를 합친다.
 
@@ -121,7 +121,7 @@ S(v_i) = λ₁·sim(h_i,h_q) + λ₂·a^(T)_i + λ₃·PageRank(v_i)
 
 효율 쪽으로는 점수를 캐시해두고 통합 시점(N=5턴)에만 갱신한다. 그래서 질의 지연이 이력 길이 `T`와 상관없이 유지된다. 기본 `k = 30`.
 
-### **2.4 Uncertainty-Aware Rejection**
+### **3.4 Uncertainty-Aware Rejection**
 
 없는 엔티티에 대해 묻는 적대적 질의를 다루는 부분이다. 사람 기억의 "Feeling of Knowing"(FOK, 답을 알 것 같은 느낌)에서 아이디어를 가져왔다. 두 단계로 돈다.
 
@@ -135,11 +135,11 @@ S(v_i) = λ₁·sim(h_i,h_q) + λ₂·a^(T)_i + λ₃·PageRank(v_i)
 
 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서는 ABS(회피)를 다섯 능력 중 하나로 뒀는데, 여기서는 그걸 시스템에서 직접 구현했다.
 
-## **3. Experiments**
+## **4. Experiments**
 
 LoCoMo(긴 다회차 대화 기억을 묻는 QA 벤치마크)에서 GPT-4o-mini로 평가한다. 점수는 F1이다.
 
-### **3.1 Main Results**
+### **4.2 Main Results**
 
 아래 표는 논문 Table 1에서 가중 평균 F1만 네 시스템 옮긴 것이다(일부만 옮김). 적대적 범주를 뺀 네 범주 평균이다.
 
@@ -182,7 +182,7 @@ A-Mem보다 +7.2점이다. AriGraph는 지식 그래프를 쓰는 에이전트 �
 
 -> 유사도만 보면 오래된 기억이 이긴다. 시간 정보를 저장만 해두고 점수에 안 넣으면 같은 일이 생길 것 같다.
 
-### **3.2 Ablation Study**
+### **4.3 Ablation Study**
 
 장치를 하나씩 끄고 LoCoMo 범주별 F1을 잰 표다(GPT-4o-mini).
 
@@ -198,7 +198,7 @@ Adversarial 열을 보면, 게이트를 끄면(`τ_gate = 0`, 억제는 켜둠) 
 
 다른 장치는 각자 맡은 범주가 있다. Fan Effect를 빼면 Open Domain이 25.9에서 16.8로, Node Decay를 빼면 Temporal이 50.1에서 14.2로 떨어진다.
 
-### **3.3 Efficiency Analysis**
+### **4.4 Efficiency Analysis**
 
 논문 Table 4에서 일부 시스템만 옮겼다. 질의당 토큰, 평균 지연(A100 한 장, 질의 100개 평균), 1,000질의 API 비용, 가중 평균 F1, 비용 효율(F1/$)이다. LoCoMo 열은 앞의 full-context 베이스라인이다.
 
@@ -218,7 +218,7 @@ MemoryOS는 계층형 메모리 OS, LangMem은 LangChain의 메모리 라이브�
 
 LangMem도 비용 효율이 150.7로 비슷한데, F1이 34.3으로 낮다. 그래프를 만드는 비용은 에이전트를 쓰는 기간 전체에 나눠지니까 질의당으로 보면 무시할 만하다고 한다.
 
-## **4. 지금 관점: 떼어 쓸 수 있는 장치와 같이 써야 하는 장치**
+## **지금 관점: 떼어 쓸 수 있는 장치와 같이 써야 하는 장치**
 
 장치 중에 따로 떼어 쓸 수 있는 것과 같이 써야 하는 것이 나뉜다.
 

@@ -19,7 +19,7 @@ AMV-L: Lifecycle-Managed Agent Memory for Tail-Latency Control in Long-Running L
 
 [https://arxiv.org/abs/2603.04443](https://arxiv.org/abs/2603.04443)
 
-AMV-L은 Georgia Tech에서 만든 에이전트 메모리 관리 방법이다. 2026년 2월에 나왔고, 저자는 1명이다.
+AMV-L은 Georgia Tech에서 만든 에이전트 메모리 관리 방법이다. 2026년 2월 arXiv에 올라왔고, 저자는 1명이다.
 
 메모리가 쌓이면 검색이 느려진다. 이 논문은 검색 후보군 크기를 직접 묶어서 가끔 튀는 느린 요청(꼬리 지연)을 줄인다.
 
@@ -37,13 +37,13 @@ AMV-L은 Georgia Tech에서 만든 에이전트 메모리 관리 방법이다. 2
 
 -> 앞 리뷰들에서 본 느린 검색 수치도 이런 경우가 아닐까 싶다. [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 MemoryOS 검색 31.2초, [Mem0 리뷰](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)의 LangMem p95 59.8초. 두 논문 모두 후보군 크기를 재지 않아서 확인은 못 한다.
 
-## **2. AMV-L Overview**
+## **4. AMV-L Overview**
 
 에이전트 메모리를 그냥 쌓아두는 저장소로 보지 않고, 관리해야 하는 시스템 자원으로 본다.
 
 각 항목에 계속 갱신되는 효용 점수 `V(m)`을 매기고, 그 값에 따라 올리고(승격) 내리고(강등) 빼는(축출) 식으로 계층을 유지한다.
 
-### **2.1 Tiered lifecycle organization**
+### **4.2 Tiered lifecycle organization**
 
 계층은 세 개다.
 
@@ -53,13 +53,13 @@ AMV-L은 Georgia Tech에서 만든 에이전트 메모리 관리 방법이다. 2
 
 이렇게 나누면 보관(retention)과 검색 대상 여부(eligibility)가 분리된다. warm이나 cold에 남아 있는 항목은 지워지지 않지만 매 요청마다 비용을 만들지도 않는다.
 
-### **2.2 Lifecycle transitions**
+### **4.3 Lifecycle transitions**
 
 생애주기 전이는 비동기로 한다.
 
 요청을 처리할 때는 사용 기록과 값 갱신만 하고, 계층 이동이나 정리는 요청 처리 경로 밖에서 따로 한다. 유지보수 때문에 요청 지연이 늘어나지 않게 하려는 설계다.
 
-### **2.3 Bounded retrieval and prompt construction**
+### **4.4 Bounded retrieval and prompt construction**
 
 통제를 두 가지로 나눈다.
 
@@ -70,7 +70,7 @@ AMV-L은 Georgia Tech에서 만든 에이전트 메모리 관리 방법이다. 2
 
 프롬프트 상한은 프롬프트 길이는 묶지만, 1번 없이는 큰 후보군을 검색하는 비용을 못 막는다.
 
-## **3. Memory Value Model**
+## **5. Memory Value Model**
 
 `V(m)`은 세 가지 신호로 갱신한다.
 
@@ -90,13 +90,13 @@ AMV-L은 Georgia Tech에서 만든 에이전트 메모리 관리 방법이다. 2
 2. 증분성 : 전체를 다시 계산하지 않고 온라인으로
 3. 저오버헤드 : 닿은 항목당 상수 시간
 
-## **4. Results and Discussion**
+## **10. Results and Discussion**
 
 베이스라인은 TTL과 LRU(가장 오래 안 쓴 항목부터 내보내는 방식) 둘이다. 같은 장기 실행 워크로드(합성)를 세 조건에 똑같이 돌리고, 프롬프트 주입 상한도 모든 조건에서 똑같이 고정했다.
 
 지연은 p50/p95/p99로 본다. 요청을 지연순으로 줄 세웠을 때 50%, 95%, 99% 지점의 값이다. p99가 크면 100건 중 1건은 그만큼 느리다.
 
-### **4.1 End to end latency and throughput**
+### **10.1 End to end latency and throughput**
 
 세 정책의 성공률, 처리량, 지연 분위수, 1초·2초 초과 비율을 같은 워크로드에서 잰 결과다.
 
@@ -126,7 +126,7 @@ CCDF(지연이 x 이상인 요청의 비율)를 로그 축으로 그린 것이�
 TTL은 1초 넘는 구간에 요청이 많이 남아 있고, LRU와 AMV-L은 둘 다 꼬리를 크게 줄인다.
 오른쪽 끝을 보면 LRU는 드물게 매우 느린 요청이 길게 남고, AMV-L은 그보다 앞에서 끊긴다.
 
-### **4.2 Mechanism: retrieval working set and vector search footprint**
+### **10.2 Mechanism: retrieval working set and vector search footprint**
 
 지연이 줄어든 이유를 검색 후보군 크기로 설명한다.
 
@@ -149,7 +149,7 @@ TTL은 위쪽 꼬리가 길고, AMV-L은 hot 항목과 상한이 있는 warm 샘
 
 -> 그럼 LRU의 p99가 왜 더 느린지는 뭐 때문인지?? 자세한 이유는 잘 모르겠다.
 
-### **4.3 Cost and quality tradeoffs**
+### **10.3 Cost and quality tradeoffs**
 
 토큰 오버헤드는 LRU보다 약 6% 낮다.
 
@@ -157,7 +157,7 @@ TTL은 위쪽 꼬리가 길고, AMV-L은 hot 항목과 상한이 있는 warm 샘
 
 -> 에이전트가 과제를 맞혔는지(과제 정확도)는 안 쟀다. 그래서 "품질은 그대로"라고 하려면 이 값 라벨이 실제 과제 품질을 따라간다는 가정이 필요하다.
 
-### **4.4 Discussion**
+### **10.4 Discussion**
 
 병목이 무엇인가를 따진다.
 
@@ -167,7 +167,7 @@ TTL은 위쪽 꼬리가 길고, AMV-L은 hot 항목과 상한이 있는 warm 샘
 
 그래서 검색 대상을 먼저 묶고 그다음에 주입 개수를 묶는 두 단계 통제를 권한다.
 
-## **5. 지금 관점: 지연 쪽에서 보면**
+## **지금 관점: 지연 쪽에서 보면**
 
 이 시리즈 논문들이 주로 보는 건 정확도다. 이 논문만 지연이 얼마나 예측 가능한지를 본다.
 
@@ -181,7 +181,7 @@ TTL은 위쪽 꼬리가 길고, AMV-L은 hot 항목과 상한이 있는 warm 샘
 
 다만 저자 1명이 시스템 하나로 한 실험이다. 합성 워크로드이고 비교 대상도 TTL, LRU 둘뿐이다. 중앙값, p95, 처리량은 LRU가 조금 낫고 AMV-L이 나은 건 극단 꼬리다. 논문도 둘이 "tradeoff frontier 위의 다른 지점"이라고 하고, p99나 2초 초과 비율이 중요한 서비스면 AMV-L, 중앙값과 처리량이 중요하면 LRU를 권한다.
 
-## **6. Conclusion**
+## **11. Conclusion**
 
 conclusion 부분을 보면, AMV-L은 메모리를 관리해야 하는 시스템 자원으로 보고, 계속 갱신되는 효용 점수로 생애주기를 관리한다.
 

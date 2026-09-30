@@ -19,7 +19,7 @@ A-Mem: Agentic Memory for LLM Agents
 
 [https://arxiv.org/abs/2502.12110](https://arxiv.org/abs/2502.12110)
 
-A-MEM은 Rutgers University 등에서 만든 LLM 에이전트용 메모리 시스템이다. 2025년 2월에 나온 논문이다.
+A-MEM은 Rutgers University 등에서 만든 LLM 에이전트용 메모리 시스템이다. 2025년 2월에 나왔고, NeurIPS 2025에 실렸다.
 
 앞에서 본 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)은 엔티티-관계-커뮤니티 3계층을 사람이 설계했다. 구조를 사람이 정해두고 기억을 거기에 넣는다.
 
@@ -41,7 +41,7 @@ Figure 1이 이 차이를 보여준다. 기존 메모리 시스템은 워크플�
 
 A-MEM은 메모리 연산을 동적으로 해서 에이전트를 더 유연하게 만든다고 한다.
 
-## **2. Methodology**
+## **3. Methodology**
 
 설계를 제텔카스텐에서 가져왔다. 원자적 노트 작성과 유연한 조직화, 이 두 원칙이다. 노트끼리 동적 색인과 링크로 이어서 지식 네트워크를 만든다.
 
@@ -49,7 +49,7 @@ A-MEM은 메모리 연산을 동적으로 해서 에이전트를 더 유연하�
 
 세 부분으로 돌아간다.
 
-### **2.1 Note Construction**
+### **3.1 Note Construction**
 
 메모리 노트 하나는 일곱 항목으로 되어 있다.
 
@@ -79,7 +79,7 @@ e_i = f_enc[ concat(c_i, K_i, G_i, X_i) ]
 
 제텔카스텐의 원자성 원칙에 따라 노트 하나에 지식 단위 하나를 담는다.
 
-### **2.2 Link Generation**
+### **3.2 Link Generation**
 
 새 노트가 들어오면 임베딩 코사인 유사도로 가까운 과거 메모리 상위 k개를 먼저 꺼내고, 연결을 맺을지는 LLM이 판단한다. 규칙으로 정하지 않는다. 논문 실험에서 k는 주로 10을 썼다.
 
@@ -87,7 +87,7 @@ e_i = f_enc[ concat(c_i, K_i, G_i, X_i) ]
 
 제텔카스텐이랑 다른 점은 메모리 하나가 여러 상자에 동시에 들어갈 수 있다는 점이다.
 
-### **2.3 Memory Evolution**
+### **3.3 Memory Evolution**
 
 이 논문에서 제일 다른 부분이다. 링크를 만든 다음 꺼내온 기존 메모리들을 고친다.
 
@@ -103,9 +103,9 @@ m*_j ← LLM( m_n ∥ M_near \ m_j ∥ m_j ∥ P_s3 )
 
 -> 그런데 이 대체는 되돌릴 수 없다. `c_i`(원본)는 남지만 `X_i`(맥락 서술), `K_i`, `G_i`는 덮어쓴다. 진화가 잘못 가면 이전 해석으로 못 돌아가는 거 아닌가?? 되돌릴 수 있느냐는 나중에 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 따로 다룬다.
 
-## **3. Experiment**
+## **4. Experiment**
 
-### **3.1 Empirical Results**
+### **4.3 Empirical Results**
 
 LoCoMo(긴 다중 세션 대화 QA 벤치마크)에서 파운데이션 모델 여섯 개로 비교한다. 비교 대상은 네 가지다.
 
@@ -141,7 +141,7 @@ GPT 모델에서는 다르다. GPT-4o의 Single Hop은 LOCOMO가 더 높고(61.5
 
 뒤에서 볼 Mem0 논문도 A-MEM을 LoCoMo에서 다시 돌리는데, 그 재현 결과에서는 순위가 다르게 나온다.
 
-### **3.2 Ablation Study**
+### **4.4 Ablation Study**
 
 Link Generation(LG)과 Memory Evolution(ME)을 하나씩 빼본다.
 
@@ -159,7 +159,7 @@ GPT-4o-mini를 기반 모델로 잰 LoCoMo F1이다. 위 그림(논문 Table 3)�
 
 링크 생성이 메모리 조직의 토대고, 진화는 거기에 정제를 더하는 거라고 한다.
 
-### **3.3 Scaling Analysis**
+### **4.6 Scaling Analysis**
 
 1,000 → 10,000 → 100,000 → 1,000,000 항목으로 열 배씩 늘려가며 잰다.
 
@@ -172,7 +172,7 @@ GPT-4o-mini를 기반 모델로 잰 LoCoMo F1이다. 위 그림(논문 Table 3)�
 
 -> 쓰기 비용은 표에 없다. 노트 구성, 링크 판단, 진화가 전부 LLM 호출인데 이건 얼마나 드는지??
 
-## **4. 지금 관점: 진화 기능을 쓸지 말지**
+## **지금 관점: 진화 기능을 쓸지 말지**
 
 A-MEM은 원본은 남기고 해석은 덮어쓰는 쪽이다. Zep이 원본을 에피소드로 남기고 모순은 무효화로 처리했다면, A-MEM은 원본 `c_i`는 남기되 키워드·태그·맥락 서술은 새 기억이 들어올 때마다 고쳐 쓴다.
 

@@ -19,7 +19,7 @@ What Deserves Memory: Adaptive Memory Distillation for LLM Agents
 
 [https://arxiv.org/abs/2508.03341](https://arxiv.org/abs/2508.03341)
 
-NEMORI는 Fudan University, Shanda Group, Beihang University 등에서 만든 에이전트 메모리 프레임워크이다.
+NEMORI는 Fudan University, Shanda Group, Beihang University 등에서 만든 에이전트 메모리 프레임워크이다. arXiv에 올라온 논문이다.
 
 2025년 8월 v1이 나왔을 때 제목은 "Nemori: Self-Organizing Agent Memory Inspired by Cognitive Science"였고, 2026년 4월 v4에서 지금 제목으로 바뀌었다. 시스템 이름은 그대로 NEMORI다.
 
@@ -42,9 +42,9 @@ LLM 에이전트 메모리는 어떤 정보를 남길 가치가 있는지 정하
 
 앞에서 본 [Generative Agents](https://momozzing.github.io/paper%20review/Generative-Agents-Paper-review/)의 recency·relevance·importance 3점수 회상이 딱 이런 휴리스틱이다. importance를 LLM한테 1~10점으로 매기게 하는 방식이 여기서 말하는 설계자 직관이다.
 
-## **2. Methodology**
+## **3. Methodology**
 
-### **2.1 Overview & Motivations**
+### **3.1 Overview & Motivations**
 
 Predictive Coding Theory(Rao & Ballard 1999, Friston 2010, Clark 2013)에서 기준을 가져온다. 위쪽 뇌 영역이 예측을 내려보내고, 아래쪽은 예측과 어긋난 오차를 주로 올려보낸다는 이론이다.
 
@@ -66,7 +66,7 @@ Predictive Coding Theory(Rao & Ballard 1999, Friston 2010, Clark 2013)에서 기
 
 오른쪽은 뽑은 지식을 받는 쪽이다. 자체 관리 모듈이나 MemoryOS, A-MEM 같은 외부 시스템에 증류 층으로 붙일 수 있다고 한다.
 
-### **2.2 Episodic Memory Integration**
+### **3.2 Episodic Memory Integration**
 
 원시 대화를 이야기처럼 이어지는 에피소드로 바꾼다. 세 단계다.
 
@@ -76,7 +76,7 @@ Predictive Coding Theory(Rao & Ballard 1999, Friston 2010, Clark 2013)에서 기
 
 앞에서 본 [LongMemEval 리뷰](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서도 뭘 한 덩어리로 저장하나(세션, 라운드, 사실)를 비교했다. 거기서는 라운드가 낫다는 고정 답이었고, 여기서는 LLM이 경계를 찾는다.
 
-### **2.3 Semantic Knowledge Distillation**
+### **3.3 Semantic Knowledge Distillation**
 
 예측 오차로 지식을 뽑는 모듈이다. 메모리를 어떻게 관리하든 붙을 수 있게(management-agnostic) 인터페이스만 정해뒀다.
 
@@ -94,9 +94,9 @@ Predictive Coding Theory(Rao & Ballard 1999, Friston 2010, Clark 2013)에서 기
 
 -> 예측 오차 기준은 넣을 때만 쓰고, 합치거나 지우는 건 결국 LLM 판단이다.
 
-## **3. Experiments**
+## **4. Experiments**
 
-### **3.1 Main Results (RQ1)**
+### **4.2 Main Results (RQ1)**
 
 LoCoMo(대화 10개, 평균 24K 토큰, 질문 1,540개)에서 잰 LLM-judge 점수(gpt-4o-mini가 0~100으로 채점) 평균이다. 논문 Table 2에서 평균만 옮김. 개선은 가장 센 베이스라인 대비 상대 개선율이다.
 
@@ -115,7 +115,7 @@ Temporal Reasoning이 특히 높다. gpt-4.1-mini에서 77.3(A-MEM 대비 +15.9%
 
 논문은 에피소드 중심으로 만들어두면 추론 부담 일부가 답변 생성 때에서 메모리 만들 때로 옮겨가기 때문으로 본다.
 
-### **3.2 Efficiency Analysis (RQ2)**
+### **4.3 Efficiency Analysis (RQ2)**
 
 먼저 메모리 구축 비용이다. LoCoMo, gpt-4o-mini 기준이고 베이스라인 수치는 Fang et al.(2025)에서 가져왔다. 입력·출력 토큰 열은 빼고 옮김. 개선 행은 가장 나은 베이스라인 대비 상대 변화다.
 
@@ -145,7 +145,7 @@ Full Context 대비 토큰은 88%, 지연은 47% 줄었고 정확도는 더 높�
 
 LangMem은 토큰이 125개인데 검색에 19.8초를 쓴다. 앞에서 본 [Mem0 리뷰](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)에서도 같은 패턴이었다. 토큰이 적다고 빨라지지는 않는다.
 
-### **3.3 Ablation Study (RQ3)**
+### **4.4 Ablation Study (RQ3)**
 
 예측 오차로 증류하는 것과, 들어온 에피소드에서 바로 지식을 뽑는 직접 증류를 비교한다. LoCoMo LLM 점수이고 논문 Table 5에서 두 설정만 옮김.
 
@@ -161,7 +161,7 @@ LangMem은 토큰이 125개인데 검색에 19.8초를 쓴다. 앞에서 본 [Me
 
 gpt-4o-mini에서 예측 오차 쪽이 13점, 상대로 25% 높다.
 
-native 관리 모듈(2.3의 new/merge/conflict 처리)은 켜고 꺼도 거의 차이가 없다. w/o e 설정에서 켰을 때 64.6, 껐을 때 65.0이고(gpt-4o-mini), gpt-4.1-mini에서는 74.7 vs 74.9다.
+native 관리 모듈(3.3의 new/merge/conflict 처리)은 켜고 꺼도 거의 차이가 없다. w/o e 설정에서 켰을 때 64.6, 껐을 때 65.0이고(gpt-4o-mini), gpt-4.1-mini에서는 74.7 vs 74.9다.
 
 논문은 LoCoMo에 지식이 바뀌는 경우가 드물어서 그렇다고 보고, 실제 서비스에서는 업데이트가 잦을 수 있어 관리 모듈을 남겨둔다고 한다.
 
@@ -169,7 +169,7 @@ native 관리 모듈(2.3의 new/merge/conflict 처리)은 켜고 꺼도 거의 �
 
 관측 창 길이 `w`도 5~40으로 바꿔 봤다. gpt-4.1-mini에서 80.4~81.2로 거의 같다(기본값 20에서 80.8). 경계를 LLM이 찾고 잘린 건 뒤에서 합치니 창 길이에 덜 민감하다는 설명이다.
 
-### **3.4 Third-Party Integration (RQ5)**
+### **4.6 Third-Party Integration (RQ5)**
 
 NEMORI를 다른 메모리 시스템 앞단의 증류 모듈로 붙여본다.
 
@@ -177,7 +177,7 @@ NEMORI를 다른 메모리 시스템 앞단의 증류 모듈로 붙여본다.
 
 기존 시스템을 바꾸지 않고 앞에 끼워 넣을 수 있다는 얘기다.
 
-### **3.5 Scalability Analysis (RQ6)**
+### **4.7 Scalability Analysis (RQ6)**
 
 LongMemEvalS(대화 500개, 평균 105K 토큰)에서 질문 유형별 LLM-judge 점수다. 논문 Table 8에서 gpt-4.1-mini 부분만 옮김.
 
@@ -203,7 +203,7 @@ gpt-4.1-mini에서는 single-session-assistant에서만 진다(92.9 vs 98.2). �
 
 gpt-4o-mini에서는 single-session-assistant(89.3 → 83.9)에 더해 Knowledge Update에서도 크게 진다(78.2 → 61.5). 이건 논문이 따로 설명하지 않는다.
 
-## **4. 지금 관점: importance 점수를 대체할 수 있나**
+## **지금 관점: importance 점수를 대체할 수 있나**
 
 앞에서 본 시스템들은 무엇을 남길지를 대부분 LLM이 판단했다. Generative Agents는 LLM이 importance를 1~10점으로 매기고, Mem0는 LLM이 대화에서 기억할 사실을 골라 뽑는다. [Experience-Following](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)은 조금 다르다. 넣을 때는 평가기가 채점하지만, 지울 때는 몇 번 검색됐고 그때 결과가 어땠는지 같은 사용 기록을 본다.
 

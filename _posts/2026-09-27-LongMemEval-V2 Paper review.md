@@ -19,7 +19,7 @@ LongMemEval-V2: Evaluating Long-Term Agent Memory Toward Experienced Colleagues
 
 [https://arxiv.org/abs/2605.12493](https://arxiv.org/abs/2605.12493)
 
-LongMemEval-V2는 UCLA에서 만든 에이전트 메모리 벤치마크다. 2026년 5월에 나왔고, [V1](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)과 1저자(Di Wu)가 같다.
+LongMemEval-V2는 UCLA에서 만든 에이전트 메모리 벤치마크다. 2026년 5월 arXiv에 올라왔고, [V1](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)과 1저자(Di Wu)가 같다.
 
 웹 에이전트가 같은 환경에서 반복해서 일한 경험을 메모리로 잘 쌓아서, 숙련된 동료처럼 되는지를 잰다.
 
@@ -37,7 +37,7 @@ V2는 메모리 시스템이 에이전트를 맞춤 환경을 잘 다루는 숙�
 
 기존 에이전트 메모리 벤치마크는 대부분 사용자 이력, 짧은 궤적, 다운스트림 태스크 성공률을 봤고, 메모리 시스템이 환경마다 다른 경험을 제대로 익히는지를 직접 재는 방법은 없었다고 한다.
 
-논문 Table 1에서 V1과 V2 행만 옮기면 이렇다. 능력 칸은 V2가 정의한 다섯 능력(2.1절) 중 몇 개를 다루는지를 논문이 표시한 것이다.
+논문 Table 1에서 V1과 V2 행만 옮기면 이렇다. 능력 칸은 V2가 정의한 다섯 능력(3.1절) 중 몇 개를 다루는지를 논문이 표시한 것이다.
 
 | | LongMemEval-V1 | LongMemEval-V2 |
 |---|---|---|
@@ -54,9 +54,9 @@ V1은 원래 자기 능력 분류가 따로 있었다. IE(정보 추출), MR(다
 
 Table 1에 있는 벤치마크 아홉 개(V2 포함) 중에 V2 기준 다섯 능력에 다 체크된 건 V2 하나다.
 
-## **2. LongMemEval-V2**
+## **3. LongMemEval-V2**
 
-### **2.1 Core Memory Ability Definition**
+### **3.1 Core Memory Ability Definition**
 
 한 환경에서 반복해서 일하고 나면 숙련된 동료는 뭘 익히게 되는가? 라는 질문에서 시작한다.
 
@@ -87,7 +87,7 @@ V1의 다섯 가지와 비교하면 사실보다 절차와 함정 쪽으로 옮�
 전체 451문항을 출처 도메인, 질문 유형, 형식별로 나눈 그림이다.
 가운데 질문 유형에는 static, dynamic, workflow마다 abstention 문항이 따로 있다.
 
-### **2.2 Evaluation Formulation**
+### **3.3 Evaluation Formulation**
 
 평가를 맥락 수집(context gathering) 과제로 둔다.
 
@@ -106,7 +106,7 @@ haystack은 두 크기가 있다. Small은 모든 질문이 같이 쓰는 궤적
 
 앞에서 본 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서는 메모리를 재는 건지 컨텍스트 길이를 재는 건지 따졌는데, 여기서는 리더를 고정해서 차이가 메모리에서만 나오게 했다.
 
-### **2.3 Pilot Studies**
+### **3.4 Pilot Studies**
 
 난이도를 두 가지로 검증한다.
 
@@ -126,7 +126,7 @@ haystack은 두 크기가 있다. Small은 모든 질문이 같이 쓰는 궤적
 
 oracle 궤적을 통째로 주는 것보다 정답 상태 주변만 자른 slice와 요약 노트로 줄이거나, 코딩 에이전트 하네스를 쓰면 더 오른다고 한다.
 
-## **3. AgentRunbook**
+## **4. AgentRunbook**
 
 논문이 같이 내놓은 메모리 방법 두 개다.
 
@@ -136,7 +136,7 @@ oracle 궤적을 통째로 주는 것보다 정답 상태 주변만 자른 slice
 
 (b) AgentRunbook-C는 궤적을 파일로 저장하고, 질의마다 지시문과 manifest를 넣은 샌드박스를 만들어 코딩 에이전트가 증거를 모으게 한다.
 
-### **3.1 AgentRunbook-R**
+### **4.1 AgentRunbook-R**
 
 R은 RAG를 뜻한다.
 
@@ -150,7 +150,7 @@ R은 RAG를 뜻한다.
 
 원본 조각과 추상 노트를 같이 두는 구조는 뒤에서 볼 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 다시 나온다.
 
-### **3.2 AgentRunbook-C**
+### **4.2 AgentRunbook-C**
 
 C는 코딩 에이전트를 뜻한다. 이쪽은 방식이 다르다.
 
@@ -164,11 +164,11 @@ C는 코딩 에이전트를 뜻한다. 이쪽은 방식이 다르다.
 
 원본을 두고 에이전트가 직접 찾게 하는 방식은 뒤에서 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서도 나온다.
 
-## **4. Experiments**
+## **5. Experiments**
 
 리더는 항상 Qwen3.5-9B다. 메모리가 돌려준 맥락은 200K 토큰에서 자른다.
 
-### **4.1 Main Results**
+### **5.1 Main Results**
 
 아래는 논문 Table 2에서 방법별 전체 정확도와 Small 기준 질의 지연만 옮긴 것이다. ablation 행과 질문 유형별 점수는 뺐다. RAG 쪽 컨트롤러는 Qwen3.5-9B, 코딩 에이전트 쪽은 GPT-5.4-mini다.
 
@@ -194,7 +194,7 @@ ablation을 보면 풀마다 역할이 다르다.
 - event 풀을 빼면 static, dynamic, gotchas가 전부 나빠짐
 - Workflow 질문은 이벤트와 노트로 묶어둔 경험이 있을 때 좋아짐
 
-### **4.2 Accuracy and Latency Trade-off**
+### **5.2 Accuracy and Latency Trade-off**
 
 메모리 컨트롤러의 reasoning effort가 전체 질의 지연에 크게 영향을 준다고 한다.
 
@@ -207,7 +207,7 @@ AgentRunbook-R은 정확도는 중간이고 지연은 26초 정도다. thinking�
 
 코딩 에이전트는 워크플로 안내, manifest, 궤적 검사 도구와 같이 줄 때 메모리 컨트롤러로 더 잘 동작한다고 한다.
 
-## **5. 지금 관점: V1과 V2 중 무엇을 쓸 것인가**
+## **지금 관점: V1과 V2 중 무엇을 쓸 것인가**
 
 둘은 갈아타는 관계가 아니고 재는 대상이 다르다. V1은 사용자에 대한 사실을 기억하는지를 115k–1.5M 토큰 규모에서 잰다. 개인화 챗봇이나 선호 추적에 맞고, 앞 리뷰들에서 Mem0, Zep, A-MEM이 겨룬 곳이다. V2는 환경에 대한 경험을 익히는지를 25M–115M 토큰 규모에서 잰다. 웹·도구 에이전트나 반복 작업 자동화에 맞고, 여기서 평가된 시스템은 아직 거의 없다.
 

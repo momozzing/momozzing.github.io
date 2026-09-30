@@ -19,7 +19,7 @@ MemGPT: Towards LLMs as Operating Systems
 
 [https://arxiv.org/abs/2310.08560](https://arxiv.org/abs/2310.08560)
 
-MemGPT는 UC Berkeley에서 만든 LLM 메모리 관리 시스템이다. 2023년 10월에 나온 논문이다.
+MemGPT는 UC Berkeley에서 만든 LLM 메모리 관리 시스템이다. 2023년 10월 arXiv에 올라온 논문이다.
 
 OS가 메모리와 디스크 사이를 페이징하듯이, LLM이 컨텍스트 창과 외부 저장소 사이에서 정보를 옮기게 한다.
 
@@ -159,7 +159,7 @@ GPT-3.5는 중첩 1단계에서, GPT-4와 GPT-4 Turbo는 3단계에서 정확도
 
 Wikipedia 2천만 문서 임베딩 데이터셋도 같이 공개했다.
 
-## **4. 지금 관점: 이후 시스템에 남은 것들**
+## **지금 관점: 이후 시스템에 남은 것들**
 
 벤치마크 숫자보다 여기서 나온 용어가 더 오래 남았다. main context와 external context를 나누는 구도는 뒤에 나오는 시스템 대부분이 그대로 쓴다. LLM이 함수 호출로 자기 메모리를 고치는 것도 뒤에서 볼 Mem0의 추가·수정·삭제 연산으로 이어진다.
 

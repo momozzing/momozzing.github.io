@@ -19,7 +19,7 @@ Zep: A Temporal Knowledge Graph Architecture for Agent Memory
 
 [https://arxiv.org/abs/2501.13956](https://arxiv.org/abs/2501.13956)
 
-Zep은 Zep AI에서 만든 에이전트 메모리 시스템이다. 2025년 1월에 나온 논문이다.
+Zep은 Zep AI에서 만든 에이전트 메모리 시스템이다. 2025년 1월 arXiv에 올라온 논문이다.
 
 사실을 지우지 않고 무효화 표시만 하는 시간 인식 지식그래프로 메모리를 만든다.
 
@@ -57,11 +57,11 @@ RAG의 한계에서 시작한다.
 
 에피소드 → 엔티티 → 커뮤니티로 올라가면서 점점 요약된 층이 쌓인다. 뒤에서 볼 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)에서도 이런 계층형 구조의 예로 Zep을 든다.
 
-### **2.1 Semantic Entities and Facts**
+### **2.2 Semantic Entities and Facts**
 
 엔티티와 사실을 뽑은 다음 시간 정보를 붙인다.
 
-#### **2.1.1 Temporal Extraction and Edge Invalidation**
+#### **2.2.3 Temporal Extraction and Edge Invalidation**
 
 논문은 이 부분이 Graphiti가 다른 지식그래프 엔진이랑 다른 점이라고 한다.
 
@@ -129,7 +129,7 @@ RRF(Reciprocal Rank Fusion, 여러 검색 결과의 순위를 합치는 방법)�
 
 ## **4. Experiments**
 
-### **4.1 Deep Memory Retrieval (DMR)**
+### **4.2 Deep Memory Retrieval (DMR)**
 
 Deep Memory Retrieval은 앞에서 본 [MemGPT](https://momozzing.github.io/paper%20review/MemGPT-Paper-review/) 팀이 자기들 주 평가 지표로 쓴 벤치마크다. 500개 다중 세션 대화, 대화당 5세션, 세션당 최대 12메시지다.
 
@@ -152,7 +152,7 @@ Zep이 MemGPT보다 높긴 한데, 대화를 통째로 넣은 full-conversation�
 
 논문도 바로 더 어려운 평가로 넘어간다. gpt-4o-mini에서는 MemGPT 결과를 재현하지 못했는데, 공개된 방법 설명이 부족해서라고 한다.
 
-### **4.2 LongMemEval (LME)**
+### **4.3 LongMemEval (LME)**
 
 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서 문항당 약 115k 토큰인 LongMemEval-S로 잰 결과다(논문 Table 2). 지연은 응답까지 걸린 전체 시간이고, IQR은 지연 분포의 가운데 50% 폭이다.
 
@@ -190,7 +190,7 @@ gpt-4o에서는 single-session-assistant만 떨어진다(−17.7%). gpt-4o-mini�
 
 LongMemEval에서 어시스턴트 쪽 정보 기억을 따로 능력으로 둔 게 이런 경우를 보려는 거였던 것 같다.
 
-## **5. 지금 관점: 삭제 대신 무효화**
+## **지금 관점: 삭제 대신 무효화**
 
 이 논문에서 제일 가져다 쓰고 싶은 건 무효화다. 모순이 생기면 지우지 않고 `t_invalid`만 찍는다. 그래프를 안 쓰더라도 사실마다 `t_valid`/`t_invalid` 두 필드만 붙이면 비슷하게 흉내 낼 수 있을 것 같다. 지우는 방식이 어떻게 되는지는 뒤에서 볼 Mem0에서 나온다.
 
@@ -200,7 +200,7 @@ LongMemEval에서 어시스턴트 쪽 정보 기억을 따로 능력으로 둔 �
 
 걸리는 건 둘이다. 어시스턴트가 한 말을 기억하는 게 약하다. 안내나 추천을 많이 하는 챗봇이면 "아까 뭐라고 알려줬지"를 자주 묻는데, 그래프 추출만으로는 부족할 수 있다. 그리고 저장할 때 LLM을 여러 번 부른다. 엔티티 추출, 관계 생성, 모순 판단이 다 LLM이다. 논문의 지연은 질의 응답 기준이고, 저장에 드는 시간은 안 나와 있다.
 
-## **6. Conclusion**
+## **5. Conclusion**
 
 의미 기억이랑 일화 기억을 엔티티·커뮤니티 요약과 같이 담는 그래프 기반 메모리를 만들었다. 기존 메모리 벤치마크에서 제일 높은 성능을 내면서 토큰도 줄이고 지연도 훨씬 낮다고 한다.
 

@@ -46,7 +46,7 @@ introduction 부분을 보면, 연구 문제는 이렇다.
 
 그래서 대화 이력을 세 계층으로 나누고, 계층별 검색 가중치와 드리프트를 막는 손실항을 붙인 구조를 제안한다.
 
-## **2. Proposed Methodology**
+## **3. Proposed Methodology**
 
 논문은 이 구조를 MLMF라고 부른다.
 
@@ -74,7 +74,7 @@ Retention regularization은 손실항이다. semantic 메모리를 엔티티 임
 
 겪은 경험에서 배우는 Experiential은 없다. CoALA의 procedural에 해당하는 계층도 없다.
 
-## **3. Results and Analysis**
+## **5. Results and Analysis**
 
 결과를 보기 전에, 앞에서 본 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서 평가가 타당한지 따져보라고 했으니 그 기준을 여기에도 대본다. 확인이 안 되는 게 네 가지 있다.
 
@@ -98,7 +98,7 @@ Anatomy에서 본 Context Saturation Gap(∆, 메모리 시스템 점수에서 �
 
 그래서 절대 수치는 인용하기 어렵다. 대신 같은 시스템 안에서 계층을 하나씩 떼는 ablation은 조건이 같으니까 상대 비교로는 볼 만하다. 아래는 그 부분 위주로 본다.
 
-### **3.1 Ablation Study**
+### **C. Ablation Study**
 
 모듈을 하나씩 떼면서 세 가지를 잰다.
 
@@ -134,7 +134,7 @@ F1은 0~1 값이라 같은 눈금에서는 막대가 거의 안 보인다. F1 �
 
 2번은 드리프트를 막는 장치가 정확도보다는 없는 걸 지어내는 쪽을 막는 데 효과가 있다는 결과다. 앞에서 본 [LongMemEval 리뷰](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서 ABS(답이 없는 질문에 모른다고 하는 능력)를 따로 잰 것과 이어진다.
 
-## **4. 지금 관점: 계층을 몇 개 둘까**
+## **지금 관점: 계층을 몇 개 둘까**
 
 ablation에서 보존율이 떨어진 폭으로 줄 세우면 semantic(−6.06%p), episodic(−4.77%p), adaptive gating(−3.92%p), 보존 손실(−3.63%p) 순이다. 보존 손실은 보존율로는 꼴찌지만 FMR로는 제일 크다.
 
@@ -142,9 +142,9 @@ semantic 계층이 1순위라는 건 앞에서 본 Zep, [Mem0](https://momozzing
 
 다만 앞에서 본 [Experience-Following 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)에서는 과거 실행 경험이 행동을 직접 바꿨는데, 여기 ablation에는 experiential 계층이 아예 없다. 사실 기억만 다룬 실험이라 경험 계층을 둘지는 이 표로 판단할 수 없다.
 
-FMR을 정확도와 따로 재는 건 가져와 볼 만하다. 정확도가 같아도 지어내는 비율은 다를 수 있고, 사용자 입장에서는 모른다고 하는 것보다 틀린 걸 기억이라고 말하는 쪽이 더 곤란하다. 절대 수치(0.618, 56.90%, 5.1%)는 3장 앞에 적은 문제들 때문에 인용하지 않고, ablation의 상대 순서만 참고한다.
+FMR을 정확도와 따로 재는 건 가져와 볼 만하다. 정확도가 같아도 지어내는 비율은 다를 수 있고, 사용자 입장에서는 모른다고 하는 것보다 틀린 걸 기억이라고 말하는 쪽이 더 곤란하다. 절대 수치(0.618, 56.90%, 5.1%)는 5장 앞에 적은 문제들 때문에 인용하지 않고, ablation의 상대 순서만 참고한다.
 
-## **5. Conclusion**
+## **6. Conclusion**
 
 conclusion 부분을 보면, 계층적 메모리 분해에 adaptive retrieval gating과 retention regularization을 붙인 프레임워크를 제안했다. working·episodic·semantic을 나눠서 세션 간 드리프트를 막으면서 컨텍스트가 늘어나는 것도 막는다.
 

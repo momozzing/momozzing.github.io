@@ -19,7 +19,7 @@ When Your Agent Opens the Chat App: Agent-Controlled Search over Raw Chat Logs R
 
 [https://arxiv.org/abs/2608.12888](https://arxiv.org/abs/2608.12888)
 
-ReFind는 중국과기대(USTC)와 MetaStone Technology에서 만든 채팅 기록 검색 방법이다. 2026년 8월에 나온 논문이다.
+ReFind는 중국과기대(USTC)와 MetaStone Technology에서 만든 채팅 기록 검색 방법이다. 2026년 8월 arXiv에 올라온 논문이다.
 
 대화 기록을 요약하거나 그래프로 바꾸지 않고, 원본 로그를 그대로 두고 BM25(단어가 얼마나 겹치는지로 점수를 매기는 고전 키워드 검색) 검색만 에이전트가 잘 돌리게 했더니 구조화 메모리 시스템들보다 잘 나왔다는 논문이다.
 
@@ -76,7 +76,7 @@ STITCH, SeCom, GAM, 그리고 뒤 표의 MIRIX는 이 논문에서 처음 나오
 
 검색(증거 모으기)이랑 추론(답 만들기)을 두 단계로 나눈다.
 
-### **3.1 What “no structure” means**
+### **What “no structure” means**
 
 구조가 없다고 해서 아무것도 안 쓰는 건 아니다.
 
@@ -86,7 +86,7 @@ BM25 인덱스도 원문을 찾아가는 경로일 뿐 메모리를 대신하지
 
 정리하면 구조화 시스템은 질문을 보기 전에 표현을 정하고, ReFind는 그걸 질문이 올 때까지 미룬다.
 
-### **3.2 System Architecture**
+### **System Architecture**
 
 Stage 1은 [ReAct](https://momozzing.github.io/paper%20review/ReAct-Paper-review/) 루프다. LLM이 키워드랑 파라미터를 정해서 여러 번 검색하고, 쓸 만한 내용을 노트에 저장한다.
 
@@ -96,7 +96,7 @@ Stage 2는 모은 노트를 세션별로 묶고 시간순으로 정렬해서 질
 
 이렇게 나눈 이유는 답 만드는 쪽이 검색이랑 컨텍스트 공간을 두고 다투지 않게 하려는 거라고 한다. 답변 모델은 원문 그대로의 증거만 받는다.
 
-### **3.3 Search Engine Design**
+### **Search Engine Design**
 
 검색 엔진에 채팅 기록에 맞춘 기능 네 개를 넣었다. RRF 2단 재랭킹, 컨텍스트 창 확장, 시간 필터, 본 세션 제외다.
 
@@ -138,7 +138,7 @@ BM25는 턴 단위로 매칭해서 세션 전체가 관련 있는지는 못 본�
 
 ## **4. Experiments**
 
-### **4.1 Evaluation Setup**
+### **Evaluation Setup**
 
 MemoryAgentBench(Hu et al., 2025)의 벤치마크 여섯 개를 GPT-4o-mini로 잰다. 약 2,800문항이다.
 
@@ -151,7 +151,7 @@ MemoryAgentBench(Hu et al., 2025)의 벤치마크 여섯 개를 GPT-4o-mini로 �
 
 모든 시스템을 GPT-4o-mini로 맞췄다. 베이스라인 수치는 MemoryAgentBench 논문에서 그대로 가져왔다.
 
-### **4.2 Main Results: Precise Retrieval and Fact Tracking**
+### **Main Results: Precise Retrieval and Fact Tracking**
 
 여섯 벤치마크 정확도(%)다. 논문 Table 2에서 일부만 옮겼다(Contriever, text-embed-3-small, Qwen3-Embed-4B, MemoRAG, Self-RAG 행은 뺐다).
 
@@ -183,7 +183,7 @@ FC-MH는 모든 시스템이 10점 아래다. 덮어쓰인 사실 중 최신 값
 
 ## **5. Analysis and Discussion**
 
-### **5.1 Backbone Scaling**
+### **Backbone Scaling**
 
 백본을 키우면 격차가 벌어진다.
 
@@ -204,7 +204,7 @@ HippoRAG 2랑 차이가 GPT-4o-mini 때는 LME 열 기준 0.6점(51.3 대 50.7)�
 
 모델이 좋아질수록 검색을 직접 하는 쪽이 유리해진다고 한다. 구조화 시스템은 인덱스를 미리 만들어뒀으니 모델이 좋아져도 얻는 게 적다.
 
-### **5.2 Ablation Study**
+### **Ablation Study**
 
 무엇이 효과를 냈는지 본다. 같은 LongMemEval-S/M, GPT-5-mini 설정에서 기능을 하나씩 뺀 정확도다.
 
@@ -224,7 +224,7 @@ HippoRAG 2랑 차이가 GPT-4o-mini 때는 LME 열 기준 0.6점(51.3 대 50.7)�
 
 검색 백엔드도 바꿔봤는데 S 기준으로 BM25 93.2, dense 91.3, hybrid 91.3으로 sparse가 조금 낫거나 비슷했다.
 
-### **5.3 Discussion**
+### **Discussion**
 
 비용은 부록(Resource Use)에 따로 정리돼 있다. 문항당 평균 검색 횟수, LLM 호출 수, 토큰, 시간이다.
 
@@ -241,7 +241,7 @@ HippoRAG 2랑 차이가 GPT-4o-mini 때는 LME 열 기준 0.6점(51.3 대 50.7)�
 
 대신 오프라인으로 인덱스 만드는 비용은 0이다. 어느 쪽이 싼지는 기록 크기랑 질문이 얼마나 자주 오는지에 달렸다.
 
-## **6. 지금 관점: 메모리를 만든다면**
+## **지금 관점: 메모리를 만든다면**
 
 메모리 구조를 짜기 전에 그게 정말 필요한지부터 따져봐야 할 것 같다. 표에서 Mem0(25.1)랑 Zep(26.6)이 BM25-RAG(48.8)의 절반 정도다. 구조화 메모리를 얹는다고 알아서 좋아지지는 않는다.
 
@@ -253,7 +253,7 @@ HippoRAG 2랑 차이가 GPT-4o-mini 때는 LME 열 기준 0.6점(51.3 대 50.7)�
 
 -> 그래도 구조화 메모리를 쓸 거면 BM25 반복 검색보다 나은지는 먼저 확인해봐야 할 것 같다. 네 기능 중 RRF 2단 재랭킹이랑 컨텍스트 창 확장은 구조를 전제하지 않아서, 벡터 DB를 쓰고 있어도 세션 단위 점수를 더해서 재랭킹하는 건 인덱스를 다시 안 만들고 붙일 수 있을 것 같다.
 
-## **7. Conclusion**
+## **6. Conclusion**
 
 구조를 하나도 안 만들고 끝까지 밀어붙여서, 구조화 메모리의 이득 상당 부분이 구조가 아니라 질문할 때 검색을 잘 하는 데서 온다는 걸 보여준다.
 

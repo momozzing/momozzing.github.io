@@ -19,7 +19,7 @@ Does Your Agent's Memory Survive a Model Upgrade? A Controlled Study of Memory P
 
 [https://arxiv.org/abs/2609.05339](https://arxiv.org/abs/2609.05339)
 
-이 논문은 LinkedIn에서 쓴 논문으로, 모델을 바꿨을 때 에이전트 메모리가 그대로 살아남는지를 실험한 논문이다. 2026년 9월에 나왔다.
+이 논문은 LinkedIn에서 쓴 논문으로, 모델을 바꿨을 때 에이전트 메모리가 그대로 살아남는지를 실험한 논문이다. 2026년 9월 arXiv에 올라왔다.
 
 논문 첫 문장이 "모델 업그레이드는 일상적이다. 메모리 마이그레이션은 그렇지 않다."이다.
 
@@ -39,7 +39,7 @@ Does Your Agent's Memory Survive a Model Upgrade? A Controlled Study of Memory P
 
 ## **2. What does it mean for memory to survive an upgrade?**
 
-### **2.1 Memory formats and their trade-offs**
+### **2.2 Memory formats and their trade-offs**
 
 같은 이력을 네 가지 방식으로 저장해서 비교한다.
 
@@ -85,9 +85,9 @@ Figure 2는 고정된 합성 이력을 네 형식으로 바꾼 다음, 모델·�
 
 ![주요 실험 결과 (논문 Figure 3)](https://momozzing.github.io/assets/images/memory-portability/fig3-key-results.png)
 
-①은 쓰는 모델 교체, ②는 임베딩 마이그레이션, ③은 복구, ④는 손실이 어느 단계에서 생기는지다. 아래 4.1~4.4가 이 순서를 따른다.
+①은 쓰는 모델 교체, ②는 임베딩 마이그레이션, ③은 복구, ④는 손실이 어느 단계에서 생기는지다. 아래 4.2~4.5가 이 순서를 따른다.
 
-### **4.1 A fixed schema transfers better than free-form notes**
+### **4.2 A fixed schema transfers better than free-form notes**
 
 쓰는 모델을 바꾸고 읽는 모델은 고정한 채로 쟀다.
 
@@ -116,7 +116,7 @@ NOTES는 방향에 따라 부호가 바뀐다. Llama가 Qwen 노트를 읽으면
 
 -> A→B가 괜찮아도 B→A는 무너질 수 있으니, 교체 방향별로 따로 테스트해야 한다.
 
-### **4.2 Retrieval can fail before the new model sees anything**
+### **4.3 Retrieval can fail before the new model sees anything**
 
 모델을 바꾸기 전부터 RAG 파이프라인 자체가 병목이었다.
 
@@ -157,7 +157,7 @@ H2는 완전 재임베딩과 혼합 인덱스의 정확도 차이다. 이력·�
 
 -> 임베딩 모델을 바꿀 때 기존 벡터는 그대로 두고 새로 들어오는 것만 새 모델로 넣는 경우가 많은데, 그러면 이렇게 된다.
 
-### **4.3 Raw history buys a second chance—if the repairer can use it**
+### **4.4 Raw history buys a second chance—if the repairer can use it**
 
 원본 이력을 남겨두면 메모리를 다시 만들 수 있는지를 본다.
 
@@ -185,7 +185,7 @@ H2는 완전 재임베딩과 혼합 인덱스의 정확도 차이다. 이력·�
 
 RAG는 재임베딩이 건당 $0.013으로 싸고, KG-fixed는 고정 스키마로 다시 만드는 비용이 거의 0이다.
 
-### **4.4 Most memory loss happens upstream of the reader**
+### **4.5 Most memory loss happens upstream of the reader**
 
 정확도 손실이 쓰기·검색·읽기 중 어느 단계에서 생기는지 나눠서 봤다.
 
@@ -208,7 +208,7 @@ RAG는 반대로 청크에는 정보가 거의 다 남아 있는데 검색이 �
 
 그래서 리더를 바꾸기 전에, 결정적 증거를 저장했는지, 검색했는지, 전달했는지부터 확인하라고 한다. NOTES는 요약·쓰기 단계를, RAG는 청킹·색인·랭킹을 고쳐야 한다.
 
-## **5. 지금 관점: 모델을 바꿀 때**
+## **지금 관점: 모델을 바꿀 때**
 
 앞의 논문들은 메모리를 어떻게 만들지를 다뤘고, 이 논문은 만든 다음에 모델이 바뀌면 어떻게 되는지를 다룬다.
 

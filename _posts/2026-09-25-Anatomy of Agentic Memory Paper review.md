@@ -19,7 +19,7 @@ Anatomy of Agentic Memory: Taxonomy and Empirical Analysis of Evaluation and Sys
 
 [https://arxiv.org/abs/2602.19320](https://arxiv.org/abs/2602.19320)
 
-Anatomy of Agentic Memory는 UT Dallas · UC Davis · Texas A&M에서 쓴 에이전트 메모리 평가 논문이다. 2026년 2월에 나왔다.
+Anatomy of Agentic Memory는 UT Dallas · UC Davis · Texas A&M에서 쓴 에이전트 메모리 평가 논문이다. 2026년 2월 arXiv에 올라왔다.
 
 앞 리뷰들에서 수치를 많이 가져왔다. Mem0의 66.88, Zep의 71.2, A-MEM의 순위 1.0 같은 것들이다.
 
@@ -40,7 +40,7 @@ introduction 부분을 보면 아키텍처는 빠르게 발전했는데 실험�
 3. 시스템 효율 : 지연과 비용의 "agency tax"(메모리 유지보수 때문에 더 드는 지연·비용)
 4. 백본 민감도 : 오픈웨이트 모델에서 메모리 연산이 조용히 실패하는 "silent failure"
 
-## **2. Taxonomy of Agentic Memory**
+## **3. Taxonomy of Agentic Memory**
 
 Memory-Augmented Generation(MAG, 외부 메모리를 붙여 생성하는 시스템)을 메모리 구조에 따라 넷으로 나눈다.
 
@@ -59,9 +59,9 @@ Memory-Augmented Generation(MAG, 외부 메모리를 붙여 생성하는 시스�
 
 분류는 앞에서 본 [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)랑 크게 다르지 않다. 실제 분석은 뒤에서부터 나온다.
 
-## **3. Evaluation and Pain Points**
+## **4. Evaluation and Pain Points**
 
-### **3.1 Benchmark Scalability: The Context Saturation Risk**
+### **4.2 Benchmark Scalability: The Context Saturation Risk**
 
 벤치마크 포화 문제다.
 
@@ -69,7 +69,7 @@ Memory-Augmented Generation(MAG, 외부 메모리를 붙여 생성하는 시스�
 
 그런데 컨텍스트 창이 128k에서 1M으로 늘어나면서 많은 벤치마크가 포화될 위험이 생겼다. 필요한 정보가 전부 프롬프트 하나에 들어가면 외부 메모리가 필요 없어 보인다.
 
-#### **3.1.1 Dimensions of Limitation**
+#### **4.2.1 Dimensions of Limitation**
 
 포화 위험을 세 가지 기준으로 본다.
 
@@ -87,7 +87,7 @@ Memory-Augmented Generation(MAG, 외부 메모리를 붙여 생성하는 시스�
 
 포화 위험은 겉보기 난이도보다 이런 구조적 특성이 long-context LLM이 감당할 수 있는 범위를 넘느냐로 정해진다는 게 논문 설명이다.
 
-#### **3.1.2 Context Saturation Gap as an Empirical Diagnostic**
+#### **4.2.2 Context Saturation Gap as an Empirical Diagnostic**
 
 그래서 진단 지표를 하나 제안한다.
 
@@ -117,7 +117,7 @@ Zep은 ∆가 +11이다. LongMemEval-S는 대화가 10만 토큰이 넘는다(�
 
 논문은 양이 작고 구조가 얕은 데이터셋이면 full-context 베이스라인과 같이 평가해야 메모리 덕분에 좋아졌다고 말할 수 있다고 한다.
 
-### **3.2 LLM-as-a-Judge Evaluation**
+### **4.3 LLM-as-a-Judge Evaluation**
 
 F1과 의미가 어긋난다는 부분이다.
 
@@ -144,7 +144,7 @@ A-Mem은 F1은 0.116으로 5위인데 판정 순위는 세 프롬프트 모두 4
 
 LLM-as-a-judge가 프롬프트에 과적합되는 게 아니냐는 걱정도 있는데, 위 표처럼 프롬프트 세 개에서 상대 순서가 거의 유지됐다. 그래도 프롬프트 설계는 조심해야 한다고 덧붙인다.
 
-### **3.3 Backbone Sensitivity and Format Stability**
+### **4.4 Backbone Sensitivity and Format Stability**
 
 에이전트 메모리에서는 백본 모델이 질문에 답하는 것과 메모리 연산(갱신·통합)을 둘 다 해야 한다. 그래서 오래 쓰려면 출력 형식을 정확히 지켜야 한다.
 
@@ -172,7 +172,7 @@ gpt-4o-mini에서도 Nemori 형식 오류가 17.91%다. API 모델이라고 안�
 
 -> 표의 형식 오류는 "복구 가능한" 오류, 즉 fallback 파싱으로 살린 경우를 센 거라고 한다. 그럼 실제로 메모리가 망가진 비율은 이보다 낮을 텐데, 그건 따로 안 나온다.
 
-### **3.4 System Performance Evaluation**
+### **4.5 System Performance Evaluation**
 
 논문이 agency tax라고 부르는 부분이다.
 
@@ -204,7 +204,7 @@ gpt-4o-mini에서도 Nemori 형식 오류가 17.91%다. API 모델이라고 안�
 
 유지보수 비용은 비동기로 처리되는 경우가 많아서 표에서 뺐다. 그러니까 이 표도 전체 비용은 아니다.
 
-## **4. 지금 관점: 앞에서 본 수치 다시 보기**
+## **지금 관점: 앞에서 본 수치 다시 보기**
 
 이 논문을 읽고 나니 앞 리뷰들 수치가 좀 다르게 보인다. Mem0는 ∆가 −6.02다. Mem0 리뷰에서 본 것처럼 Mem0의 장점은 정확도보다 지연 쪽이었다. 검색 p95(느린 쪽 5% 경계 지연)가 0.2초, 응답까지 합친 전체 p95가 1.44초로 full-context의 17.1초보다 훨씬 빠르다. 같은 백본의 full-context 점수가 옆에 없으면 컨텍스트 창으로 풀리는 문제를 메모리로 푼 걸 수도 있다.
 

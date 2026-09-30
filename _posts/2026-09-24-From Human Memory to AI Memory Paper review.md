@@ -21,7 +21,7 @@ From Human Memory to AI Memory: A Survey on Memory Mechanisms in the Era of LLMs
 
 From Human Memory to AI Memory는 Huawei Noah's Ark Lab에서 쓴 LLM 메모리 서베이 논문이다.
 
-사람의 기억 분류에서 출발해서, AI 메모리를 대상·형태·시간 세 축으로 8분면에 나눈다. 2025년 4월에 나왔다.
+사람의 기억 분류에서 출발해서, AI 메모리를 대상·형태·시간 세 축으로 8분면에 나눈다. 2025년 4월 arXiv에 올라왔다.
 
 뒤에서 볼 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)보다 8개월 먼저 나왔고, 같은 대상을 다르게 나눈다. 두 서베이 비교는 뒤의 지금 관점 절에 적었다.
 
@@ -153,7 +153,7 @@ VIII는 모델 파라미터 자체를 장기 메모리로 본다. MemoryLLM, WIS
 5. Individual Privacy → Collective Privacy : 데이터 공유가 늘면서 프라이버시 보호 대상이 개인에서 집단으로 넓어진다
 6. Rule-Based Evolution → Automated Evolution : 사람이 만든 규칙으로 과거 경험을 반영하던 데서, 시스템이 스스로 병목을 찾아 고치는 쪽으로
 
-## **6. 지금 관점: 뒤에 나온 서베이와 비교**
+## **지금 관점: 뒤에 나온 서베이와 비교**
 
 8개월 뒤에 나온 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)와 나란히 놓고 보면 제일 큰 차이는 시간 축이다.
 
@@ -165,7 +165,7 @@ personal/system 구분은 뒤의 서베이에 없는데, 나는 이게 이 논�
 
 두 서베이 모두 parametric memory를 한 갈래로 다루는데, 이 시리즈에서 다룬 시스템 중에는 parametric 쪽을 직접 구현한 게 없다. 왜 그런지는 잘 모르겠다??
 
-## **7. Conclusion**
+## **6. Conclusion**
 
 conclusion 부분을 보면, 사람 기억과 LLM 기반 AI 메모리의 관계를 정리하고, 사람의 인지 원리가 더 효율적이고 유연한 메모리 구조를 만드는 데 어떻게 도움이 될 수 있는지 살펴봤다고 한다.
 

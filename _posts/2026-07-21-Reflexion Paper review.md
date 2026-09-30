@@ -17,7 +17,7 @@ Reflexion: Language Agents with Verbal Reinforcement Learning
 
 [https://arxiv.org/abs/2303.11366](https://arxiv.org/abs/2303.11366)
 
-Reflexion은 Northeastern, MIT, Princeton에서 만든 언어 에이전트 논문이다. (NeurIPS 2023)
+Reflexion은 Northeastern, MIT, Princeton에서 만든 언어 에이전트 연구로, arXiv에 올라온 논문이다.
 
 [지난 ReAct 리뷰](https://momozzing.github.io/paper%20review/ReAct-Paper-review/)의 저자 Shunyu Yao가 공저자로 들어간 후속 연구다.
 
@@ -45,7 +45,7 @@ gradient 업데이트가 한 번도 없는데 시도할수록 잘해진다.
 
 시도 → 실패 신호 → 반성("팬이 stoveburner 1에 없었으니 2를 봐야 했다") → 다음 시도에서 교정.
 
-## **2. Reflexion: reinforcement via verbal reflection**
+## **3. Reflexion: reinforcement via verbal reflection**
 
 프레임워크는 모듈 3개와 메모리로 구성된다.
 
@@ -80,11 +80,11 @@ RL의 reward는 "0점이었다"만 알려주지만, 반성문은 "어디서 무�
 
 전부 반성의 재료로 쓸 수 있다고 한다.
 
-## **3. Experiments**
+## **4. Experiments**
 
 의사결정, 추론, 코딩 세 도메인에서 실험한다.
 
-### **3.1 Sequential Decision Making: ALFWorld**
+### **4.1 Sequential Decision Making: ALFWorld**
 
 ReAct 리뷰에서 봤던 그 텍스트 집안일 시뮬레이터다. Actor로 ReAct를 쓰고 Reflexion을 얹었다.
 
@@ -105,7 +105,7 @@ ReAct 단독은 hallucination 비율이 22%에 수렴한 채 회복하지 못한
 1. 긴 trajectory 초반의 실수를 반성으로 찾아내는 것
 2. "어디를 이미 뒤져봤는지"를 여러 trial에 걸쳐 기억해서 방을 차례대로 수색하는 것
 
-### **3.2 Reasoning: HotpotQA**
+### **4.2 Reasoning: HotpotQA**
 
 HotpotQA(위키피디아 문서 여러 개를 거쳐 답하는 multi-hop QA)에서 100문제를 뽑아 추론이 좋아지는지 본다.
 
@@ -131,7 +131,7 @@ ablation도 있다.
 
 -> 기억을 주는 것과 교훈을 주는 것은 다르다.
 
-### **3.3 Programming**
+### **4.3 Programming**
 
 HumanEval, MBPP(둘 다 함수 하나를 짜는 Python 코딩 벤치마크)와 이를 Rust로 옮긴 버전, 그리고 LeetcodeHardGym으로 본다.
 
@@ -185,7 +185,7 @@ Table 3은 HumanEval Rust에서 가장 어려운 50문제로 테스트 생성과
 
 이 실험에서는 근거 없는 반성이 오히려 성능을 떨어뜨렸다. 다만 50문제짜리 ablation 하나라 어디까지 일반화되는지는 모르겠다.
 
-## **4. Limitations**
+## **5. Limitations**
 
 - 전체가 Evaluator의 정확도에 의존한다. 코딩의 false positive 문제가 대표적
 - 장기 기억을 최대 개수가 정해진 sliding window로 잘라서 쓴다. 논문은 벡터 DB나 SQL DB 같은 구조로 넓히는 걸 향후 과제로 둔다
@@ -194,7 +194,7 @@ Table 3은 HumanEval Rust에서 가장 어려운 50문제로 테스트 생성과
 
 -> 반성이 잘못됐는지는 누가 판단하지??
 
-## **5. 지금 관점: LangGraph Reflexion 구현과 비교**
+## **지금 관점: LangGraph Reflexion 구현과 비교**
 
 지금 보면 Reflexion 루프는 낯설지 않다. 코딩 에이전트가 테스트를 돌리고, 실패하면 에러 로그를 읽고, 어디서 틀렸는지 정리한 뒤 코드를 고쳐서 다시 시도한다. Actor(코드 생성) → Evaluator(테스트 실행) → Self-Reflection(에러 분석) → 재시도와 같은 순서다.
 
@@ -259,7 +259,7 @@ graph = builder.compile()
 
 -> 에이전트 루프를 만들 때 반성 프롬프트보다 판정이 얼마나 확실한지를 먼저 봐야 할 것 같다.
 
-## **6. Conclusion**
+## **7. Conclusion**
 
 Reflexion은 ReAct 루프에 실패에서 배우는 단계를 더했다.
 

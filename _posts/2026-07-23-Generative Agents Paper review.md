@@ -62,7 +62,7 @@ Generative Agents는 Stanford + Google에서 만든, 가상 마을에서 사람�
 
 냉장고가 비었다는 것도 마지막으로 봤을 때의 상태로 기억한다. 세계 지식도 기억이랑 같은 방식으로 다룬다.
 
-## **2. Generative Agent Architecture**
+## **4. Generative Agent Architecture**
 
 구조는 4단계다.
 
@@ -75,7 +75,7 @@ Generative Agents는 Stanford + Google에서 만든, 가상 마을에서 사람�
 
 전부 자연어로 기록하고 자연어로 처리한다. 반성이랑 계획도 기억의 한 종류라서 다시 회상 대상이 된다.
 
-### **2.1 Memory and Retrieval**
+### **4.1 Memory and Retrieval**
 
 memory stream은 에이전트가 인식한 걸 전부 쌓는 기록이다.
 
@@ -107,7 +107,7 @@ recency는 생성 시점 대신 마지막 접근 시점 기준이라, 자주 꺼
 
 ![Memory Stream과 회상 (논문 Figure 6)](https://momozzing.github.io/assets/images/generative-agents/fig6-memory-stream.png)
 
-### **2.2 Reflection**
+### **4.2 Reflection**
 
 관찰 기억만으로는 일반화가 안 된다.
 
@@ -141,7 +141,7 @@ Klaus에게 "아는 사람 중 한 명과 시간을 보낸다면 누구와?"라�
 
 반성이 생기면 Klaus의 선택도 바뀐다. 자주 마주친 Wolfgang 대신, 연구라는 공통 관심사를 반성으로 알게 된 Maria를 고른다.
 
-### **2.3 Planning and Reacting**
+### **4.3 Planning and Reacting**
 
 계획 없이 매 순간 LLM에게 행동을 물으면, 12시에 점심을 먹고 12시 30분이랑 13시에 또 점심을 먹는 일이 생긴다.
 
@@ -163,7 +163,7 @@ Klaus에게 "아는 사람 중 한 명과 시간을 보낸다면 누구와?"라�
 
 누가 시킨 스케줄이 없고, 에이전트가 스스로 세운 계획이다.
 
-#### **2.3.1 Reacting and Updating Plans**
+#### **4.3.1 Reacting and Updating Plans**
 
 계획은 고정이 아니다.
 
@@ -173,7 +173,7 @@ Klaus에게 "아는 사람 중 한 명과 시간을 보낸다면 누구와?"라�
 
 반응하기로 하면 그 시점부터 계획을 다시 만든다. 반응이 다른 에이전트와의 상호작용이면 대화를 만들고, 발화는 상대에 대한 기억 요약을 보고 만든다.
 
-## **3. Controlled Evaluation**
+## **6. Controlled Evaluation**
 
 에이전트 25명을 인터뷰한다.
 
@@ -199,7 +199,7 @@ Klaus에게 "아는 사람 중 한 명과 시간을 보낸다면 누구와?"라�
 2. 기억에 없는 세부사항을 지어내서 덧붙이는 embellishment(꾸며내기)가 있다
 3. instruction tuning 영향으로 지나치게 협조적이고 격식 있는 말투가 나온다
 
-## **4. End-to-End Evaluation**
+## **7. End-to-End Evaluation**
 
 전체 아키텍처로 25명을 게임 시간 이틀 동안 돌리고, 사회적 행동이 생기는지 본다.
 
@@ -228,14 +228,18 @@ Isabella가 소문을 내고, 단골 Maria에게 장식을 부탁하고, Maria�
 
 -> 이것까지 사람다운 결과로 봐야 하는지는 잘 모르겠다. 계획 단계에서 초대를 빠뜨린 걸로도 읽힌다.
 
-## **5. Limitations**
+## **8. Discussion**
+
+논문은 Discussion에서 응용, 이후 과제, 한계, 윤리 문제를 같이 다룬다. 여기서는 한계만 가져왔다.
+
+### **8.2 Future Work and Limitations**
 
 1. 회상 실패와 embellishment가 있다. 기억이 쌓일수록 회상이 어려워진다
 2. 게임 시간 이틀, 25명 규모다. 더 길고 큰 시뮬레이션에서 안정적인지는 확인이 안 됐다
 3. 비용이 크다. 25명을 이틀 돌리는 데 토큰 비용이 수천 달러 들었고, 실행에 며칠이 걸렸다
 4. 평가가 believability 하나에 몰려 있다. 유용성이나 정확성은 따로 봐야 한다
 
-## **6. 지금 관점: 이후 메모리 설계와 비교**
+## **지금 관점: 이후 메모리 설계와 비교**
 
 회상 점수를 recency, importance, relevance의 가중합으로 매기는 방식은 이후 나온 에이전트 장기 기억 설계에서 자주 보인다. 시간 감쇠, 중요도 채점, 임베딩 유사도를 섞는 조합이 많은 memory 프레임워크의 출발점이 된 것 같다. 다만 이 논문은 가중치를 전부 1로 두고 따로 튜닝하지 않았고, limitation에서도 이 함수들을 다듬을 여지를 남겨뒀다.
 
@@ -245,7 +249,7 @@ reflection도 비슷하다. 원시 기록을 쌓아두기만 하지 않고 주�
 
 멀티에이전트 시뮬레이션 쪽에서도 이 논문을 많이 인용한다. 사회과학 시뮬레이션, 게임 NPC, 에이전트 여러 개를 협업시키는 프레임워크들이 이 논문을 초기 사례로 든다.
 
-## **7. Conclusion**
+## **9. Conclusion**
 
 기억을 전부 쌓고, 필요한 것만 꺼내고, 주기적으로 추상화하고, 계획을 세워 행동하게 하면, LLM 에이전트 25명이 사람 개입 없이 소문을 퍼뜨리고 관계를 만들고 파티를 연다.
 

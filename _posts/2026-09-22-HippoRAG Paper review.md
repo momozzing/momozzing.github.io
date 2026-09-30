@@ -20,7 +20,7 @@ HippoRAG: Neurobiologically Inspired Long-Term Memory for Large Language Models
 
 [https://arxiv.org/abs/2405.14831](https://arxiv.org/abs/2405.14831)
 
-HippoRAG는 Ohio State University와 Stanford에서 만든 RAG 방법이다. 2024년 5월에 나왔다.
+HippoRAG는 Ohio State University와 Stanford에서 만든 RAG 방법이다. 2024년 5월에 나왔고, NeurIPS 2024에 실렸다.
 
 사람 뇌의 해마 색인 이론을 가져와서, LLM으로 지식그래프를 만들고 Personalized PageRank(PPR, 시작 노드를 정해두고 그래프 위에서 확률을 퍼뜨리는 PageRank)로 한 번의 검색에 다중홉을 푼다.
 
@@ -97,7 +97,7 @@ PPR이 그래프 경로를 탐색하고 관련 부분그래프를 찾아주니�
 
 뒤에서 볼 [SYNAPSE](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)도 그래프 위에서 활성을 퍼뜨리는 비슷한 계열이다.
 
-## **3. Results**
+## **4. Results**
 
 단일 단계 검색부터 보자. 세 데이터셋 dev 1,000문항에서 잰 recall@5(상위 5개 안에 근거 구절이 든 비율)다. 논문 Table 2에서 R@5만 옮겼다.
 
@@ -139,9 +139,9 @@ QA 성능은 이렇다. 검색 결과를 읽기 모델에 넣고 답한 EM과 F1
 
 그러면서 온라인 검색이 IRCoT보다 10~30배 싸고 6~13배 빠르다고 한다. 반복 검색만큼의 정확도를 한 번의 검색으로 낸다.
 
-## **4. Discussions**
+## **5. Discussions**
 
-### **4.1 What Makes HippoRAG Work?**
+### **5.1 What Makes HippoRAG Work?**
 
 먼저 OpenIE 모델을 바꿔 봤다. 세 데이터셋 평균 R@5다(논문 Table 5 일부).
 
@@ -182,7 +182,7 @@ PPR을 빼면 R@5가 16점 넘게 떨어진다.
 
 둘 다 2점 정도다. PPR에 비하면 작다.
 
-### **4.2 HippoRAG's Advantage: Single-Step Multi-Hop Retrieval**
+### **5.2 HippoRAG's Advantage: Single-Step Multi-Hop Retrieval**
 
 All-Recall로 본다. 근거 구절을 전부 찾은 질문의 비율이다(논문 Table 6에서 AR@5만 옮김).
 
@@ -197,7 +197,7 @@ All-Recall로 본다. 근거 구절을 전부 찾은 질문의 비율이다(논�
 
 -> 다중홉은 근거 하나만 빠져도 못 푸니까, R@5보다 AR@5가 실제 능력에 더 가까워 보인다.
 
-### **4.3 HippoRAG's Potential: Path-Finding Multi-Hop Retrieval**
+### **5.3 HippoRAG's Potential: Path-Finding Multi-Hop Retrieval**
 
 앞에서 본 "알츠하이머 연구하는 스탠퍼드 교수?" 질문에 대한 상위 3개 결과는 이렇다.
 
@@ -207,7 +207,7 @@ All-Recall로 본다. 근거 구절을 전부 찾은 질문의 비율이다(논�
 
 ColBERTv2랑 IRCoT가 같은 답을 낸다. 반복 검색을 해도 못 찾았다.
 
-## **5. 지금 관점: 원본 구절을 남기는 그래프**
+## **지금 관점: 원본 구절을 남기는 그래프**
 
 이 논문을 읽고 나서 좋아 보인 점이 몇 가지 있다.
 
@@ -219,7 +219,7 @@ ColBERTv2랑 IRCoT가 같은 답을 낸다. 반복 검색을 해도 못 찾았�
 
 다중홉 질문을 볼 때는 R@k만 보지 말고 AR(all-recall)을 같이 보는 게 좋을 것 같다. 그리고 PPR은 그래프 구조가 필요해서 벡터 DB만 있는 환경에 바로 얹기는 어렵다. 질의에서 엔티티를 뽑고 그 엔티티로 다시 검색하는 2단 구조는 그래프 없이도 되니까, path-finding 일부는 그걸로도 나아지지 않을까?
 
-## **6. Conclusions & Limitations**
+## **7. Conclusions & Limitations**
 
 논문은 신경생물학 원리를 가져온 단순한 방법으로 기존 RAG의 한계를 넘으면서도 파라미터 메모리보다 나은 점은 유지할 수 있다는 걸 보였다고 한다.
 
