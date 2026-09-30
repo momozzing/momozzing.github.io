@@ -44,7 +44,7 @@ Memory Portability는 LinkedIn에서 쓴, 모델을 바꿨을 때 에이전트 �
 같은 이력을 네 가지 방식으로 저장해서 비교한다.
 
 - LC-RAW : 원문 그대로 두고 긴 컨텍스트로 읽음, 쓰기 단계 없음
-- RAG : 청크로 나눠서 검색, 쓰기 단계는 없는데 임베딩에 의존
+- RAG : 청크로 나눠서 검색, 쓰는 모델은 없는데 임베딩에 의존
 - NOTES : 모델이 자연어 노트로 압축, 쓰기 모델에 의존
 - KG-fixed : 고정 스키마 지식그래프로 정리, 쓰기 모델에 의존
 
@@ -131,7 +131,7 @@ NOTES는 방향에 따라 부호가 바뀐다. Llama가 Qwen 노트를 읽으면
 
 다만 논문은 이게 RAG 전체의 한계라고 하지는 않는다. 일부러 단순하게 만들었기 때문이다. 단일 단계 dense 검색기, 이벤트 기반 청크, 코사인 top-k=8을 썼고 리랭커나 어휘 검색은 없다.
 
-앞에서 본 [MemMachine 리뷰](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)는 이웃 턴 확장으로, [SYNAPSE 리뷰](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)는 BM25+dense 이중 트리거로 이 부분을 채웠다. 그런 장치가 없으면 40%를 놓친다는 걸 여기서 보여준다.
+앞에서 본 [MemMachine 리뷰](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)는 이웃 턴 확장으로, [SYNAPSE 리뷰](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)는 BM25+dense 이중 트리거로 이 부분을 채웠다. 이 논문의 단일 단계 dense 검색 설정에서는 그런 장치가 없으면 40%를 놓친다는 걸 보여준다.
 
 여기서는 RAG의 임베딩 모델을 바꾸는 경우를 본다.
 
@@ -173,7 +173,7 @@ H2는 완전 재임베딩과 혼합 인덱스의 정확도 차이다. 이력·�
 | raw-history 복구 (Qwen) | 48건 중 34건 | 약 $0.76 |
 | raw-history 복구 (Llama) | 0건, 매번 출력 토큰 한도 초과 | — |
 | RAG 재임베딩 | 96건 전부 | 약 $0.013 |
-| KG-fixed 재구축 | 96건 중 91~96건 | 거의 0 |
+| KG-fixed 재구축 | 96건 전부 (99% 목표에서는 91건) | 거의 0 |
 
 96건은 48개 이력에 교체 방향 두 개(Llama→Qwen, Qwen→Llama)를 곱한 수다. Figure 3의 ③에 방향별로 48건씩 나뉘어 있다. NOTES 복구는 방향마다 복구 모델이 달라서 48건씩 따로 적었다.
 

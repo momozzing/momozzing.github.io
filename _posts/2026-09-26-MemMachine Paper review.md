@@ -150,7 +150,7 @@ abstract에 나온 0.9169는 제일 좋은 조합(gpt-4.1-mini, agent 모드) �
 
 -> 표대로 빼면 0.8747 − 0.7578 = 0.1169라서 11.7점이다. 9.7은 어디서 나온 건지??
 
-Temporal만 진다. Memobase가 0.8505로 더 높다.
+Temporal과 Open-domain에서 진다. Temporal은 Memobase가 0.8505, Open-domain은 Memobase가 0.7717로 더 높다(MemMachine 0.7083).
 
 논문은 타임스탬프를 고려한 검색으로 개선할 수 있다고 본다. 그리고 gpt-4.1-mini agent 모드에서는 Temporal이 0.9159까지 올라가서, 시간 추론은 답변 모델 능력에 많이 좌우된다고 한다.
 
@@ -160,9 +160,9 @@ Temporal만 진다. Memobase가 0.8505로 더 높다.
 
 - 입력 토큰 : Mem0 대비 약 80% 절감 (LoCoMo, memory 모드, 4.20M vs 19.21M)
 - 메모리 추가 속도 : MemMachine 이전 버전 대비 약 75% 빨라짐
-- 검색 속도 : MemMachine 이전 버전 대비 최대 75% 빨라짐
+- 검색 속도 : 최대 75% 빨라짐 (비교 기준은 안 적혀 있음)
 
-속도 두 개는 다른 시스템이 아니라 자기 이전 버전과 비교한 수치다.
+추가 속도는 다른 시스템이 아니라 자기 이전 버전과 비교한 수치다. 검색 속도는 무엇과 비교했는지 논문에 안 나온다.
 
 ### **8.4 LongMemEvalS Ablation Study**
 
@@ -191,7 +191,7 @@ LongMemEval_S는 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%2
 
 답변 LLM으로 GPT-5-mini가 GPT-5보다 +2.6%p 높았다(0.896 → 0.922). 최적화된 프롬프트와 같이 썼을 때 그렇고, 토큰 비용도 더 싸다.
 
-이유는 모델과 프롬프트를 같이 맞춰야 해서라고 본다. 최종 프롬프트는 chain-of-thought 없이 간결하게 지시하는 형태인데, GPT-5는 자체 추론이 이런 명시적 추론 지시와 부딪힐 수 있다고 한다.
+이유는 모델과 프롬프트를 같이 맞춰야 해서라고 본다. 최종 프롬프트는 chain-of-thought 없이 간결하게 지시하는 형태라 GPT-5-mini와 잘 맞았다고 한다. 반대로 GPT-5는 자체 추론이 있어서, 명시적인 추론 지시를 주면 서로 부딪힐 수 있다고 한다.
 
 ## **9. Discussion**
 
@@ -206,6 +206,8 @@ LongMemEval_S는 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%2
 | 프롬프트 캐시 | 부분 | ✗ | ✗ | ✗ | ✓ |
 | 창 너머 확장 | ✓ | ✓ | ✓ | ✓ | ✗ |
 | 메시지당 LLM 호출 | 낮음 | 높음 | 보통 | 높음 | 없음 |
+
+원문 보존의 Mem0 "부분"은 논문 Table 16의 평가다. 위에서 Mem0이 원문을 버린다고 한 것과는 기준이 다르다.
 
 메시지당 LLM 호출이 낮다는 게 다른 검색형 시스템과 다른 점이다.
 

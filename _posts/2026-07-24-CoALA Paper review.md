@@ -197,7 +197,7 @@ Table 2는 최근 에이전트 다섯 개(SayCan, ReAct, Voyager, Generative Age
 
 1. SayCan(구글의 로봇 에이전트) : 내부 행동 없이 고정된 스킬 551개를 LLM+가치 함수로 평가해서 고름
 2. ReAct : 장기 기억 없음, 내부 행동은 reasoning뿐, 제안 하나를 바로 실행
-3. Voyager : 절차 기억(스킬 코드)에 reasoning, retrieval, learning을 전부 씀
+3. Voyager : 장기 기억은 절차 기억(스킬 코드), 내부 행동은 reasoning, retrieval, learning을 전부 씀
 4. Generative Agents : 일화 기억에 경험을 쌓고, 반성 결과를 의미 기억에 씀
 5. ToT : 장기 기억 없이 제안-평가-선택을 전부 구현
 
@@ -276,7 +276,7 @@ RAG는 사람이 쓴 문서를 읽기만 한다. 에이전트의 기억은 스�
 
 대부분의 에이전트가 아직 제안 하나를 바로 실행하는 수준이다.
 
-제안-평가-선택을 제대로 쓰는 의사결정을 가장 유망한 방향으로 꼽는다.
+제안-평가-선택을 제대로 쓰는 의사결정을 가장 유망한 방향 중 하나로 꼽는다.
 
 -> 2023년에 나온 제안인데 지금 보면 꽤 많이 현실이 됐다. 구조화 출력은 function calling으로 흔해졌고, 에이전트 프레임워크 상당수가 Memory/Agent 같은 추상을 갖췄다.
 

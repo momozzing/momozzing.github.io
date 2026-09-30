@@ -111,7 +111,7 @@ CoALA의 네 가지랑 맞춰보면 이렇다.
 | 2025-08 | [What Deserves Memory](https://momozzing.github.io/paper%20review/NEMORI-Paper-review/) | 무엇을 기억할지 자동 판단 | 예상과 달랐던 것만 저장 |
 | 2025-12 | [Memory in the Age of AI Agents](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/) | 메모리 연구 전체 분류 | 장기/단기 대신 형태·목적·동작으로 분류 |
 | 2026-01 | [SYNAPSE](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/) | 연관된 기억이 연쇄로 떠오르게 검색 | 모르는 건 모른다고 답함 |
-| 2026-02 | [Anatomy of Agentic Memory](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/) | 기존 평가 방식이 맞는지 검증 | 대화 전체를 넣은 것보다 못한 경우가 많음 |
+| 2026-02 | [Anatomy of Agentic Memory](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/) | 기존 평가 방식이 맞는지 검증 | 메모리 점수를 full-context와 비교하자(∆), 작은 모델 형식 오류 |
 | 2026-02 | [AMV-L](https://momozzing.github.io/paper%20review/AMV-L-Paper-review/) | 기억이 쌓여도 느려지지 않게 관리 | 자주 쓰는 기억만 검색 대상으로 |
 | 2026-03 | [Multi-Layered Memory](https://momozzing.github.io/paper%20review/Multi-Layered-Memory-Paper-review/) | 기억 계층을 하나씩 빼보는 실험 | 개념 기억 층이 가장 중요 |
 | 2026-04 | [MemMachine](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/) | 원문을 그대로 저장하는 메모리 시스템 | 저장 방식보다 검색 튜닝 효과가 큼 |
@@ -177,7 +177,7 @@ LongMemEval이 평가 기준을 세우고 나서 제품형 시스템이 쏟아�
 
 첫째, 평가를 의심한다.
 
-Anatomy of Agentic Memory는 메모리 시스템 점수를 같은 모델에 대화 전체를 넣은 점수랑 나란히 놓으라고 한다. 그렇게 계산하면 MemGPT랑 Mem0는 오히려 마이너스다. MemFail은 점수 하나로 뭉뚱그리지 말고 요약·저장·검색 중 어디서 틀렸는지 나눠 보자고 한다.
+Anatomy of Agentic Memory는 메모리 시스템 점수를 같은 모델에 대화 전체를 넣은 점수랑 나란히 놓으라고 한다. 내가 앞 리뷰 수치로 계산해보면 3개 중 2개(MemGPT, Mem0)가 마이너스다. MemFail은 점수 하나로 뭉뚱그리지 말고 요약·저장·검색 중 어디서 틀렸는지 나눠 보자고 한다.
 
 둘째, 병목을 다시 찾는다.
 
@@ -189,7 +189,7 @@ ReFind가 제일 멀리 갔다. 아무 구조도 안 만들고 원문 대화 위
 
 넷째, 운영을 본다.
 
-Memory Portability는 모델을 바꾸면 요약형 메모리가 방향에 따라 ±10%p 넘게 흔들리고, 원본이 없으면 복구가 48건 전부 실패한다고 한다. The Past Is Prologue는 갱신을 무조건 받지 말고 옛 버전이랑 비교해서 나은 쪽을 남기자고 한다.
+Memory Portability는 모델을 바꾸면 요약형 메모리가 방향에 따라 +9.91 ~ −13.28pp 흔들리고, 원본이 없으면 복구가 48건 전부 실패한다고 한다. The Past Is Prologue는 갱신을 무조건 받지 말고 옛 버전이랑 비교해서 나은 쪽을 남기자고 한다.
 
 ## **4. 여러 논문에서 겹친 결론**
 
@@ -257,7 +257,7 @@ Anatomy에서 제안한 방식이다. 메모리 시스템 점수에서 같은 �
 3. 저장 구조는 그대로 두고 검색부터 손본다 (검색 개수, 이웃 턴, BM25+벡터, 시간 감쇠)
 4. MemFail 네 과제(조건부 사실, 같이 있는 선호, 없는 사람, 흩어진 사실 잇기)로 어디서 틀리는지 본다
 5. 그다음에 구조를 얹는다 (삭제 대신 무효화, 갱신 전에 옛 버전과 비교)
-6. 모델을 바꿀 때마다 임베딩을 다시 만들고, 바꾸는 방향별로 메모리를 다시 잰다
+6. 임베딩 모델을 바꿀 때는 전부 다시 만들고, LLM을 바꿀 때는 방향별로 메모리를 다시 잰다
 
 처음 이 시리즈를 시작할 때는 어떤 메모리 구조를 고를지가 궁금했다.
 

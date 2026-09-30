@@ -23,7 +23,7 @@ Multi-Layered Memory는 Fulloop에서 만든 에이전트 메모리 구조다. 2
 
 대화 이력을 working·episodic·semantic 세 계층으로 나누고, 계층을 하나씩 떼어보는 ablation으로 각 계층이 얼마나 기여하는지 잰다.
 
-앞 리뷰들에서 계속 미뤄둔 질문이 계층을 몇 개 둘 것인가였다. [CoALA](https://momozzing.github.io/paper%20review/CoALA-Paper-review/)는 네 개(working·episodic·semantic·procedural)를 말했고 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)은 세 개(episode·entity·community)를 썼다. 그런데 계층을 하나 뺐을 때 얼마나 나빠지는지 잰 실험은 없었다. 이 논문의 ablation이 그걸 보여준다.
+앞 리뷰들에서 계속 미뤄둔 질문이 계층을 몇 개 둘 것인가였다. [CoALA](https://momozzing.github.io/paper%20review/CoALA-Paper-review/)는 네 개(working·episodic·semantic·procedural)를 말했고 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)은 세 개(episode·entity·community)를 썼다. 그런데 계층을 하나 뺐을 때 얼마나 나빠지는지 잰 실험은 [NEMORI](https://momozzing.github.io/paper%20review/NEMORI-Paper-review/) 논문 Table 5의 w/o e·w/o s(에피소드 검색이나 의미 검색을 하나씩 뺀 설정) 정도였다. 이 논문의 ablation은 계층을 하나씩 다 빼본다.
 
 다만 이 논문은 앞의 논문들보다 근거가 약하다. 확인이 안 되는 부분은 결과 앞에 따로 적어둔다.
 
@@ -62,7 +62,9 @@ Adaptive retrieval gating은 계층마다 검색 가중치를 주는 장치다. 
 
 Retention regularization은 손실항이다. semantic 메모리를 엔티티 임베딩으로 옮긴 뒤, 세션이 바뀔 때 그 임베딩이 크게 바뀌면 벌점을 준다. 전체 목적함수는 생성 손실에 이걸 더한 `L = L_gen + λ·L_ret`이고, 파라미터를 이 손실로 경사하강해서 업데이트한다.
 
--> 그러면 학습을 한다는 건데, 어떤 모델의 파라미터를 학습하는지는 논문에 안 나온다?? 생성 모델 자체인지, 메모리를 만드는 인코더인지 모르겠다.
+Algorithm 1을 보면 θ는 상태를 합치는 f_θ와 답을 만드는 P_θ에 같이 들어간다. 생성 쪽 파라미터도 같이 학습한다는 뜻이다.
+
+-> 그런데 그 바탕 모델이 뭔지는 논문에 안 나온다??
 
 ![MLMF 전체 구조 (논문 Figure 1)](https://momozzing.github.io/assets/images/mlmf/fig1-mlmf-overview.png)
 
@@ -86,7 +88,7 @@ abstract에 *"Experiments on LOCOMO, LOCCO, and LoCoMo"* 라고 쓰고, 표에�
 
 베이스라인이 참조 번호로만 나온다.
 
-표에 `[10]`, `[13]`, `[14]`, `[18]`, `[20]`으로만 적혀 있다. 따라가 보면 HiAgent, Truth-Maintained Memory Agent, Jia et al., EvolveMem, LaVa다. 서로 다른 과제와 지표를 쓰는 논문들이라, 각 논문이 보고한 수치를 한 표에 가져다 놓은 건지 같은 조건에서 다시 돌린 건지 알 수 없다.
+표에 `[10]`, `[12]`, `[13]`, `[14]`, `[18]`, `[20]`으로만 적혀 있다. 따라가 보면 HiAgent, MemoryOS, Truth-Maintained Memory Agent, Jia et al., EvolveMem, LaVa다. 서로 다른 과제와 지표를 쓰는 논문들이라, 각 논문이 보고한 수치를 한 표에 가져다 놓은 건지 같은 조건에서 다시 돌린 건지 알 수 없다.
 
 날짜가 안 맞는다.
 
@@ -106,7 +108,7 @@ Anatomy에서 본 Context Saturation Gap(∆, 메모리 시스템 점수에서 �
 - 6기간 보존율 : LOCCO에서 여섯 번의 시간 간격이 지난 뒤에도 남아 있는 기억의 비율
 - FMR(거짓 기억률) : 없던 내용을 기억한다고 답하는 비율
 
-F1을 어떻게 계산했는지는 논문에 안 나온다. LoCoMo에서는 보통 답과 정답이 겹치는 토큰으로 잰다. FMR을 어느 데이터셋에서 쟀는지도 따로 적혀 있지 않다.
+F1을 어떻게 계산했는지는 논문에 안 나온다. LoCoMo에서는 보통 답과 정답이 겹치는 토큰으로 잰다. FMR은 Table IV 제목과 V.B 본문에 LOCCO에서 쟀다고 나온다.
 
 아래가 논문 Table V다. 다섯 번 돌린 평균이라고 한다.
 
@@ -152,7 +154,7 @@ conclusion 부분을 보면, 계층적 메모리 분해에 adaptive retrieval ga
 
 한계 절은 없다. 8쪽 안에 Limitations도 Future Work도 없다.
 
-계층을 몇 개 둘지는 앞의 논문들이 각자 정해서 썼는데, 이 논문은 계층을 하나씩 빼보면서 얼마나 기여하는지를 쟀다. 앞에서 본 [SYNAPSE](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)는 episodic과 semantic을 잇는 방식까지 다뤘는데, 이 논문은 두 계층을 나란히 두기만 한다.
+계층을 몇 개 둘지는 앞의 논문들이 각자 정해서 썼는데, 이 논문은 계층을 하나씩 빼보면서 얼마나 기여하는지를 쟀다. 앞에서 본 [SYNAPSE](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)는 episodic과 semantic을 잇는 방식까지 다뤘는데, 이 논문은 식 (6) M(s)=A(M(e))처럼 episodic에서 semantic을 한 방향으로 뽑기만 하고, 질의 때 두 계층을 오가며 잇지는 않는다.
 
 검증이 안 되는 부분이 많아서 계층 ablation 표 하나 말고는 가져오기 어렵다. 그래도 그 표는 다른 데서 못 본 수치다.
 

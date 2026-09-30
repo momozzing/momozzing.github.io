@@ -110,7 +110,7 @@ LOCOMO 벤치마크에서 여섯 종류의 베이스라인이랑 비교한다. �
 
 LOCOMO 질문 유형별 J 점수다. 논문 Table 1에서 J가 있는 방법만 옮겼다(일부만 옮김).
 
-A-Mem*의 별표는 Mem0 팀이 A-Mem을 temperature 0으로 다시 돌려서 J 점수를 낸 결과라는 뜻이다. 앞에서 본 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/) 논문은 F1·BLEU만 보고해서 J가 없었다.
+A-Mem*의 별표는 Mem0 팀이 A-Mem을 temperature 0으로 다시 돌려서 J 점수를 낸 결과라는 뜻이다. 앞에서 본 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/) 논문은 LLM-as-a-Judge(J) 점수를 보고하지 않아서 J가 없었다.
 
 | 방법 | Single Hop (J) | Multi-Hop (J) | Open Domain (J) | Temporal (J) |
 |---|---:|---:|---:|---:|

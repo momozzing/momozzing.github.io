@@ -113,7 +113,7 @@ MemGPT와 Mem0는 ∆가 음수다. 대화를 통째로 넣는 게 더 정확하
 
 -> 그러면 이 두 시스템은 정확도보다는 지연이랑 토큰 비용 때문에 쓰는 거라고 봐야 할 것 같다.
 
-Zep은 ∆가 +11이다. LongMemEval-S는 대화가 10만 토큰이 넘는다(이 논문 Table 2 기준 103k). 앞의 Table 2에서 포화 위험이 "보통(경계)"인 벤치마크라 full-context가 덜 유리했을 수 있다.
+Zep은 ∆가 +11이다. LongMemEval-S는 대화가 10만 토큰이 넘는다(이 논문 Table 2 기준 103k, [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/) 논문은 약 115k). 앞의 Table 2에서 포화 위험이 "보통(경계)"인 벤치마크라 full-context가 덜 유리했을 수 있다.
 
 논문은 양이 작고 구조가 얕은 데이터셋이면 full-context 베이스라인과 같이 평가해야 메모리 덕분에 좋아졌다고 말할 수 있다고 한다.
 
@@ -142,7 +142,7 @@ A-Mem은 F1은 0.116으로 5위인데 판정 순위는 세 프롬프트 모두 4
 
 논문은 F1만 보고 최적화하면 추론이나 메모리 통합보다 표면적인 암기를 좋아하게 된다고 지적한다.
 
-앞에서 본 [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)에서 A-Mem의 F1이 낮았다. 여기 결과를 보면 그 낮은 F1에는 지표 탓도 일부 섞여 있을 수 있다. 다만 판정 순위도 6개 중 4위라 A-Mem이 잘했다고 하기는 어렵다.
+앞에서 본 [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)에서 A-Mem의 J 점수가 낮았다(48.38). 여기서도 판정 순위가 6개 중 4위라 A-Mem이 잘했다고 하기는 어렵다.
 
 LLM-as-a-judge가 프롬프트에 과적합되는 게 아니냐는 걱정도 있는데, 위 표처럼 프롬프트 세 개에서 상대 순서가 거의 유지됐다. 그래도 프롬프트 설계는 조심해야 한다고 덧붙인다.
 
@@ -198,7 +198,7 @@ gpt-4o-mini에서도 Nemori 형식 오류가 17.91%다. API 모델이라고 안�
 1. MemoryOS는 검색이 31.2초다. 턴마다 32초면 대화형으로는 못 쓴다. 정확도 표에서는 안 보이던 부분이다.
 2. A-Mem은 구축이 15시간이다. 검색은 0.062초로 빠른데 오프라인 구축 시간은 제일 길다.
 
-앞에서 본 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)에서는 쓰기 비용이 표에 없었는데 여기서 나온다. 논문은 쌍별 통합 같은 초선형 갱신 때문으로 본다.
+앞에서 본 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)에서는 연산 한 번당 비용(약 1,200토큰, 평균 5.4초)만 나왔는데, 여기서는 전체 오프라인 구축 시간(15시간)이 나온다. 논문은 쌍별 통합 같은 초선형 갱신 때문으로 본다.
 
 -> 노트 구성, 링크 판단, 진화가 전부 LLM 호출이라 그런 것 같다.
 

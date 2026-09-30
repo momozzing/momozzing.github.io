@@ -23,7 +23,7 @@ Memory in the Age of AI Agents는 에이전트 메모리 연구를 전부 모아
 
 2025년 12월에 arXiv에 올라온 107쪽짜리 서베이로, 저자가 47명이다. 정리한 논문 목록은 [Agent-Memory-Paper-List](https://github.com/Shichun-Liu/Agent-Memory-Paper-List)에 따로 공개돼 있다.
 
-예전에 리뷰한 [CoALA](https://momozzing.github.io/paper%20review/CoALA-Paper-review/)가 에이전트 전체 구조를 정리했다면, 이 논문은 그중 메모리만 떼어서 다시 정리했다. CoALA는 기억을 working·episodic·semantic·procedural 네 가지로 나눴는데, 이 논문은 그 분류로는 요즘 시스템들을 다 담을 수 없다고 한다.
+예전에 리뷰한 [CoALA](https://momozzing.github.io/paper%20review/CoALA-Paper-review/)가 에이전트 전체 구조를 정리했다면, 이 논문은 그중 메모리만 떼어서 다시 정리했다. 이 논문은 장기/단기 같은 기존 분류로는 요즘 시스템들을 다 담을 수 없고, episodic·semantic 같은 용어가 늘어나면서 개념이 더 흐려졌다고 한다. CoALA의 working·episodic·semantic·procedural 같은 분류 용어도 그 연장선에 있다고 보고 읽었다.
 
 앞에서 메모리 논문을 아홉 편 봤는데, 여기서 전체를 한 번 정리하고 가려고 이 논문을 읽었다. 좀 더 자세히 알아보자.
 
@@ -292,7 +292,7 @@ LLM은 원래 stateless라서 에이전트로 쓰려면 기억이 필요하고, 
 
 #### **4.3.2 Multi-turn Working Memory**
 
-대화가 길어지면서 쌓이는 이력을 관리한다. 이력이 쌓이면 어텐션이 흐려지고 느려지고 목표를 잃는다(goal drift). 그래서 고정 크기 상태로 압축하거나(MemAgent, MemSearcher), 이력을 접어두는(Context Folding, ReSum) 방식을 쓴다.
+대화가 길어지면서 쌓이는 이력을 관리한다. 이력이 쌓이면 어텐션이 흐려지고 느려지고 목표를 잃는다(goal drift). 그래서 고정 크기 상태로 압축하거나(MemAgent, MemSearcher, ReSum), 이력을 접어두는(HiAgent, Context-Folding, AgentFold) 방식을 쓴다.
 
 Figure 1에서 KV 캐시 압축이 Working memory 칸에 있던 근거는 2.3.1의 Overlap이다. 한 과제 안에서 중요한 정보를 유지하는 데 쓰면 단기 메모리로 기능한다고 본다.
 
@@ -506,7 +506,7 @@ CoALA(2023년 9월)에서는 "기억을 지우거나 고치는 학습은 아직 
 
 CoALA 리뷰를 읽고 나서 제일 궁금했던 게, CoALA의 네 가지 기억이랑 이 논문의 세 가지가 어떻게 대응되냐였다.
 
-맞춰보면 working은 거의 그대로 Working으로 가고, 여기서는 KV 캐시 압축까지 들어간다. semantic은 Factual에 대응되는데 사용자/환경으로 한 번 더 나뉜다. episodic은 Experiential과 반만 맞는다. CoALA의 episodic은 있었던 일을 기록하는 거고, Experiential은 거기서 뽑아낸 교훈과 스킬까지 포함한다.
+맞춰보면 working은 거의 그대로 Working으로 가고, 여기서는 KV 캐시 압축까지 들어간다. semantic 중 세계 지식은 Factual에 대응되는데 사용자/환경으로 한 번 더 나뉜다. 같은 semantic이라도 Reflexion의 반성문처럼 경험에서 뽑아낸 교훈은 Experiential의 strategy-based로 간다. episodic은 Experiential과 반만 맞는다. CoALA의 episodic은 있었던 일을 기록하는 거고, Experiential은 거기서 뽑아낸 교훈과 스킬까지 포함한다.
 
 procedural은 대응되는 게 없다. CoALA는 기억을 담긴 내용의 종류로 나눴고, 이 논문은 왜 기억하느냐(Functions)와 어디에 담느냐(Forms)를 따로 나눴다. 그래서 절차 기억은 Functions 쪽으로는 Experiential의 skill-based로, Forms 쪽으로는 스킬 코드면 Token-level, 모델 가중치면 Parametric으로 흩어졌다.
 

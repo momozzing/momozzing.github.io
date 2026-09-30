@@ -72,13 +72,13 @@ Evaluator는 꼭 LLM이 아니다. 추론은 정답 문자열 비교, ALFWorld�
 
 RL의 reward는 "0점이었다"만 알려주지만, 반성문은 "어디서 무엇을 잘못했고 대신 뭘 해야 하는지"를 알려준다. 이게 논문 제목의 verbal reinforcement다.
 
-피드백 소스도 여러 가지를 쓸 수 있다.
+피드백은 형태(scalar 값 또는 자유형 텍스트)와 출처(외부 또는 내부에서 시뮬레이션)를 가리지 않고 받을 수 있다고 한다.
 
-- 환경이 주는 binary reward (외부)
-- 스스로 만든 unit test 결과 (내부)
-- 사람이 주는 자유형 텍스트
+실제 실험에서 쓴 건 세 가지다.
 
-전부 반성의 재료로 쓸 수 있다고 한다.
+- 환경이 주는 binary 피드백
+- 자주 나오는 실패를 잡는 사전 정의 휴리스틱
+- 자기 평가 (의사결정은 LLM의 binary 분류, 코딩은 스스로 만든 unit test)
 
 ## **4. Experiments**
 
@@ -169,7 +169,7 @@ Table 2는 HumanEval·MBPP에서 base와 Reflexion의 정확도, 그리고 자�
 
 FP 열이 "테스트는 통과했는데 코드는 틀린" 비율이다.
 
-FP가 큰 MBPP Python에서만 Reflexion이 Base보다 낮다.
+Python 두 벤치마크 중 FP가 큰 MBPP Python에서만 Reflexion이 Base보다 낮다.
 
 -> 테스트가 틀린 코드를 통과시키면 반성할 기회 자체가 없다.
 

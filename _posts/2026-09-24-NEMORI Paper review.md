@@ -23,7 +23,7 @@ NEMORI는 Fudan University, Shanda Group, Beihang University 등에서 만든 �
 
 무엇을 기억으로 남길지를 중요도 점수 대신 "예측 실패"로 정한다. 기존 지식으로 예상한 것과 실제가 어긋난 부분만 기억으로 남긴다.
 
-[앞 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)에서는 무엇을 넣고 지우느냐가 에이전트 행동을 바꾼다는 걸 봤는데, 이 논문은 처음에 무엇을 뽑을지를 다룬다. 뒤에서 볼 [Janus](https://momozzing.github.io/paper%20review/Janus-Selective-Memory-Update-Paper-review/)는 넣은 뒤에 검증하는 쪽이다.
+[앞 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)에서는 무엇을 넣고 지우느냐가 에이전트 행동을 바꾼다는 걸 봤는데, 이 논문은 처음에 무엇을 뽑을지를 다룬다. 뒤에서 볼 [Janus](https://momozzing.github.io/paper%20review/Janus-Selective-Memory-Update-Paper-review/)는 갱신 후보를 만든 뒤, 반영하기 전에 옛 메모리와 비교해 검증하는 쪽이다.
 
 좀 더 자세히 알아보자.
 

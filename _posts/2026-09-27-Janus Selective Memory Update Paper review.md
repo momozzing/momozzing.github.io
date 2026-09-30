@@ -27,7 +27,7 @@ Janus는 University of Virginia, Princeton, UCF에서 만든 메모리 갱신 �
 
 기존 메모리 갱신기가 새 메모리를 제안하면, 그걸 바로 쓰지 않고 옛 메모리랑 비교해서 나은 쪽을 남긴다.
 
-여기서 다루는 메모리는 앞의 리뷰들처럼 지난 대화를 회상하는 용도가 아니다. MATH500, GPQA 같은 문제를 차례로 풀면서 쌓은 경험(규칙, 치트시트)을 다음 문제에 쓰는 메모리다. 논문은 이걸 다음 태스크에서 LLM의 행동을 바꾸는 test-time 적응 수단으로 본다.
+여기서 다루는 메모리는 앞의 리뷰들 대부분(Mem0, Zep 등)처럼 지난 대화를 회상하는 용도가 아니다. MATH500, GPQA 같은 문제를 차례로 풀면서 쌓은 경험(규칙, 치트시트)을 다음 문제에 쓰는 메모리다. 논문은 이걸 다음 태스크에서 LLM의 행동을 바꾸는 test-time 적응 수단으로 본다.
 
 앞에서 본 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/) 분류로 보면 Functions는 experiential memory이고, Dynamics는 evolution에 해당한다.
 

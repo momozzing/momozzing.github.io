@@ -53,7 +53,7 @@ MemFail은 UC Berkeley에서 만든 메모리 시스템 진단 벤치마크이�
 - 오래된 사실을 안 덮어씀 : 사용자가 "Dan은 이제 피자를 싫어한다"고 했는데 "Dan likes pizza"를 그대로 둠
 - 같이 있어도 되는 사실을 거절 : "Dan likes burgers"를 저장된 "Dan likes pizza"와 모순이라고 보고 안 넣음
 
-두 번째가 앞에서 본 [Mem0 리뷰](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)의 DELETE 위험이다. 모순이라고 판단한 게 틀렸을 때 생긴다.
+앞에서 본 [Mem0 리뷰](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)의 DELETE 위험은 뒤의 Task 2에서 말하는 경우에 더 가깝다. 같이 있어도 되는 두 사실을 모순으로 보고 옛 사실을 덮어쓰는 것("overwrite the older fact")이다. 모순이라고 판단한 게 틀렸을 때 생긴다.
 
 4번은 메모리 시스템 바깥의 실패라서 참고용으로 재기만 한다.
 
