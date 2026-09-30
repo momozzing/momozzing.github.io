@@ -148,7 +148,7 @@ DeepSeek-V4-Flash는 평균만 옮겼다.
 
 제일 많이 오른 건 GPQA에서 DC-RS 73.4 → 81.5로 8.1점이다.
 
-Qwen3-8B에서는 DC-RS, ExpeL이 단순히 비슷한 과거 문제를 가져오는 ExpRAG를 늘 이기지는 못한다. 논문은 규칙을 뽑는 과정에서 쓸모 있는 세부가 빠지거나 너무 좁은 규칙이 들어가서 그렇다고 본다.
+DC-RS, ExpeL이 단순히 비슷한 과거 문제를 가져오는 ExpRAG를 늘 이기지는 못한다. 논문은 규칙을 뽑는 과정에서 쓸모 있는 세부가 빠지거나 너무 좁은 규칙이 들어가서 그렇다고 본다.
 
 ### **3.3 MMT Trigger Ablation**
 
@@ -211,9 +211,9 @@ DC-RS와 ExpeL 둘 다 갱신을 전부 받으면 초중반에는 좋아지다�
 
 앞에서 본 Mem0, Zep, A-MEM은 갱신할 때 LLM 판단을 그대로 믿었다. 추가·수정·삭제를 LLM이 고르거나, 모순을 LLM이 판단해서 옛 사실을 무효화하거나, 이웃 메모리를 LLM이 고쳐 쓴다. 고친 다음에 그게 나아졌는지 재보는 단계는 없었다.
 
-Experience-Following은 넣기 전에 평가기로 거르고, Janus는 넣은 결과를 옛 것과 비교해서 나쁘면 되돌린다. 넣기 전에 거르느냐, 넣고 나서 재보느냐의 차이다.
+Experience-Following은 넣기 전에 평가기로 거르고, Janus는 후보를 만든 뒤 배포 전에 옛 버전과 맞붙여서 나쁘면 옛 메모리를 유지한다. 평가기로 거르느냐, 옛 버전과 맞붙이느냐의 차이다.
 
--> 되돌리려면 이전 메모리가 남아 있어야 한다. 그 자리에서 덮어쓰면 Janus 같은 비교를 붙일 수가 없다. 버전을 남기든지 적어도 직전 상태는 들고 있어야 할 것 같다. 되돌릴 수 있게 남기는 문제는 바로 다음 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 다시 나온다.
+-> 옛 메모리를 유지하려면 이전 메모리가 남아 있어야 한다. 그 자리에서 덮어쓰면 Janus 같은 비교를 붙일 수가 없다. 버전을 남기든지 적어도 직전 상태는 들고 있어야 할 것 같다. 되돌릴 수 있게 남기는 문제는 바로 다음 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 다시 나온다.
 
 평가 집합 셋 중에서는 fresh가 제일 쉽다. 안 본 질의를 조금 떼어두면 되고, 기여도 제일 컸다. boundary는 비교를 돌리다 보면 저절로 쌓이니까 처음 몇 번은 비어 있을 텐데, 그때는 coverage랑 fresh만으로 버티는 건지??
 

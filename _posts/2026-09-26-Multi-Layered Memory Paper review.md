@@ -70,7 +70,7 @@ Retention regularization은 손실항이다. semantic 메모리를 엔티티 임
 
 세 계층이 오른쪽의 adaptive layer-weighted retrieval로 모인 뒤 fusion(cross-attention)을 거쳐 응답 생성으로 간다.
 
-앞에서 본 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)의 분류로 보면 이렇다. 서베이는 저장 형태(Forms)로 텍스트 단위로 쌓는 Token-level을 나누고, 그 안에서 단위끼리 층을 이루는 구조를 Hierarchical(3D)라고 불렀다. 이 논문이 여기에 들어간다. 쓰임새(Functions)로는 지금 생각 중인 것을 담는 Working과 사용자·환경에 대한 사실을 담는 Factual 조합이다.
+앞에서 본 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)의 분류로 보면 이렇다. 서베이는 저장 형태(Forms)에서 텍스트 단위로 쌓는 방식을 Token-level이라 부르고, 그 안에서 단위끼리 층을 이루는 구조를 Hierarchical(3D)라고 불렀다. 이 논문이 여기에 들어간다. 쓰임새(Functions)로는 지금 생각 중인 것을 담는 Working과 사용자·환경에 대한 사실을 담는 Factual 조합이다.
 
 겪은 경험에서 배우는 Experiential은 없다. CoALA의 procedural에 해당하는 계층도 없다.
 
@@ -142,7 +142,7 @@ semantic 계층이 1순위라는 건 앞에서 본 Zep, [Mem0](https://momozzing
 
 다만 앞에서 본 [Experience-Following 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)에서는 과거 실행 경험이 행동을 직접 바꿨는데, 여기 ablation에는 experiential 계층이 아예 없다. 사실 기억만 다룬 실험이라 경험 계층을 둘지는 이 표로 판단할 수 없다.
 
-FMR을 정확도와 따로 재는 건 가져와 볼 만하다. 정확도가 같아도 지어내는 비율은 다를 수 있고, 사용자 입장에서는 모른다고 하는 것보다 틀린 걸 기억이라고 말하는 쪽이 더 곤란하다. 절대 수치(0.618, 56.90%, 5.1%)는 5장 앞에 적은 문제들 때문에 인용하지 않고, ablation의 상대 순서만 참고한다.
+FMR을 정확도와 따로 재는 건 가져와 볼 만하다. 정확도가 같아도 지어내는 비율은 다를 수 있고, 사용자 입장에서는 모른다고 하는 것보다 틀린 걸 기억이라고 말하는 쪽이 더 곤란하다. 절대 수치(0.618, 56.90%, 5.1%)는 5장 첫머리에 적은 문제들 때문에 인용하지 않고, ablation의 상대 순서만 참고한다.
 
 ## **6. Conclusion**
 

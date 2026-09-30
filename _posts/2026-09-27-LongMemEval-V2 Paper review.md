@@ -52,7 +52,7 @@ V2는 메모리 시스템이 에이전트를 맞춤 환경을 잘 다루는 숙�
 
 V1은 원래 자기 능력 분류가 따로 있었다. IE(정보 추출), MR(다중 세션 추론), KU(지식 갱신), TR(시간 추론), ABS(답이 없으면 모른다고 하기) 다섯 개다. 논문은 이걸 V2 기준으로 다시 매겨서 V1이 세 개를 다룬다고 표시했다.
 
-Table 1에 있는 벤치마크 아홉 개(V2 포함) 중에 V2 기준 다섯 능력에 다 체크된 건 V2 하나다.
+Table 1에 있는 벤치마크 열네 개(V2 포함) 중에 V2 기준 다섯 능력에 다 체크된 건 V2 하나다.
 
 ## **3. LongMemEval-V2**
 
@@ -78,7 +78,7 @@ V1의 다섯 가지와 비교하면 사실보다 절차와 함정 쪽으로 옮�
 
 앞에서 본 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)의 Functions 분류로 보면 V1은 사실 기억(factual memory)을, V2는 겪은 경험에서 배우는 기억(experiential memory)을 잰다. 앞에서 본 메모리 논문들은 거의 다 factual 쪽이었다.
 
--> Gotchas는 이 시리즈에서 처음 보는 축이다. 논문 Table 1에서도 Gotchas까지 다루는 건 AMA-Bench와 V2뿐이다.
+Gotchas는 이 시리즈에서 처음 보는 축이다. 논문 Table 1에서 Gotchas까지 다루는 건 MemoryArena, EMemBench, 여러 종류의 에이전트 궤적을 다루는 AMA-Bench, 그리고 V2 네 개다.
 
 문항은 WorkArena-ServiceNow(46.8%), WebArena-CMS(20.2%), WebArena-OneStopShop(18.4%), WebArena-Reddit(14.6%)에서 나온다. 형식은 단답(50.1%), 자유형(34.6%), 객관식(15.3%)이다.
 
@@ -118,7 +118,7 @@ haystack은 두 크기가 있다. Small은 모든 질문이 같이 쓰는 궤적
 
 정답이 들어 있는 궤적(oracle)만 주면 long-context 프롬프팅 점수가 많이 오르지만, 그래도 한계가 있다고 한다. 궤적이 모델 컨텍스트 창보다 크기 때문이다.
 
--> oracle은 질문당 평균 궤적 1.39개, 약 310.8K 토큰이다. haystack 전체(25M~115M)를 주는 게 아닌데도 창을 넘는다. 웹 에이전트 궤적은 화면 상태가 계속 들어가서 하나하나가 길다.
+oracle은 질문당 평균 궤적 1.39개, 약 310.8K 토큰이다. haystack 전체(25M~115M)를 주는 게 아닌데도 창을 넘는다. 웹 에이전트 궤적은 화면 상태가 계속 들어가서 하나하나가 길다.
 
 ![파일럿 스터디 결과 (논문 Figure 4)](https://momozzing.github.io/assets/images/longmemeval-v2/fig4-pilot-studies.png)
 
@@ -209,7 +209,7 @@ AgentRunbook-R은 정확도는 중간이고 지연은 26초 정도다. thinking�
 
 ## **지금 관점: V1과 V2 중 무엇을 쓸 것인가**
 
-둘은 갈아타는 관계가 아니고 재는 대상이 다르다. V1은 사용자에 대한 사실을 기억하는지를 115k–1.5M 토큰 규모에서 잰다. 개인화 챗봇이나 선호 추적에 맞고, 앞 리뷰들에서 Mem0, Zep, A-MEM이 겨룬 곳이다. V2는 환경에 대한 경험을 익히는지를 25M–115M 토큰 규모에서 잰다. 웹·도구 에이전트나 반복 작업 자동화에 맞고, 여기서 평가된 시스템은 아직 거의 없다.
+둘은 갈아타는 관계가 아니고 재는 대상이 다르다. V1은 사용자에 대한 사실을 기억하는지를 115k–1.5M 토큰 규모에서 잰다. 개인화 챗봇이나 선호 추적에 맞고, 앞 리뷰들에서 Zep, MemMachine이 평가한 곳이다. V2는 환경에 대한 경험을 익히는지를 25M–115M 토큰 규모에서 잰다. 웹·도구 에이전트나 반복 작업 자동화에 맞다.
 
 사용자 정보를 기억하고 갱신하는 챗봇이라면 V1이 여전히 맞는 기준 같다. V1의 KU(지식 갱신)와 ABS(모른다고 하기)가 바로 그 일이다. 대신 V2가 보는 쪽은 앞에서 본 논문들에서 거의 비어 있었다. 경험 기억을 제대로 잰 건 [Experience-Following](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/) 하나였고, 그것도 직접 만든 태스크였다. 도구를 반복해서 부르는 에이전트라면 Gotchas와 Premise Awareness가 바로 해당될 것 같다. 예를 들면 어떤 도구가 특정 조건에서 실패하는 패턴을 에이전트가 익히는지 같은 것.
 

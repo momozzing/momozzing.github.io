@@ -131,9 +131,9 @@ RegAgent에서는 메모리가 커지면 입력·출력 유사도 상관이 거�
 
 같은 색 실선과 점선 사이 간격이 오류 때문에 잃은 만큼이다.
 
-두 에이전트 모두 처음부터 오류 없는 버전보다 성능이 벌어지고, 실행이 계속될수록 add-all이랑 coarse selective addition은 그 차이가 더 커진다.
+두 에이전트(RegAgent, AgentDriver) 모두 처음부터 오류 없는 버전보다 성능이 벌어지고, 실행이 계속될수록 add-all이랑 coarse selective addition은 그 차이가 더 커진다.
 
-예외는 AgentDriver의 strict selective addition 하나다. 처음엔 뒤처지다가 점점 따라잡는다.
+예외는 AgentDriver의 strict selective addition 하나다. 처음엔 뒤처지다가 점점 따라잡고, 약 2,000번 실행 뒤에는 오히려 오류 없는 버전을 앞선다.
 
 -> 메모리를 다시 쓰는 루프에서는 손실이 계속 쌓이는 것 같다. 뒤에서 볼 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 비슷한 이야기가 다시 나온다.
 
@@ -225,9 +225,9 @@ AgentDriver에서는 엄격한 평가로 추가만 한 버전(strict addition)�
 
 4.3의 공짜 품질 라벨은 바로 해볼 만하다. 레코드마다 검색된 횟수랑 그때 결과를 기록해두면 LLM 호출 없이도 나쁜 레코드를 골라낼 수 있다. 다만 4.2에서 C1 평가기로는 History-based가 오히려 떨어진 경우가 있어서, 결과를 판정하는 쪽이 믿을 만해야 한다.
 
-지우는 쪽은 상황마다 답이 달랐다. 분포가 안정적이면 History-based가 성능이 제일 좋았고, 분포가 바뀌면 Periodical이 섞인 Combined가 안정적이었다.
+지우는 쪽은 상황마다 답이 달랐다. 분포가 안정적이면 History-based가 네 에이전트 중 둘(AgentDriver, CIC-IoT)에서 성능이 제일 좋았고, 분포가 바뀌면 Periodical이 섞인 Combined가 안정적이었다.
 
-주기적 삭제는 메모리를 60~70% 줄이고 성능은 최대 4.6점 떨어졌다. 오래된 것부터 지우는 FIFO가 아니라 한동안 안 불린 레코드를 지우는 방식이라, 안 쓰이는 중복이 그만큼 많이 쌓인다는 뜻으로 보인다.
+주기적 삭제는 오래된 것부터 지우는 FIFO가 아니라 한동안 안 불린 레코드를 지우는 방식이다. 그걸로 메모리가 크게 줄었는데 성능은 조금만 떨어졌으니, 안 쓰이는 중복이 그만큼 많이 쌓인다는 뜻으로 보인다.
 
 이 논문은 같은 에이전트에서 정책만 바꿔가며 재기 때문에 서로 다른 메모리 시스템을 비교할 때 생기는 문제는 없다. 그쪽 문제는 뒤에서 볼 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서 다룬다.
 

@@ -131,7 +131,7 @@ temporal에서 OpenAI가 크게 낮다. 프롬프트로 시키는데도 만들�
 
 open-domain은 Zep이 76.60으로 Mem0g(75.71)보다 조금 높다. 논문도 Zep이 작지만 의미 있는 차이로 앞선다고 인정한다.
 
-A-MEM 논문에서는 A-MEM이 LoCoMo 기준선보다 높았는데, 여기 재현에서는 A-Mem*가 표에서 제일 낮다. 같은 벤치마크라도 누가 어떻게 돌렸느냐에 따라 순위가 바뀐다.
+A-MEM 논문에서는 A-MEM이 full-context 기준선(LoCoMo 논문 방식)보다 높았는데, 여기 재현에서는 A-Mem*가 Single Hop·Multi-Hop과 아래 Table 2의 전체 J(48.38)에서 옮긴 방법 중 제일 낮다. 같은 벤치마크라도 누가 어떻게 돌렸느냐에 따라 순위가 바뀐다.
 
 ### **4.4 Latency Analysis**
 

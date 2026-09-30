@@ -33,7 +33,7 @@ Figure 1은 논문 전체를 한 장으로 요약한 그림이다. 바닥 격자
 
 요즘 많이 보이는 Mem0랑 Zep이 Token-level 장기기억 칸에 같이 있고, SnapKV, H2O 같은 KV 캐시 압축 기법들이 Working memory로 들어가 있다.
 
--> KV 캐시 압축을 메모리로 분류하는 건 좀 의외였다. 뒤에 4.3에서 이유가 나온다.
+-> KV 캐시 압축을 메모리로 분류하는 건 좀 의외였다. 뒤에 2.3.1에서 이유가 나온다.
 
 ## **1. Introduction**
 
@@ -89,6 +89,8 @@ agent memory를 기준으로 헷갈리기 쉬운 개념 세 개랑 비교한다.
 MemoryBank나 MemGPT는 스스로를 "LLM memory"라고 불렀는데, 실제로 푼 문제가 사용자 선호 추적, 대화 상태 유지 같은 에이전트 문제였다. 논문 설명으로는 2023~2024년에는 에이전트 정의가 제대로 없어서, LLM이 계산기만 불러도 에이전트라고 부르던 경우가 있었다. 그래서 그때는 LLM memory라고 불렀다.
 
 다만 KV 캐시 관리, long-context 처리, 아키텍처 변경(RWKV, Mamba, diffusion LM)은 LLM memory로 남긴다. 모델 내부를 직접 건드리느냐가 기준이다.
+
+겹치는 부분(Overlap)도 적어둔다. KV 압축이나 컨텍스트 창 관리도 한 과제 안에서 중요한 정보를 유지하려고 쓰면 에이전트 관점에서 단기 메모리로 기능한다고 본다.
 
 #### **2.3.2 Agent Memory vs. RAG**
 
@@ -292,7 +294,7 @@ LLM은 원래 stateless라서 에이전트로 쓰려면 기억이 필요하고, 
 
 대화가 길어지면서 쌓이는 이력을 관리한다. 이력이 쌓이면 어텐션이 흐려지고 느려지고 목표를 잃는다(goal drift). 그래서 고정 크기 상태로 압축하거나(MemAgent, MemSearcher), 이력을 접어두는(Context Folding, ReSum) 방식을 쓴다.
 
-Figure 1에서 KV 캐시 압축이 Working memory 칸에 있던 이유가 이거다. 컨텍스트 예산을 관리하는 게 곧 working memory 관리라고 본다.
+Figure 1에서 KV 캐시 압축이 Working memory 칸에 있던 근거는 2.3.1의 Overlap이다. 한 과제 안에서 중요한 정보를 유지하는 데 쓰면 단기 메모리로 기능한다고 본다.
 
 ## **5. Dynamics: How Memory Operates and Evolves?**
 
@@ -338,7 +340,7 @@ Figure 1에서 KV 캐시 압축이 Working memory 칸에 있던 이유가 이거
 - Frequency-based : 안 꺼내 쓴 것
 - Importance-driven : 중요도 평가
 
-CoALA 리뷰 때는 "기억을 지우거나 고치는 학습은 아직 거의 연구가 안 됐다"고 했었는데(2023년 9월), 2년 남짓 사이에 망각이 따로 한 항목이 됐다.
+CoALA(2023년 9월)에서는 "기억을 지우거나 고치는 학습은 아직 거의 연구가 안 됐다"고 했는데, 2년 남짓 사이에 망각이 따로 한 항목이 됐다.
 
 ### **5.3 Memory Retrieval**
 
@@ -397,7 +399,7 @@ CoALA 리뷰 때는 "기억을 지우거나 고치는 학습은 아직 거의 �
 | Cognee | ✔ | ✔ | ✔ | knowledge graph | — |
 | Memary | ✔ | ✔ | ✘ | stream + entity store | — |
 | MemEngine | ✔ | ✔ | ✔ | modular space | — |
-| ReMe (AgentScope) | ✔ | ✔ | ✘ | memory management | BFCL, AppWorld |
+| ReMe (AgentScope) | ✔ | ✔ | ✘ | agentscope | BFCL, AppWorld |
 | Pinecone / Chroma / Weaviate | ✔ | ✘ | 일부 ✔ | vector(+graph) DB | — |
 
 표를 보면,
@@ -495,6 +497,8 @@ CoALA 리뷰 때는 "기억을 지우거나 고치는 학습은 아직 거의 �
 메모리에 개인정보가 쌓이니까 유출 위험이 있다. 나중엔 OS처럼 버전 관리되고 감사할 수 있는 메모리가 필요하다고 한다.
 
 ### **7.8 Human-Cognitive Connections**
+
+컨텍스트 창과 외부 저장소를 나누는 지금 구조를 Atkinson-Shiffrin 다중저장 모델에, 상호작용 로그·세계 지식·스킬로 나누는 걸 Tulving의 일화·의미·절차 기억 구분에 대응시킨다.
 
 지금 에이전트 메모리는 사람 기억 구조를 많이 닮았는데, 사람은 기억을 매번 새로 재구성하고 에이전트는 저장된 걸 그대로 꺼낸다. 그래서 사람이 잘 때 기억을 정리하는 것처럼 오프라인으로 정리하는 시간을 두자고 제안한다.
 

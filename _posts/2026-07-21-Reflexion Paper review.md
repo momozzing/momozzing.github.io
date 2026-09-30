@@ -169,7 +169,7 @@ Table 2는 HumanEval·MBPP에서 base와 Reflexion의 정확도, 그리고 자�
 
 FP 열이 "테스트는 통과했는데 코드는 틀린" 비율이다.
 
-MBPP Python만 Base보다 Reflexion이 낮은 줄과 같이 보면 된다.
+FP가 큰 MBPP Python에서만 Reflexion이 Base보다 낮다.
 
 -> 테스트가 틀린 코드를 통과시키면 반성할 기회 자체가 없다.
 

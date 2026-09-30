@@ -117,7 +117,7 @@ Search에서는 함수 세 개를 쓴다.
 
 논문은 BFS가 RAG 쪽에서는 거의 안 쓰였다고 한다. AriGraph나 Distill-SynthKG 정도가 예외다.
 
-세 개를 같이 쓰는 건 리랭킹 전에 후보를 넓게 모으려는 것이다. 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서도 키워드와 임베딩 검색을 섞는다.
+세 개를 같이 쓰는 건 리랭킹 전에 후보를 넓게 모으려는 것이다. 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)는 반대로 BM25 하나만 쓴다.
 
 ### **3.2 Reranker**
 
@@ -196,7 +196,7 @@ LongMemEval에서 어시스턴트 쪽 정보 기억을 따로 능력으로 둔 �
 
 검색 결과에 `FACT (Date range: from - to)`처럼 유효 구간을 같이 주는 것도 쉽게 따라 할 수 있다. LongMemEval의 CP 3은 시간을 인덱스와 질의 쪽에서 풀었는데, Zep은 LLM에 넘기는 출력 형식에서도 푼다. 원본을 에피소드로 남겨두는 것도 마찬가지로 가져다 쓸 만하다.
 
-믿을 만한 근거는 LongMemEval 쪽이라고 본다. DMR은 full-conversation이 94.4%라서 Zep의 94.8%와 거의 같은 점수다.
+믿을 만한 근거는 DMR보다 LongMemEval 쪽이라고 본다.
 
 걸리는 건 둘이다. 어시스턴트가 한 말을 기억하는 게 약하다. 안내나 추천을 많이 하는 챗봇이면 "아까 뭐라고 알려줬지"를 자주 묻는데, 그래프 추출만으로는 부족할 수 있다. 그리고 저장할 때 LLM을 여러 번 부른다. 엔티티 추출, 관계 생성, 모순 판단이 다 LLM이다. 논문의 지연은 질의 응답 기준이고, 저장에 드는 시간은 안 나와 있다.
 
@@ -207,7 +207,5 @@ LongMemEval에서 어시스턴트 쪽 정보 기억을 따로 능력으로 둔 �
 conclusion 부분을 보면 논문도 이건 그래프 기반 메모리의 초기 단계라고 한다. 다음으로 다른 GraphRAG 방법을 합치는 것, 엔티티·엣지 추출용 모델을 파인튜닝하는 것을 꼽는다.
 
 틀린 기억을 지우지 않고, 언제까지 참이었는지를 표시해두는 방식이다.
-
--> 그래프를 안 쓰더라도 타임스탬프 네 개를 두는 건 그대로 가져다 쓸 수 있을 것 같다.
 
 다음은 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)이다. Zettelkasten을 LLM 에이전트에 옮겨서, 새 기억이 들어오면 스스로 링크를 걸고 기존 기억의 맥락·키워드·태그까지 고쳐 쓴다.

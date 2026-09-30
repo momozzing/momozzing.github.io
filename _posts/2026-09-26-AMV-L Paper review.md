@@ -175,7 +175,7 @@ TTL은 위쪽 꼬리가 길고, AMV-L은 hot 항목과 상한이 있는 warm 샘
 
 실제로 쓴다면 원본은 지우지 않고 검색 대상에서만 빼는 계층을 두면 될 것 같다. 앞에서 본 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)은 오래된 사실을 지우지 않고 무효 표시만 했는데, 그렇게 남긴 걸 전부 검색 대상으로 두면 이 논문의 문제가 그대로 생긴다.
 
-앞에서 본 [NEMORI](https://momozzing.github.io/paper%20review/NEMORI-Paper-review/)는 저장할 때 내용을 증류해서 성능을 올렸는데, 이 논문은 저장은 그대로 두고 검색 대상만 줄인다. 저장과 검색 중 어디가 병목인지는 뒤에서 볼 [MemMachine](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/), [LongMemEval-V2](https://momozzing.github.io/paper%20review/LongMemEval-V2-Paper-review/), [MemFail](https://momozzing.github.io/paper%20review/MemFail-Paper-review/)에서, 원본을 남기는 쪽은 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/), [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/), [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서 다시 나온다.
+앞에서 본 [NEMORI](https://momozzing.github.io/paper%20review/NEMORI-Paper-review/)는 저장할 때 내용을 증류해서 성능을 올렸는데, 이 논문은 저장은 그대로 두고 검색 대상만 줄인다. 저장과 검색 중 어디가 병목인지는 뒤에서 볼 [MemMachine](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)에서, 원본을 남기는 쪽은 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)과 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서 다시 나온다.
 
 그리고 보통 응답 지연만 모니터링하는데, \|R\|(검색 후보군 크기)를 따로 재면 느려진 원인을 찾기 쉬울 것 같다. access·contribution·elapsed 세 값은 벡터 DB의 메타데이터 필드로도 충분히 만들 수 있어 보인다.
 
@@ -187,10 +187,10 @@ conclusion 부분을 보면, AMV-L은 메모리를 관리해야 하는 시스템
 
 논문은 p95, p99 지연을 최대 2~3자릿수 줄이면서 밀리초 단위 중앙값을 유지한다고 쓴다. 전체 보관량과 상관없이 검색 대상 크기를 묶었기 때문이라고 한다.
 
--> 그런데 논문 Table 1에서 TTL 대비 p95, p99는 4.7배, 4.4배 줄었고, 중앙값도 815ms → 194ms로 바뀌었다. 2~3자릿수가 어디서 나온 건지 표에서는 못 찾았다.
+-> 그런데 논문 Table 1에서 TTL 대비 p95, p99는 4.7배, 4.4배 줄었다. 2~3자릿수가 어디서 나온 건지 표에서는 못 찾았다.
 
 한계는 논문 Discussion에 두 가지가 적혀 있다. LRU 베이스라인이 순수 recency 기반이라 recency와 value를 섞은 하이브리드가 더 나을 수 있다는 것, 그리고 AMV-L은 hot 계층 크기에 딱 정해진 상한이 없어서 최악의 경우를 확실하게 보장하지는 못한다는 것이다.
 
-여태까지 메모리 논문들이 무엇을 어떻게 기억할지를 봤다면, 이 방법은 기억한 것 중 무엇을 검색 대상으로 둘지를 관리한다.
+정리하면 AMV-L은 기억은 그대로 두고, 그중 무엇을 검색 대상으로 둘지를 관리하는 방법이다.
 
 다음은 [Multi-Layered Memory](https://momozzing.github.io/paper%20review/Multi-Layered-Memory-Paper-review/)다. 대화 이력을 working·episodic·semantic 세 계층으로 나누고, 계층을 하나씩 떼어보는 ablation으로 각 계층이 얼마나 기여하는지 잰 논문이다.

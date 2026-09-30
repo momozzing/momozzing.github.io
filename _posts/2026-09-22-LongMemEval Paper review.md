@@ -23,7 +23,7 @@ LongMemEval은 UCLA, Tencent AI Lab Seattle, UC San Diego에서 만든 챗봇 �
 
 이 시리즈 뒤쪽 논문들이 계속 이 벤치마크로 점수를 낸다. [나중에 볼 ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)도 여기서 평가하고, 뒤에서 볼 서베이(Memory in the Age of AI Agents)에서도 lifelong learning 쪽 대표로 들어가 있다.
 
-벤치마크만 있는 게 아니라, 메모리 시스템을 세 단계와 네 가지 설계 포인트로 나눠서 보는 틀도 같이 내놓았다.
+벤치마크만 있는 게 아니라, 메모리 시스템을 세 단계와 네 가지 제어점(CP)으로 나눠서 보는 틀도 같이 내놓았다.
 
 좀 더 자세히 알아보자.
 
@@ -51,7 +51,7 @@ introduction 부분을 보면 기존 장기 대화 벤치마크가 못 보던 �
 - TR (Temporal Reasoning) : 대화 속 시간 표현이랑 타임스탬프 메타데이터 둘 다 이해하기
 - ABS (Abstention) : 이력에 없는 걸 물으면 "모른다"고 답하기
 
-ABS가 따로 있는 게 좋았다. 기존 벤치마크는 맞히는 것만 쟀다.
+ABS가 따로 있는 게 좋았다. Table 1을 보면 기존 벤치마크 중 ABS를 재는 건 PerLTQA, LoCoMo, DialSim 셋뿐이다.
 
 -> 실제로 챗봇을 만들어보면 없는 기억을 지어내는 게 더 문제다.
 

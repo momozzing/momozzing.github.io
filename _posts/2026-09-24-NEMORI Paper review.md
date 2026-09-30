@@ -19,9 +19,7 @@ What Deserves Memory: Adaptive Memory Distillation for LLM Agents
 
 [https://arxiv.org/abs/2508.03341](https://arxiv.org/abs/2508.03341)
 
-NEMORI는 Fudan University, Shanda Group, Beihang University 등에서 만든 에이전트 메모리 프레임워크이다. arXiv에 올라온 논문이다.
-
-2025년 8월 v1이 나왔을 때 제목은 "Nemori: Self-Organizing Agent Memory Inspired by Cognitive Science"였고, 2026년 4월 v4에서 지금 제목으로 바뀌었다. 시스템 이름은 그대로 NEMORI다.
+NEMORI는 Fudan University, Shanda Group, Beihang University 등에서 만든 에이전트 메모리 프레임워크이다. 2025년 8월 arXiv에 v1이 올라왔을 때 제목은 "Nemori: Self-Organizing Agent Memory Inspired by Cognitive Science"였고, 2026년 4월 v4에서 지금 제목으로 바뀌었다. 시스템 이름은 그대로 NEMORI다.
 
 무엇을 기억으로 남길지를 중요도 점수 대신 "예측 실패"로 정한다. 기존 지식으로 예상한 것과 실제가 어긋난 부분만 기억으로 남긴다.
 
@@ -64,7 +62,7 @@ Predictive Coding Theory(Rao & Ballard 1999, Friston 2010, Clark 2013)에서 기
 
 위쪽 Episodic Memory Integration이 원시 대화를 이야기처럼 이어지는 에피소드로 바꾸고, 아래쪽 Semantic Knowledge Distillation이 예측 오차로 지식을 뽑는다.
 
-오른쪽은 뽑은 지식을 받는 쪽이다. 자체 관리 모듈이나 MemoryOS, A-MEM 같은 외부 시스템에 증류 층으로 붙일 수 있다고 한다.
+오른쪽은 뽑은 지식을 받는 쪽이다. 자체 관리 모듈이나 MemoryOS(OS에서 착안한 계층형 저장 메모리), A-MEM 같은 외부 시스템에 증류 층으로 붙일 수 있다고 한다.
 
 ### **3.2 Episodic Memory Integration**
 
@@ -105,6 +103,8 @@ LoCoMo(대화 10개, 평균 24K 토큰, 질문 1,540개)에서 잰 LLM-judge 점
 | gpt-4o-mini | 73.0 | Mem0 61.3 | +19.1% |
 | gpt-4.1-mini | 80.8 | LangMem 73.4 | +10.1% |
 
+LangMem은 세션을 넘어 지식을 자동으로 추출하는 메모리 라이브러리다.
+
 Full Context(대화 전체를 그대로 넣는 방식)도 두 모델 모두에서 조금 넘는다(80.8 vs 80.6, 73.0 vs 72.3).
 
 차이가 1점도 안 된다. LoCoMo는 전부 넣어도 되는 길이라서 그렇고, 논문도 이걸 알고 뒤에서 더 긴 벤치마크로 넘어간다.
@@ -113,7 +113,7 @@ Full Context와 비교하는 이 차이는 뒤에서 볼 [Anatomy 리뷰](https:
 
 Temporal Reasoning이 특히 높다. gpt-4.1-mini에서 77.3(A-MEM 대비 +15.9%), gpt-4o-mini에서 67.6(Zep 대비 +14.8%)이다.
 
-논문은 에피소드 중심으로 만들어두면 추론 부담 일부가 답변 생성 때에서 메모리 만들 때로 옮겨가기 때문으로 본다.
+논문은 에피소드 중심으로 만들어두면 추론 부담 일부가 답변 생성 단계에서 메모리 만들 때로 옮겨가기 때문으로 본다.
 
 ### **4.3 Efficiency Analysis (RQ2)**
 
@@ -199,7 +199,7 @@ Full Context와 평균 차이가 +9.0점이다. LoCoMo에서 +0.2점이던 게 �
 
 -> 그런데 토큰 수가 논문 안에서 서로 다르다. LoCoMo는 실험 설정에서 평균 24K인데 여기 본문에서는 9K, LongMemEvalS는 105K인데 표에서는 101K다. 어느 기준으로 센 건지??
 
-gpt-4.1-mini에서는 single-session-assistant에서만 진다(92.9 vs 98.2). 앞에서 본 [Zep 리뷰](https://momozzing.github.io/paper%20review/Zep-Paper-review/)에서도 이 유형만 떨어졌다. 어시스턴트 발화는 추출하면서 흐려지는 것 같다.
+gpt-4.1-mini에서는 single-session-assistant에서만 진다(92.9 vs 98.2). 앞에서 본 [Zep 리뷰](https://momozzing.github.io/paper%20review/Zep-Paper-review/)에서도 gpt-4o에서는 이 유형만 떨어졌다(gpt-4o-mini에서는 knowledge-update도 떨어졌다). 어시스턴트 발화는 추출하면서 흐려지는 것 같다.
 
 gpt-4o-mini에서는 single-session-assistant(89.3 → 83.9)에 더해 Knowledge Update에서도 크게 진다(78.2 → 61.5). 이건 논문이 따로 설명하지 않는다.
 
@@ -211,7 +211,7 @@ NEMORI도 예상 스키마를 LLM이 만드니 LLM 판단이 빠지진 않는다
 
 실제로 쓴다면 제3자 통합 실험처럼 지금 쓰는 메모리 앞에 증류 층으로 끼우는 게 제일 현실적일 것 같다. 저장이 45~64% 줄고 평균 성능은 ±4% 안이다. 다만 어시스턴트 발화에 약해서, 안내나 추천처럼 어시스턴트가 한 말을 다시 찾아야 하는 경우라면 그 부분은 원문을 따로 남겨두는 게 나을 것 같다.
 
--> 예상 스키마를 만드는 데 LLM 호출이 하나 더 붙는다. 구축 총량이 줄어든 건(−59.5%) 에피소드 단위로 처리해서인데, 메시지가 올 때마다 바로 반영해야 하는 구조라면 어떻게 될지??
+-> 예상 스키마를 만드는 데 LLM 호출이 하나 더 붙는다. 구축 비용이 줄어든 건(LLM 호출 −59.5%, 총 토큰 −38.7%) 에피소드 단위로 처리해서인데, 메시지가 올 때마다 바로 반영해야 하는 구조라면 어떻게 될지??
 
 ## **5. Conclusion**
 

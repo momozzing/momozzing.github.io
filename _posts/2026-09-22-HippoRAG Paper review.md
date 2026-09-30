@@ -137,7 +137,7 @@ QA 성능은 이렇다. 검색 결과를 읽기 모델에 넣고 답한 EM과 F1
 
 단일 단계 HippoRAG가 IRCoT보다 높다(48.1 vs 44.7).
 
-그러면서 온라인 검색이 IRCoT보다 10~30배 싸고 6~13배 빠르다고 한다. 반복 검색만큼의 정확도를 한 번의 검색으로 낸다.
+그러면서 온라인 검색이 IRCoT보다 10~30배 싸고 6~13배 빠르다고 한다(초록에는 10~20배로 적혀 있다). 반복 검색만큼의 정확도를 한 번의 검색으로 낸다.
 
 ## **5. Discussions**
 
@@ -211,11 +211,11 @@ ColBERTv2랑 IRCoT가 같은 답을 낸다. 반복 검색을 해도 못 찾았�
 
 이 논문을 읽고 나서 좋아 보인 점이 몇 가지 있다.
 
-하나는 원본 구절을 안 버린다. 그래프를 만들긴 하지만 검색 결과는 원래 구절이다. PPR 노드 확률을 구절로 모아서 순위를 매긴다. 그래프는 색인이고 저장소가 아니다. 해마도 기억을 직접 저장하지 않고 신피질의 기억을 가리키는 색인만 갖고 있다고 하니까, 이론을 그대로 옮긴 결과다. 원본을 남기느냐는 나중에 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 다시 나온다.
+하나는 원본 구절을 안 버린다는 점이다. 그래프를 만들긴 하지만 검색 결과는 원래 구절이다. PPR 노드 확률을 구절로 모아서 순위를 매긴다. 그래프는 색인이고 저장소가 아니다. 해마도 기억을 직접 저장하지 않고 신피질의 기억을 가리키는 색인만 갖고 있다고 하니까, 이론을 그대로 옮긴 결과다. 원본을 남기느냐는 나중에 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 다시 나온다.
 
-또 하나는 스키마가 없다. 논문이 `schemaless knowledge graph`라고 적었다. 스키마를 안 정하니까 뭘 버릴지 미리 정하지 않는다. 대신 그래프가 OpenIE를 돌린 모델에 묶인다. REBEL이랑 GPT-3.5의 트리플 수가 두 배 차이 나는 걸 보면, 색인 모델을 바꾸면 그래프를 다시 만들어야 하는 거 아닌가?? 모델을 바꿀 때 메모리가 어떻게 되는지는 나중에 볼 [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서 다룬다.
+또 하나는 스키마가 없다는 점이다. 논문이 `schemaless knowledge graph`라고 적었다. 스키마를 안 정하니까 뭘 버릴지 미리 정하지 않는다. 대신 그래프가 OpenIE를 돌린 모델에 묶인다. REBEL이랑 GPT-3.5의 트리플 수가 두 배 차이 나는 걸 보면, 색인 모델을 바꾸면 그래프를 다시 만들어야 하는 거 아닌가?? 모델을 바꿀 때 메모리가 어떻게 되는지는 나중에 볼 [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서 다룬다.
 
-마지막은 검색 비용이 낮다. 색인은 오프라인이고 질의할 때는 PPR만 돈다. IRCoT보다 6~13배 빠르다. 검색이 느린 메모리 시스템이 뒤에서 볼 [Anatomy](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서 나오는데, 그거랑 비교하면 차이가 크다.
+마지막은 검색 비용이 낮다는 점이다. 색인은 오프라인이고 질의할 때는 PPR만 돈다. IRCoT보다 6~13배 빠르다. 검색이 느린 메모리 시스템이 뒤에서 볼 [Anatomy](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서 나오는데, 그거랑 비교하면 차이가 크다.
 
 다중홉 질문을 볼 때는 R@k만 보지 말고 AR(all-recall)을 같이 보는 게 좋을 것 같다. 그리고 PPR은 그래프 구조가 필요해서 벡터 DB만 있는 환경에 바로 얹기는 어렵다. 질의에서 엔티티를 뽑고 그 엔티티로 다시 검색하는 2단 구조는 그래프 없이도 되니까, path-finding 일부는 그걸로도 나아지지 않을까?
 

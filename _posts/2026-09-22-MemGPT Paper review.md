@@ -23,7 +23,7 @@ MemGPT는 UC Berkeley에서 만든 LLM 메모리 관리 시스템이다. 2023년
 
 OS가 메모리와 디스크 사이를 페이징하듯이, LLM이 컨텍스트 창과 외부 저장소 사이에서 정보를 옮기게 한다.
 
-이후 메모리 논문들에서 계속 베이스라인으로 나오는 시스템이다. 뒤에서 볼 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)이 DMR에서 비교한 상대이고, [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)와 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/) 표에도 나온다. 시간순으로는 이 계열의 출발점이라 제일 먼저 읽었다.
+이후 메모리 논문들에서 계속 베이스라인으로 나오는 시스템이다. 뒤에서 볼 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)이 DMR에서 비교한 상대이고, [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/) 표와 [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/) 논문의 비교 대상에도 나온다. 시간순으로는 이 계열의 출발점이라 제일 먼저 읽었다.
 
 2023년 논문이라 지금 기준으로는 오래되었다. 그래도 이후 메모리 시스템들이 쓰는 용어가 여기서 많이 나왔다.
 

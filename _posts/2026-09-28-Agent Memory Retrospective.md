@@ -58,8 +58,8 @@ MemGPT가 이걸 운영체제에 빗대서 정리했다. 컨텍스트 창(main c
 CoALA는 여기서 한 단계 더 나눴다. 단기는 working memory 하나고, 장기를 사람 기억처럼 셋으로 쪼갰다.
 
 - Working : 지금 의사결정에 쓰는 정보, 매 LLM 호출의 프롬프트가 여기서 만들어짐
-- Episodic : 과거 경험 기록 (Reflexion의 반성문 같은 것)
-- Semantic : 세계에 대한 지식 (RAG가 읽어오는 지식 베이스)
+- Episodic : 과거 경험 기록 (Generative Agents의 memory stream)
+- Semantic : 세계에 대한 지식 (RAG가 읽어오는 지식 베이스, Reflexion의 반성문)
 - Procedural : 행동하는 방법 (Voyager의 스킬 코드, LLM 가중치)
 
 RAG(Retrieval-Augmented Generation)는 질문과 관련된 문서를 검색해서 프롬프트에 붙여 넣고 답하게 하는 방식이다.
@@ -99,7 +99,7 @@ CoALA의 네 가지랑 맞춰보면 이렇다.
 
 | 나온 시기 | 논문 | 무엇을 했나 | 기억할 것 |
 |---|---|---|---|
-| 2023-09 | [CoALA](https://momozzing.github.io/paper%20review/CoALA-Paper-review/) | 에이전트 기억을 네 종류로 분류 | 작업·일화·의미·절차 기억 구분의 원조 |
+| 2023-09 | [CoALA](https://momozzing.github.io/paper%20review/CoALA-Paper-review/) | 에이전트 기억을 네 종류로 분류 | 인지과학의 기억 분류를 에이전트에 가져옴 |
 | 2023-10 | [MemGPT](https://momozzing.github.io/paper%20review/MemGPT-Paper-review/) | LLM이 스스로 기억을 넣고 빼게 함 | 컨텍스트 창은 RAM, 외부 저장소는 디스크 |
 | 2024-05 | [HippoRAG](https://momozzing.github.io/paper%20review/HippoRAG-Paper-review/) | 문서에서 개념 그래프를 만들어 검색 | 그래프로 찾고 답은 원문 구절로 |
 | 2024-10 | [LongMemEval](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/) | 챗봇 장기 기억 벤치마크 | 5가지 능력, 모른다고 답하기 포함 |
@@ -160,15 +160,14 @@ LongMemEval이 평가 기준을 세우고 나서 제품형 시스템이 쏟아�
 
 같은 시기에 나온 From Human Memory to AI Memory는 아직 장기/단기를 분류 기준으로 뒀다. 8개월 뒤 서베이(Memory in the Age of AI Agents)가 그 이분법으로는 부족하다고 한다.
 
+같은 무렵 Experience-Following은 실행 경험을 전부 넣으면 네 에이전트 모두에서 고정 메모리보다 나빠진다고 했다. 비슷한 과거를 그대로 따라 하니까 나쁜 경험도 따라 하기 때문이었다. 무엇을 남길지라는, 다음 시기의 질문을 먼저 꺼낸 논문이다.
+
 ### **3.3 무엇을 남길지 고민한 시기 (2025 하반기 ~ 2026 초)**
 
 구조가 어느 정도 갖춰지고 나니 질문이 바뀌었다. 어떻게 저장하느냐에서 무엇을 저장하느냐로.
 
-- Experience-Following : 실행 경험을 전부 넣으면 네 에이전트 모두에서 고정 메모리보다 나빠짐
 - What Deserves Memory : 중요도 점수 대신 "기존 지식으로 예측했는데 틀린 부분"만 남김
 - SYNAPSE : 잘 찾는 것에 더해서, 못 찾았을 때 모른다고 답하게 만듦
-
-Experience-Following에서 나빠진 건 비슷한 과거를 그대로 따라 하니까 나쁜 경험도 따라 하기 때문이었다.
 
 그리고 이 시기 끝에 2025년 12월 서베이가 Forms(어디에 담나), Functions(무엇을 위해), Dynamics(어떻게 움직이나)로 전체를 다시 나눴다.
 
@@ -186,7 +185,7 @@ MemMachine은 저장 방식 개선(+0.8%p)보다 검색 개선(검색 개수만 
 
 셋째, 구조 자체를 의심한다.
 
-ReFind가 제일 멀리 갔다. 아무 구조도 안 만들고 원문 대화에 키워드 검색만 반복시켰더니 그래프·트리 기반 시스템을 전부 넘었다. Mem0랑 Zep은 BM25의 절반 정도였다.
+ReFind가 제일 멀리 갔다. 아무 구조도 안 만들고 원문 대화 위에 BM25 반복 검색과 채팅용 기능 몇 개만 얹어서 그래프·트리 기반 시스템을 전부 넘었다. Mem0랑 Zep은 BM25의 절반 정도였다.
 
 넷째, 운영을 본다.
 
@@ -218,7 +217,7 @@ Memory Portability는 모델을 바꾸면 요약형 메모리가 방향에 따�
 - MemMachine : 검색 최적화 효과가 저장 최적화의 5배
 - Memory Portability : RAG 손실의 81%가 검색 단계
 - AMV-L : 병목은 검색 후보 크기
-- ReFind : 반복 검색 하나로 1위
+- ReFind : 원문 위에 BM25 반복 검색과 채팅용 기능 몇 개만 얹어서 1위
 
 예외도 있다. What Deserves Memory는 검색을 단순하게 두고 저장 단계 증류만으로 이겼다.
 

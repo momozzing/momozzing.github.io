@@ -23,7 +23,7 @@ ReFind는 중국과기대(USTC)와 MetaStone Technology에서 만든 채팅 기�
 
 대화 기록을 요약하거나 그래프로 바꾸지 않고, 원본 로그를 그대로 두고 BM25(단어가 얼마나 겹치는지로 점수를 매기는 고전 키워드 검색) 검색만 에이전트가 잘 돌리게 했더니 구조화 메모리 시스템들보다 잘 나왔다는 논문이다.
 
-앞에서 본 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)에서는 메모리 형태를 Token-level · Parametric · Latent로 나누고 flat → graph → hierarchical로 올라가는 구조를 정리했는데, 여기서는 그렇게 올라갈 필요가 있냐고 묻는다.
+앞에서 본 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)에서는 메모리 형태를 Token-level · Parametric · Latent로 나누고 Flat(1D) → Planar(2D) → Hierarchical(3D)로 올라가는 구조를 정리했는데, 여기서는 그렇게 올라갈 필요가 있냐고 묻는다.
 
 좀 더 자세히 알아보자.
 
@@ -31,7 +31,7 @@ ReFind는 중국과기대(USTC)와 MetaStone Technology에서 만든 채팅 기�
 
 에이전트 메모리 시스템들은 원본 대화를 요약, 임베딩, 트리, 지식그래프로 바꿔두고 검색한다.
 
-문제는 이 변환이 질문이 오기 전에 일어난다.
+문제는 이 변환이 질문이 오기 전에 일어난다는 점이다.
 
 논문은 이걸 "질문을 알기 전에 거는 내기"라고 부른다. 뭘 남기고 뭘 버릴지 미리 정하는 거라서, 전처리에서 빠진 내용은 나중에 되살리기 어렵다.
 
@@ -68,7 +68,7 @@ related work 부분을 보면 기존 시스템을 다섯 가지 기준으로 비
 - Time : 시간으로 걸러서 검색할 수 있음
 - Dedup : 라운드끼리 중복 결과를 뺌
 
-STITCH, SeCom, GAM, 그리고 뒤 표의 MIRIX는 이 논문에서 처음 나오는 비교 대상 메모리 시스템이다. SeCom은 대화를 주제 단위로 잘라 압축하고, GAM은 원본 메시지를 페이지 단위로 보관해 두고 찾아 쓴다.
+STITCH, SeCom, GAM, 그리고 뒤 표의 MIRIX는 이 시리즈에서 처음 나오는 비교 대상 메모리 시스템이다. STITCH는 메모리를 대화의 맥락상 의도(contextual intent)에 묶어 두고, SeCom은 대화를 주제 단위로 잘라 압축하고, GAM은 원본 메시지를 페이지 단위로 보관해 두고 찾아 쓴다. MIRIX는 역할이 나뉜 메모리 에이전트 여러 개를 조율한다.
 
 논문도 각각은 새로운 게 아니라고 한다. 기존 시스템들은 하나씩만 갖고 있고, ReFind는 다 합쳤다.
 
@@ -187,7 +187,7 @@ FC-MH는 모든 시스템이 10점 아래다. 덮어쓰인 사실 중 최신 값
 
 백본을 키우면 격차가 벌어진다.
 
-LongMemEval-S(50문항, 문항당 ~115k 토큰)와 M(15문항, ~500k 토큰)에서 GPT-5-mini로 다시 쟀다. ReFind는 5회 반복 평균이다. 베이스라인은 STITCH 논문 수치를 가져왔고, 표는 논문 Table 3에서 RAPTOR 행만 뺐다.
+LongMemEval-S(50문항, 문항당 ~115k 토큰)와 M(15문항, ~500k 토큰)에서 GPT-5-mini로 다시 쟀다. ReFind는 5회 반복 평균이다. 베이스라인은 STITCH 논문 수치를 가져왔고(GAM만 직접 돌림), 표는 논문 Table 3에서 RAPTOR 행만 뺐다.
 
 | 방법 | S | M |
 |---|---:|---:|
@@ -259,7 +259,7 @@ HippoRAG 2랑 차이가 GPT-4o-mini 때는 LME 열 기준 0.6점(51.3 대 50.7)�
 
 여섯 벤치마크 평균 58.2(구조화 중 제일 높은 게 53.2), LongMemEval-S/M에서 93.2/89.3이다.
 
-부수적인 장점도 있다. 검색 과정이 노트에 남아서 나중에 확인할 수 있고, 답을 원문 턴이랑 대조할 수 있고, 새 메시지가 오면 바로 반영된다. 앞에서 본 서베이 7.7의 trustworthy memory에서 말한 것들이다.
+부수적인 장점도 있다. 검색 과정이 노트에 남아서 나중에 확인할 수 있고, 답을 원문 턴이랑 대조할 수 있고, 새 메시지가 오면 바로 반영된다. 앞의 두 가지는 앞에서 본 서베이 7.7(trustworthy memory)에서 말한 감사할 수 있는 메모리와 이어진다.
 
 원본을 그대로 두고, 질문이 올 때 에이전트가 검색을 여러 번 돌려서 찾는 방법이다. 미리 구조를 만드는 비용을 질문 시점의 토큰으로 옮겼다.
 
