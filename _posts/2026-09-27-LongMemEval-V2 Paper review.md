@@ -54,6 +54,12 @@ V1은 원래 자기 능력 분류가 따로 있었다. IE(정보 추출), MR(다
 
 Table 1에 있는 벤치마크 열네 개(V2 포함) 중에 V2 기준 다섯 능력에 다 체크된 건 V2 하나다.
 
+## **2. Related Work**
+
+긴 문맥·개인화 메모리 벤치마크(LoCoMo, LongMemEval 등), 에이전트 궤적을 쓰는 메모리 벤치마크(MemoryArena, AMA-Bench 등), LLM이 메모리 읽기·쓰기를 직접 하는 시스템(MemGPT, A-MEM, Mem0 등)을 정리한다.
+
+가장 가까운 AMA-Bench는 궤적 하나를 이해하는지 보고, V2는 여러 궤적에 걸쳐 쌓인 환경 지식을 본다고 한다.
+
 ## **3. LongMemEval-V2**
 
 ### **3.1 Core Memory Ability Definition**
@@ -86,6 +92,10 @@ Gotchas는 이 시리즈에서 처음 보는 축이다. 논문 Table 1에서 Got
 
 전체 451문항을 출처 도메인, 질문 유형, 형식별로 나눈 그림이다.
 가운데 질문 유형에는 static, dynamic, workflow마다 abstention 문항이 따로 있다.
+
+### **3.2 Annotation**
+
+WebArena, WorkArena, WorkArena++에서 웹 에이전트 궤적을 모으고, 사람이 궤적을 보고 질문을 직접 만들었다. 그다음 질문마다 답이 들어 있는 궤적을 표시하고, 이 궤적들로 이력(haystack)을 구성한다.
 
 ### **3.3 Evaluation Formulation**
 
@@ -207,16 +217,6 @@ AgentRunbook-R은 정확도는 중간이고 지연은 26초 정도다. thinking�
 
 코딩 에이전트는 워크플로 안내, manifest, 궤적 검사 도구와 같이 줄 때 메모리 컨트롤러로 더 잘 동작한다고 한다.
 
-## **지금 관점: V1과 V2 중 무엇을 쓸 것인가**
-
-둘은 갈아타는 관계가 아니고 재는 대상이 다르다. V1은 사용자에 대한 사실을 기억하는지를 115k–1.5M 토큰 규모에서 잰다. 개인화 챗봇이나 선호 추적에 맞고, 앞 리뷰들에서 Zep, MemMachine이 평가한 곳이다. V2는 환경에 대한 경험을 익히는지를 25M–115M 토큰 규모에서 잰다. 웹·도구 에이전트나 반복 작업 자동화에 맞다.
-
-사용자 정보를 기억하고 갱신하는 챗봇이라면 V1이 여전히 맞는 기준 같다. V1의 KU(지식 갱신)와 ABS(모른다고 하기)가 바로 그 일이다. 대신 V2가 보는 쪽은 앞에서 본 논문들에서 거의 비어 있었다. 경험 기억을 제대로 잰 건 [Experience-Following](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/) 하나였고, 그것도 합성 태스크(RegAgent) 하나에 기존 에이전트 3개(EHRAgent, AgentDriver, CIC-IoT)를 붙인 규모였다. 도구를 반복해서 부르는 에이전트라면 Gotchas와 Premise Awareness가 바로 해당될 것 같다. 예를 들면 어떤 도구가 특정 조건에서 실패하는 패턴을 에이전트가 익히는지 같은 것.
-
-AgentRunbook-R의 3풀 구조는 규모가 작아도 가져와 볼 만하다. 원본 조각, 상태 전이 이벤트, 절차 노트를 따로 저장하고 따로 검색한다. ablation을 보면 풀마다 맡는 질문 유형이 다르다.
-
-26초 지연도 참고할 숫자다. AgentRunbook-R이 빠른 쪽인데도 26초다. thinking을 끄면 내려간다고는 하지만, 이 규모에서 실시간 응답은 어려울 것 같다.
-
 ## **6. Conclusion**
 
 conclusion 부분을 보면, 메모리 시스템은 에이전트가 특정 환경을 잘 다루는 숙련자가 되도록 도와야 한다고 한다.
@@ -232,5 +232,19 @@ conclusion 부분을 보면, 메모리 시스템은 에이전트가 특정 환�
 2번은 앞에서 본 [Experience-Following 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)와 겹친다. 거기서는 에이전트가 만든 경험이 다시 에이전트 행동을 바꾸는 루프를 쟀는데, V2는 그 루프를 끊고 고정된 이력으로 평가한다.
 
 V1이 사용자 대화를 물었다면 V2는 웹 에이전트 궤적을 묻고, 그만큼 규모도 커졌다. 아직 이 벤치마크에서 돌려본 메모리 시스템은 논문이 만든 AgentRunbook 말고는 거의 없다.
+
+## **7. 지금 관점: V1과 V2 중 어느 쪽으로 잴지**
+
+둘은 갈아타는 관계가 아니다. 재는 대상이 다르다.
+
+V1은 사용자에 대한 사실을 기억하는지를 115k–1.5M 토큰 규모에서 잰다. 개인화 챗봇이나 선호 추적에 맞고, 앞 리뷰들에서 Zep, MemMachine이 평가한 곳이다.
+
+V2는 환경에 대한 경험을 익히는지를 25M–115M 토큰 규모에서 잰다. 웹·도구 에이전트나 반복 작업 자동화에 맞다.
+
+사용자 정보를 기억하고 갱신하는 챗봇이라면 V1이 여전히 맞는 기준 같다. V1의 KU(지식 갱신)와 ABS(모른다고 하기)가 바로 그 일이다. 대신 V2가 보는 쪽은 앞에서 본 논문들에서 거의 비어 있었다. 경험 기억을 제대로 잰 건 [Experience-Following](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/) 하나였고, 그것도 합성 태스크(RegAgent) 하나에 기존 에이전트 3개(EHRAgent, AgentDriver, CIC-IoT)를 붙인 규모였다. 도구를 반복해서 부르는 에이전트라면 Gotchas와 Premise Awareness가 바로 해당될 것 같다. 예를 들면 어떤 도구가 특정 조건에서 실패하는 패턴을 에이전트가 익히는지 같은 것.
+
+AgentRunbook-R의 3풀 구조는 규모가 작아도 가져와 볼 만하다. 원본 조각, 상태 전이 이벤트, 절차 노트를 따로 저장하고 따로 검색한다. ablation을 보면 풀마다 맡는 질문 유형이 다르다.
+
+26초 지연도 참고할 숫자다. AgentRunbook-R이 빠른 쪽인데도 26초다. thinking을 끄면 내려간다고는 하지만, 이 규모에서 실시간 응답은 어려울 것 같다.
 
 다음은 [MemFail](https://momozzing.github.io/paper%20review/MemFail-Paper-review/)이다. 메모리 시스템을 요약·저장·검색 세 연산으로 나눠서, 틀린 답이 어느 단계에서 나왔는지 찾아내는 진단 벤치마크다.

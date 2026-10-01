@@ -170,6 +170,12 @@ mechanism engineering은 모듈과 동작 규칙을 설계해서 능력을 올�
 
 스몰빌의 believability(사람다워 보이는 정도) 인터뷰가 주관 평가, Voyager의 테크 트리 진행이 객관 평가다.
 
+## **5. Related Surveys**
+
+LLM 전반, 응용, alignment, reasoning, 도구를 쓰는 Augmented Language Models, 평가를 다룬 기존 서베이들을 소개한다.
+
+다만 LLM 기반 에이전트만 따로 다룬 서베이는 이 논문 전에는 없었다고 한다.
+
 ## **6. Challenges**
 
 서베이가 꼽은 풀리지 않은 과제 6개다.
@@ -183,16 +189,6 @@ mechanism engineering은 모듈과 동작 규칙을 설계해서 능력을 올�
 
 -> 2번이랑 5번은 모델이 좋아질수록 시뮬레이션이 더 어려워지는 쪽의 문제다. 성능이 올라간다고 다 풀리진 않을 것 같다.
 
-## **지금 관점: CoALA와 비교**
-
-이 서베이(2023-8)와 CoALA(2023-9)는 한 달 차이로 나온 같은 분야의 정리다. 서베이는 나온 논문들을 읽고 공통점을 묶었고, CoALA는 인지 아키텍처라는 오래된 이론에서 틀을 가져와 적용했다.
-
-나누는 방식도 다르다. 서베이는 Profile, Memory, Planning, Action 4개로 나누고, CoALA는 기억, 행동 공간, 의사결정 3개로 나눈다. 흔히 보는 Planning, Memory, Tool Use 3분류는 둘 다와 또 다른데, Lilian Weng의 2023년 블로그 글 "LLM Powered Autonomous Agents"에서 나온 정리다.
-
-제일 크게 갈리는 건 역할과 학습이다. 서베이는 역할(Profile)을 첫 모듈로 두고 학습은 2.2에 따로 떼어놨다. CoALA는 역할이 없고 학습을 행동의 한 종류로 넣었다. 사람을 시뮬레이션하는 쪽과 과제를 푸는 쪽의 관점 차이가 그대로 나온 것 같다.
-
-Profile, Memory, Planning, Action이라는 용어는 이후 에이전트 설명에서 자주 보인다. 뭐가 있었는지 찾아볼 때는 이 서베이, 구조를 어떻게 짤지 생각할 때는 CoALA를 보면 될 것 같다.
-
 ## **7. Conclusion**
 
 2021년부터 2023년까지의 LLM 에이전트 연구를 Profile, Memory, Planning, Action 4모듈로 정리하고, 응용과 평가까지 묶은 서베이다.
@@ -200,5 +196,25 @@ Profile, Memory, Planning, Action이라는 용어는 이후 에이전트 설명�
 새 기법을 만든 논문은 아니고, 흩어져 있던 기법들을 한 틀로 모아 이름을 붙인 논문이다.
 
 능력 획득을 파라미터 학습, 프롬프트 엔지니어링, mechanism engineering으로 나눈 구분도 기억해둘 만하다.
+
+## **8. 지금 관점: CoALA와 비교**
+
+이 서베이(2023-8)와 CoALA(2023-9)는 한 달 차이로 나온 같은 분야의 정리다.
+
+서베이는 나온 논문들을 읽고 공통점을 묶었고, CoALA는 인지 아키텍처라는 오래된 이론에서 틀을 가져와 적용했다.
+
+나누는 방식도 다르다. 서베이는 Profile, Memory, Planning, Action 4개, CoALA는 기억, 행동 공간, 의사결정 3개다.
+
+흔히 보는 Planning, Memory, Tool Use 3분류는 둘 다와 또 다르다. Lilian Weng의 2023년 블로그 글 "LLM Powered Autonomous Agents"에서 나온 정리다.
+
+제일 크게 갈리는 건 역할과 학습이다.
+
+서베이는 역할(Profile)을 첫 모듈로 두고 학습은 2.2에 따로 떼어놨다. CoALA는 역할이 없고 학습을 행동의 한 종류로 넣었다.
+
+-> 사람을 시뮬레이션하는 쪽과 과제를 푸는 쪽의 관점 차이가 그대로 나온 것 같다.
+
+Profile, Memory, Planning, Action이라는 용어는 이후 에이전트 설명에서 자주 보인다.
+
+뭐가 있었는지 찾아볼 때는 이 서베이, 구조를 어떻게 짤지 생각할 때는 CoALA를 보면 될 것 같다.
 
 다음은 메모리 쪽으로 넘어가서 [MemGPT](https://momozzing.github.io/paper%20review/MemGPT-Paper-review/)다. 컨텍스트 창을 RAM, 외부 저장소를 디스크로 보고 LLM이 스스로 기억을 옮기게 한 논문이다.

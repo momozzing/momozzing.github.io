@@ -45,6 +45,12 @@ gradient 업데이트가 한 번도 없는데 시도할수록 잘해진다.
 
 시도 → 실패 신호 → 반성("팬이 stoveburner 1에 없었으니 2를 봐야 했다") → 다음 시도에서 교정.
 
+## **2. Related work**
+
+reasoning·decision making 쪽(Self-Refine, critic 모델 파인튜닝, beam search 등)과 프로그래밍 쪽(AlphaCode, CodeT, Self-Debugging, CodeRL) 연구를 정리한다.
+
+이 방법들은 자기 평가나 실행 피드백은 쓰지만, 자기 반성을 쌓아두는 기억으로 실수에서 교훈을 남기지는 않는다고 한다.
+
 ## **3. Reflexion: reinforcement via verbal reflection**
 
 프레임워크는 모듈 3개와 메모리로 구성된다.
@@ -194,13 +200,37 @@ Table 3은 HumanEval Rust에서 가장 어려운 50문제로 테스트 생성과
 
 -> 반성이 잘못됐는지는 누가 판단하지??
 
-## **지금 관점: LangGraph Reflexion 구현과 비교**
+## **6. Broader impact**
 
-지금 보면 Reflexion 루프는 낯설지 않다. 코딩 에이전트가 테스트를 돌리고, 실패하면 에러 로그를 읽고, 어디서 틀렸는지 정리한 뒤 코드를 고쳐서 다시 시도한다. Actor(코드 생성) → Evaluator(테스트 실행) → Self-Reflection(에러 분석) → 재시도와 같은 순서다.
+에이전트가 외부 환경과 더 많이 상호작용하게 되면 자동화가 늘어나는 만큼 오용 위험도 커져서, 안전·윤리 쪽 노력이 더 필요하다고 한다.
 
-ReAct는 LangChain `create_agent` 한 줄로 만들 수 있었는데, Reflexion은 agent 루프 바깥에 평가와 반성을 두는 구조라 LangGraph(LangChain의 그래프 기반 에이전트 라이브러리)로 그래프를 직접 짠다. LangChain 공식 블로그 [Reflection Agents](https://www.langchain.com/blog/reflection-agents)는 이 계열을 Basic Reflection(생성과 비평 반복), Reflexion(비평을 구조화하고 검색 근거를 붙임), LATS(트리 탐색까지 붙인 방법) 순서로 정리해뒀다.
+반대로 언어로 된 반성은 블랙박스였던 RL 정책보다 해석하기 쉬워서, 도구를 쓰기 전에 반성 내용을 보고 의도를 확인하는 식으로 쓸 수 있다고 한다.
 
-아래는 블로그가 링크한 [공식 노트북](https://github.com/langchain-ai/langgraph/blob/23961cff61a42b52525f3b20b4094d8d2fba1744/docs/docs/tutorials/reflexion/reflexion.ipynb)에서 출력 스키마와 그래프 조립만 일부 발췌한 것이다. 원본은 지금은 사라진 `MessageGraph` 기반이라 그래프 부분은 현재 API(`StateGraph` + `add_messages`)로 바꿔 적었다.
+## **7. Conclusion**
+
+Reflexion은 ReAct 루프에 실패에서 배우는 단계를 더했다.
+
+가중치를 하나도 안 바꾸고, 실패 경험을 반성문으로 바꿔 메모리에 쌓는 것만으로 시도할수록 잘해지는 에이전트가 된다.
+
+강화학습의 스칼라 reward 대신 언어를 학습 신호로 쓰는 verbal RL이다.
+
+단, 반성은 근거가 있을 때 효과가 있었다. 테스트 없이 반성만 시킨 실험에서는 base보다 떨어졌다 (Table 3).
+
+## **8. 지금 관점: LangGraph로 만들 때와 비교**
+
+지금 보면 Reflexion 루프는 낯설지 않다.
+
+코딩 에이전트가 테스트를 돌리고, 실패하면 에러 로그를 읽고, 어디서 틀렸는지 정리한 뒤 코드를 고쳐서 다시 시도한다.
+
+Actor(코드 생성) → Evaluator(테스트 실행) → Self-Reflection(에러 분석) → 재시도와 같은 순서다.
+
+ReAct는 LangChain `create_agent` 한 줄로 만들 수 있었는데, Reflexion은 agent 루프 바깥에 평가와 반성을 두는 구조라 LangGraph(LangChain의 그래프 기반 에이전트 라이브러리)로 그래프를 직접 짠다.
+
+LangChain 공식 블로그 [Reflection Agents](https://www.langchain.com/blog/reflection-agents)는 이 계열을 Basic Reflection(생성과 비평 반복), Reflexion(비평을 구조화하고 검색 근거를 붙임), LATS(트리 탐색까지 붙인 방법) 순서로 정리해뒀다.
+
+아래는 블로그가 링크한 [공식 노트북](https://github.com/langchain-ai/langgraph/blob/23961cff61a42b52525f3b20b4094d8d2fba1744/docs/docs/tutorials/reflexion/reflexion.ipynb)에서 출력 스키마와 그래프 조립만 일부 발췌한 것이다.
+
+원본은 지금은 사라진 `MessageGraph` 기반이라 그래프 부분은 현재 API(`StateGraph` + `add_messages`)로 바꿔 적었다.
 
 ```python
 from pydantic import BaseModel, Field
@@ -249,24 +279,24 @@ builder.add_conditional_edges("revise", event_loop, ["execute_tools", END])
 graph = builder.compile()
 ```
 
-논문과 맞춰 보면 `draft`·`revise` 노드가 Actor, 스키마의 reflection 필드가 Self-Reflection, `execute_tools`의 웹 검색이 반성의 근거(논문 코딩 실험에서는 unit test), `MAX_ITERATIONS`가 max trials다. 다른 점도 있다. 논문은 Evaluator가 따로 있는데 여기서는 비평을 Actor 출력에 합쳤다. 그리고 누적되는 메시지 리스트는 한 번의 실행 안에서만 유지되니, 논문으로 치면 trial을 넘어가는 장기 기억보다 단기 기억(trajectory)에 가깝다.
+논문과 맞춰 보면 `draft`·`revise` 노드가 Actor, 스키마의 reflection 필드가 Self-Reflection, `execute_tools`의 웹 검색이 반성의 근거(논문 코딩 실험에서는 unit test), `MAX_ITERATIONS`가 max trials다.
+
+다른 점도 있다. 논문은 Evaluator가 따로 있는데 여기서는 비평을 Actor 출력에 합쳤다.
+
+그리고 누적되는 메시지 리스트는 한 번의 실행 안에서만 유지되니, 논문으로 치면 trial을 넘어가는 장기 기억보다 단기 기억(trajectory)에 가깝다.
 
 -> Table 3에서 테스트 없이 반성만 시키면 떨어졌는데, 이 구현에서는 검색 결과가 그 테스트 자리를 대신하는 것 같다.
 
-에이전트에 붙는 memory 설계도 비슷하다. 세션에서 얻은 교훈을 파일로 남겨두고 다음 세션 컨텍스트에 넣어주는 패턴은 Reflexion의 장기 기억과 같은 발상이다. 논문은 한 태스크의 trial 사이에서만 넘겨줬고, 이건 세션을 넘어간다.
+에이전트에 붙는 memory 설계도 비슷하다.
 
-판정이 부정확한 상태(멋대로 만든 테스트, 어설픈 LLM-judge)에서 반성을 붙이면 기대만큼 안 오를 수 있다. Table 3은 작은 실험이지만 그 방향을 보여준다.
+세션에서 얻은 교훈을 파일로 남겨두고 다음 세션 컨텍스트에 넣어주는 패턴은 Reflexion의 장기 기억과 같은 발상이다.
+
+논문은 한 태스크의 trial 사이에서만 넘겨줬고, 이건 세션을 넘어간다.
+
+판정이 부정확한 상태(멋대로 만든 테스트, 어설픈 LLM-judge)에서 반성을 붙이면 기대만큼 안 오를 수 있다.
+
+Table 3은 작은 실험이지만 그 방향을 보여준다.
 
 -> 에이전트 루프를 만들 때 반성 프롬프트보다 판정이 얼마나 확실한지를 먼저 봐야 할 것 같다.
-
-## **7. Conclusion**
-
-Reflexion은 ReAct 루프에 실패에서 배우는 단계를 더했다.
-
-가중치를 하나도 안 바꾸고, 실패 경험을 반성문으로 바꿔 메모리에 쌓는 것만으로 시도할수록 잘해지는 에이전트가 된다.
-
-강화학습의 스칼라 reward 대신 언어를 학습 신호로 쓰는 verbal RL이다.
-
-단, 반성은 근거가 있을 때 효과가 있었다. 테스트 없이 반성만 시킨 실험에서는 base보다 떨어졌다 (Table 3).
 
 다음은 [Toolformer](https://momozzing.github.io/paper%20review/Toolformer-Paper-review/)다. 모델이 API를 언제 부를지 스스로 배우게 한다.

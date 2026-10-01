@@ -97,6 +97,12 @@ PPR이 그래프 경로를 탐색하고 관련 부분그래프를 찾아주니�
 
 뒤에서 볼 [SYNAPSE](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)도 그래프 위에서 활성을 퍼뜨리는 비슷한 계열이다.
 
+## **3. Experimental Setup**
+
+다중홉 QA 벤치마크 MuSiQue, 2WikiMultiHopQA, HotpotQA에서 검색과 QA를 잰다. 각 검증셋에서 질문 1,000개를 뽑고, IRCoT를 따라 후보 구절을 모아 검색 코퍼스를 만든다.
+
+베이스라인은 BM25, Contriever, GTR, ColBERTv2와 Propositionizer, RAPTOR, 다단계 검색인 IRCoT다. 지표는 검색 R@2·R@5, QA EM·F1이다.
+
 ## **4. Results**
 
 단일 단계 검색부터 보자. 세 데이터셋 dev 1,000문항에서 잰 recall@5(상위 5개 안에 근거 구절이 든 비율)다. 논문 Table 2에서 R@5만 옮겼다.
@@ -207,17 +213,11 @@ All-Recall로 본다. 근거 구절을 전부 찾은 질문의 비율이다(논�
 
 ColBERTv2랑 IRCoT가 같은 답을 낸다. 반복 검색을 해도 못 찾았다.
 
-## **지금 관점: 원본 구절을 남기는 그래프**
+## **6. Related Work**
 
-이 논문을 읽고 나서 좋아 보인 점이 몇 가지 있다.
+LLM 장기기억(파라미터 메모리, RAG, 긴 컨텍스트), 그래프를 쓰는 다중홉 QA, LLM과 지식그래프를 합치는 연구를 정리한다.
 
-하나는 원본 구절을 안 버린다는 점이다. 그래프를 만들긴 하지만 검색 결과는 원래 구절이다. PPR 노드 확률을 구절로 모아서 순위를 매긴다. 그래프는 색인이고 저장소가 아니다. 해마도 기억을 직접 저장하지 않고 신피질의 기억을 가리키는 색인만 갖고 있다고 하니까, 이론을 그대로 옮긴 결과다. 원본을 남기느냐는 나중에 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 다시 나온다.
-
-또 하나는 스키마가 없다는 점이다. 논문이 `schemaless knowledge graph`라고 적었다. 스키마를 안 정하니까 뭘 버릴지 미리 정하지 않는다. 대신 그래프가 OpenIE를 돌린 모델에 묶인다. REBEL이랑 GPT-3.5의 트리플 수가 두 배 차이 나는 걸 보면, 색인 모델을 바꾸면 그래프를 다시 만들어야 하는 거 아닌가?? 모델을 바꿀 때 메모리가 어떻게 되는지는 나중에 볼 [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서 다룬다.
-
-마지막은 검색 비용이 낮다는 점이다. 색인은 오프라인이고 질의할 때는 PPR만 돈다. IRCoT보다 6~13배 빠르다. 검색이 느린 메모리 시스템이 뒤에서 볼 [Anatomy](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서 나오는데, 그거랑 비교하면 차이가 크다.
-
-다중홉 질문을 볼 때는 R@k만 보지 말고 AR(all-recall)을 같이 보는 게 좋을 것 같다. 그리고 PPR은 그래프 구조가 필요해서 벡터 DB만 있는 환경에 바로 얹기는 어렵다. 질의에서 엔티티를 뽑고 그 엔티티로 다시 검색하는 2단 구조는 그래프 없이도 되니까, path-finding 일부는 그걸로도 나아지지 않을까?
+RAPTOR, GraphRAG처럼 오프라인에서 정보를 합치는 방법은 요약을 쓰니까 새 데이터가 들어오면 요약을 다시 해야 한다. HippoRAG는 KG에 엣지만 더하면 된다고 한다.
 
 ## **7. Conclusions & Limitations**
 
@@ -233,5 +233,27 @@ path-following 다중홉 QA에서 좋은 결과, path-finding에서의 가능성
 첫 번째는 쓰기 단계에서 LLM 추출 품질이 전체를 좌우한다는 얘기다. 뒤에서 볼 [Anatomy](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서 이 문제를 직접 잰다.
 
 다중홉을 검색 여러 번으로 풀던 것을, 그래프 위에 PPR을 돌려서 검색 한 번으로 푼다.
+
+## **8. 지금 관점: 메모리 설계에 쓸 수 있는 점**
+
+이 논문을 읽고 지금도 써먹을 만해 보인 게 몇 가지 있다.
+
+먼저 원본 구절을 안 버린다. 그래프를 만들긴 하지만 검색 결과는 원래 구절이다. PPR 노드 확률을 구절로 모아서 순위를 매긴다.
+
+그래프는 색인이고 저장소가 아니다. 해마도 기억을 직접 저장하지 않고 신피질의 기억을 가리키는 색인만 갖고 있다고 하니까, 이론을 그대로 옮겼다. 원본을 남기느냐는 나중에 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 다시 나온다.
+
+스키마도 없다. 논문이 `schemaless knowledge graph`라고 적었다. 스키마를 안 정하니까 뭘 버릴지 미리 정하지 않는다.
+
+대신 그래프가 OpenIE를 돌린 모델에 묶인다. REBEL이랑 GPT-3.5의 트리플 수가 두 배 차이 난다.
+
+-> 색인 모델을 바꾸면 그래프를 다시 만들어야 하는 거 아닌가??
+
+모델을 바꿀 때 메모리가 어떻게 되는지는 나중에 볼 [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서 다룬다.
+
+검색 비용도 낮다. 색인은 오프라인이고 질의할 때는 PPR만 돈다. IRCoT보다 6~13배 빠르다. 검색이 느린 메모리 시스템이 뒤에서 볼 [Anatomy](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서 나오는데, 그거랑은 차이가 크다.
+
+다중홉 질문을 볼 때는 R@k만 보지 말고 AR(all-recall)도 같이 보는 게 좋을 것 같다.
+
+PPR은 그래프 구조가 필요해서 벡터 DB만 있는 환경에 바로 얹기는 어렵다. 질의에서 엔티티를 뽑고 그 엔티티로 다시 검색하는 2단 구조는 그래프 없이도 되니까, path-finding 일부는 그걸로도 나아지지 않을까?
 
 다음은 [LongMemEval](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)이다. 장기기억을 다섯 능력으로 쪼개고, 메모리 설계를 indexing·retrieval·reading 세 단계 네 제어점으로 나눈 벤치마크다.

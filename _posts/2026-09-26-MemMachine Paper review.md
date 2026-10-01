@@ -36,7 +36,21 @@ MemMachine은 MemVerge, Inc.에서 만든 오픈소스 메모리 시스템이다
 
 원시 대화 에피소드를 그대로 저장하고, LLM으로 추출하는 건 최소화한다. 아예 안 쓰는 건 아니고, 프로필 메모리는 여전히 LLM으로 추출한다.
 
+## **2. Related Work**
+
+MemGPT, Generative Agents 같은 에이전트 메모리 연구와 Mem0, Zep, Memobase, LangMem, Mastra, MemOS 같은 기존 메모리 시스템, LoCoMo·LongMemEval·EpBench 벤치마크를 정리한다.
+
+Mem0처럼 메시지마다 LLM으로 사실을 뽑으면 비용이 들고 추출 오류가 쌓인다는 게 이 논문의 문제의식이다.
+
+## **3. Memory Types for AI Agents**
+
+인지과학의 구분을 빌려 일화 메모리(무엇이 언제 있었나), 의미 메모리(사용자 선호 같은 일반화된 지식), 절차 메모리(어떻게 하나)를 나눈다.
+
+MemMachine은 일화 메모리와 의미 메모리(프로필 메모리)만 구현하고 절차 메모리는 아직 없다. 시간 정보는 따로 모듈을 두지 않고 모든 에피소드에 타임스탬프를 붙여 검색 때 거른다.
+
 ## **4. MemMachine Architecture**
+
+### **4.1 System Overview**
 
 전체 구조는 이렇다.
 
@@ -46,7 +60,25 @@ MemMachine은 MemVerge, Inc.에서 만든 오픈소스 메모리 시스템이다
 
 일화 메모리는 working memory(단기)와 persistent memory(장기)로 나뉘고, 프로필 메모리는 semantic memory 쪽에 있다.
 
-논문은 단기 쪽을 STM(Short-Term Memory), 장기 쪽을 LTM(Long-Term Memory)이라고 부른다. STM은 최근 에피소드를 정해진 개수만큼 들고 있으면서 세션 요약을 만들고, 창을 벗어난 에피소드는 LTM으로 넘어가 문장 단위로 임베딩해서 검색할 수 있게 저장된다.
+저장소는 PostgreSQL(pgvector), SQLite, Neo4j를 쓴다.
+
+### **4.2 Data Ingestion**
+
+메시지 하나(대화 턴 하나)를 Episode라는 단위로 저장한다. 보낸 쪽, 타임스탬프, 세션 ID, 사용자 정의 메타데이터가 붙는다.
+
+원본 저장소에 넣으면서 동시에 일화 메모리와 프로필 메모리로 보내 색인한다.
+
+### **4.3 Short-Term Memory**
+
+논문은 단기 쪽을 STM(Short-Term Memory)이라고 부른다. STM은 최근 에피소드를 정해진 개수만큼 들고 있으면서 LLM으로 세션 요약을 만든다. 검색 없이 바로 최근 문맥을 쓸 수 있다.
+
+### **4.4 Long-Term Memory**
+
+장기 쪽은 LTM(Long-Term Memory)이다. STM 창을 벗어난 에피소드는 LTM으로 넘어가 문장 단위로 쪼개고, 원래 에피소드의 메타데이터와 연결해 문장마다 임베딩해서 저장한다.
+
+### **4.5 Memory Search and Recall**
+
+검색은 STM을 먼저 보고, LTM에서 문장 임베딩으로 찾은 뒤 원래 에피소드로 거슬러 올라가는 순서다. STM과 겹치는 에피소드는 빼고 시간순으로 정렬해서 돌려준다.
 
 ### **4.6 Contextualization**
 
@@ -81,6 +113,10 @@ LLM 추출은 여기서만 쓴다. 원문은 일화 메모리에 남아 있으�
 
 앞에서 본 Mem0에서는 사실만 남기고 원문을 버렸는데, 여기서는 원문을 남긴다.
 
+### **4.8 Multi-Tenancy and Isolation**
+
+프로젝트 단위(org_id/project_id)로 메모리를 나누고, 그 안에서 user_id, agent_id, session_id로 다시 격리한다.
+
 ## **5. Retrieval Agent**
 
 다중홉 질의를 위해서 에이전트를 따로 둔다.
@@ -112,6 +148,18 @@ LLM 추출은 여기서만 쓴다. 원문은 일화 메모리에 남아 있으�
 
 세 전략 모두 같은 DeclarativeMemory 검색(벡터 검색 + 재랭커)을 부른다. 그래서 인덱스나 재랭커를 개선하면 세 경로에 다 반영된다고 한다.
 
+### **5.3 Query Routing**
+
+`ToolSelectAgent`가 LLM 한 번 호출로 질의를 다중홉 의존 사슬, 여러 엔티티 단일홉, 단순 단일홉 셋 중 하나로 분류한다. 의존 사슬이 하나라도 보이면 다중홉으로 보낸다.
+
+### **5.4 Strategy Details**
+
+ChainOfQuery는 검색, 충분한지 판단하고 질의 다시 쓰기, 증거 쌓기를 최대 3번 반복한다. SplitQuery는 질의를 독립된 하위 질의 2~6개로 쪼개서 동시에 검색한다.
+
+### **5.5 Multi-Query Reranking**
+
+마지막 재랭킹에 원래 질의만 쓰지 않고, 중간에 다시 쓴 질의와 하위 질의까지 이어 붙여서 넣는다. 중간 단계에서만 필요한 사실도 순위에서 밀리지 않게 하려는 장치다.
+
 ### **5.6 Benchmark Results**
 
 다중홉 에이전트 결과다. 정확도는 LLM 판정 점수이고, 세 가지 방식을 비교한다. 메모리 없이 전체 텍스트를 LLM에 넣는 베이스라인, 기본 MemMachine 검색, Retrieval Agent다.
@@ -121,6 +169,30 @@ HotpotQA hard 500문항(답변 모델 gpt-5-mini)에서 Retrieval Agent는 93.2%
 WikiMultiHop에서 질문들의 문맥을 한 저장소에 무작위로 섞어 넣은 조건에서는 Retrieval Agent가 92.6%, 기본 MemMachine이 87.4%다. 전체 텍스트 베이스라인은 96.7%로 더 높다.
 
 -> 에이전트가 기본 검색보다는 확실히 낫지만, 문맥이 창에 다 들어가는 이 벤치마크들에서는 전체 텍스트를 넣는 쪽이 비슷하거나 더 높다.
+
+### **5.7 Token Cost Analysis**
+
+라우팅과 전략 실행에 LLM 호출이 더 들어간다. 바로 기본 검색으로 가는 질의는 라우팅 호출 비용만 들고, ChainOfQuery는 반복 3번 제한이 있어서 비용에 상한이 있다고 한다.
+
+### **5.8 When to Use Agent Mode**
+
+다중홉이나 여러 엔티티를 묻는 질의, 지연보다 정확도가 중요한 경우에 쓰라고 한다. 단일홉 조회 위주이거나 지연·토큰 예산이 빡빡하면 필요 없다.
+
+### **5.9 OpenClaw Integration**
+
+Retrieval Agent를 오픈소스 에이전트 프레임워크 OpenClaw의 플러그인으로도 제공한다.
+
+## **6. LLM Integration and Model Impact**
+
+LLM은 STM 요약, 프로필 추출, agent 모드 추론 세 군데에만 쓰고, 메시지마다 사실을 뽑거나 중복을 정리하는 데는 안 쓴다고 한다.
+
+답변 모델에 따른 점수 차이, 토큰 비용, 대화가 컨텍스트 창에 다 들어가는 경우에도 메모리가 필요한지를 같이 다룬다.
+
+## **7. Experimental Setup**
+
+벤치마크(LoCoMo, LongMemEval_S. HotpotQA·WikiMultiHop·EpBench는 5.6의 Retrieval Agent 실험에서 따로 쓴다), 평가 지표, 실험 환경, 비교 시스템을 정리한다.
+
+비교 시스템 중 Mem0는 직접 다시 돌렸고, Zep, Memobase 등은 발표된 수치를 가져왔다.
 
 ## **8. Results and Analysis**
 
@@ -195,6 +267,34 @@ LongMemEval_S는 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%2
 
 ## **9. Discussion**
 
+### **9.1 Retrieval Stage Dominates Accuracy**
+
+8.4의 ablation을 다시 정리한다. 검색 쪽 개선을 다 합한 효과가 저장 쪽(문장 청킹)보다 훨씬 크다고 한다.
+
+### **9.2 Model–Prompt Co-optimization**
+
+모델을 바꿀 때 프롬프트를 그대로 가져다 쓰지 말고, 답변 모델이 바뀌면 프롬프트를 다시 평가해야 한다고 한다.
+
+### **9.3 The Role of Personalization**
+
+일화 메모리는 무슨 일이 있었는지, 프로필 메모리는 사용자가 어떤 사람인지를 맡아서 세션이 바뀌어도 개인화를 이어간다고 한다.
+
+### **9.4 Summary vs. Full Context vs. Compressed Observations**
+
+전체 문맥을 넣으면 길어질수록 모델이 놓치고, 요약만 쓰면 세부 사실과 시점이 빠진다. Mastra의 압축 관찰 로그는 그 중간이라고 본다.
+
+### **9.5 Single-Agent vs. Multi-Agent Memory**
+
+여러 에이전트가 메모리를 공유하면 같은 정보를 다시 모으지 않아도 되고, 에이전트 사이에 넘길 때 문맥을 잃지 않는다고 한다.
+
+### **9.6 Privacy and Data Sovereignty**
+
+임베딩 모델과 LLM을 로컬에서 돌리면 데이터가 밖으로 나가지 않는다. 자체 호스팅이라 로컬 모델과 외부 API를 코드 수정 없이 바꿔 쓸 수 있다고 한다.
+
+### **9.7 Limitations and Threats to Validity**
+
+논문이 밝힌 한계다. 점수는 답변 모델, 프롬프트 템플릿, 제공자 쪽 모델 업데이트에 따라 달라진다. 시스템 간 비교는 직접 다시 돌린 결과와 발표된 수치를 섞은 거다. ablation은 차원을 하나씩 따로 바꾼 거라 차원끼리 상호작용은 안 봤고, 일부 설정은 일부 문항으로 먼저 돌린 다음 500문항으로 늘렸다. 그래서 일반적인 성능 보장보다는 평가한 설정 안에서의 근거로 봐달라고 한다.
+
 ### **9.8 Architectural Design Tensions**
 
 논문 Table 16은 여러 메모리 시스템을 설계 속성별로 비교한다. 아래는 그중 일부 행과 열만 옮겼다.
@@ -230,15 +330,9 @@ LongMemEval_S는 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%2
 - 양은 많고 개인화는 적은 작업 (배치 처리, 데이터 추출)
 - 개인정보 제약 때문에 상호작용 이력을 저장하면 안 되는 경우
 
-## **지금 관점: 저장 구조를 안 바꾸고 할 수 있는 것**
+## **10. Future Work**
 
-이 논문에서 가져올 만한 건 대부분 저장 구조를 안 바꾸고도 해볼 수 있다. 여섯 가지 중에 제일 큰 게 `k`를 20→30으로 올린 +4.2%p인데, 파라미터 하나 바꾼 거다. 다만 GPT-5에서는 k=50이 오히려 0.890으로 떨어졌으니 무조건 늘린다고 좋은 것도 아니다.
-
-이웃 턴을 같이 꺼내는 것도 대화 데이터에서는 해볼 만하다. 대화는 턴 하나만으로는 말이 안 되는 경우가 많다.
-
-모델을 바꿀 때 프롬프트도 다시 봐야 한다. CoT 제거 +1.6%p, GPT-5-mini가 GPT-5보다 +2.6%p였다. 추출·그래프를 쓰는 무거운 메모리 시스템을 들이기 전에 이런 것부터 해보는 게 순서일 것 같다.
-
-그런데 5.6절에서 본 Retrieval Agent 실험(논문 Table 3)을 보면 LoCoMo에서도 gpt-5-mini 기준으로 전체 텍스트 91.7%, MemMachine 90.5%다. abstract의 0.9169(gpt-4.1-mini, agent 모드)와는 답변 모델과 설정이 다른 실험이다. 메모리를 쓰는 이유가 정확도보다는 토큰과 지연 쪽일 수 있다.
+절차 메모리, 시간 추론 강화, LongMemEval_M(질문당 약 1.5M 토큰) 평가, 질의에 따라 `k`를 정하는 방법, 오래된 메모리 정리, 멀티모달 메모리를 앞으로 할 일로 든다.
 
 ## **11. Conclusion**
 
@@ -248,8 +342,18 @@ LongMemEval_S는 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%2
 
 LongMemEval_S ablation에서는 검색 단계 최적화가 저장 단계 변경보다 효과가 컸고, 프롬프트를 맞춘 작은 모델(GPT-5-mini)이 큰 모델(GPT-5)보다 나았다.
 
-논문이 밝힌 한계도 있다. 점수는 답변 모델, 프롬프트 템플릿, 제공자 쪽 모델 업데이트에 따라 달라진다. 시스템 간 비교는 직접 다시 돌린 결과와 발표된 수치를 섞은 거다. ablation은 차원을 하나씩 따로 바꾼 거라 차원끼리 상호작용은 안 봤고, 일부 설정은 일부 문항으로 먼저 돌린 다음 500문항으로 늘렸다. 그래서 일반적인 성능 보장보다는 평가한 설정 안에서의 근거로 봐달라고 한다.
-
 저장 구조는 단순하게 두고 검색 깊이, 포맷, 프롬프트를 조정하는 것만으로 점수를 많이 올린 논문이다.
+
+## **12. 지금 관점: 저장 구조를 그대로 두고 해볼 만한 것**
+
+이 논문에서 가져올 만한 건 대부분 저장 구조를 안 바꾸고도 해볼 수 있다. 여섯 가지 중에 제일 큰 게 `k`를 20→30으로 올린 +4.2%p인데, 파라미터 하나 바꾼 거다. 다만 GPT-5에서는 k=50이 오히려 0.890으로 떨어졌으니 무조건 늘린다고 좋은 것도 아니다.
+
+이웃 턴을 같이 꺼내는 것도 대화 데이터에서는 해볼 만하다. 대화는 턴 하나만으로는 말이 안 되는 경우가 많다.
+
+모델을 바꿀 때 프롬프트도 다시 봐야 한다. CoT 제거 +1.6%p, GPT-5-mini가 GPT-5보다 +2.6%p였다.
+
+-> 추출·그래프를 쓰는 무거운 메모리 시스템을 들이기 전에 이런 것부터 해보는 게 순서일 것 같다.
+
+그런데 5.6절에서 본 Retrieval Agent 실험(논문 Table 3)을 보면 LoCoMo에서도 gpt-5-mini 기준으로 전체 텍스트 91.7%, MemMachine 90.5%다. abstract의 0.9169(gpt-4.1-mini, agent 모드)와는 답변 모델과 설정이 다른 실험이다. 메모리를 쓰는 이유가 정확도보다는 토큰과 지연 쪽일 수 있다.
 
 다음은 [LongMemEval-V2](https://momozzing.github.io/paper%20review/LongMemEval-V2-Paper-review/)다. V1이 사용자 이력을 물었다면 V2는 웹 에이전트가 환경에서 쌓은 경험을 묻는다.

@@ -127,6 +127,19 @@ LLM은 이 아키텍처의 중심 부품이지 전부는 아니다.
 
 ![CoALA 프레임워크 (논문 Figure 4)](https://momozzing.github.io/assets/images/coala/fig4-coala.png)
 
+행동 공간은 CoALA가 제일 많이 넓힌 곳이다.
+
+보통 도구 사용이라고 부르는 건 외부 행동뿐이다. CoALA는 그 옆에 내부 행동 3종을 같이 둔다.
+
+![행동 공간의 구분 (논문 Figure 5)](https://momozzing.github.io/assets/images/coala/fig5-action-space.png)
+
+- 외부 행동 = grounding : 물리 환경 제어, 사람과의 대화, 디지털 환경(API, 웹, 코드 실행) 조작
+- 내부 행동 3종 : retrieval(장기 기억 읽기), reasoning(LLM으로 working memory 갱신), learning(장기 기억에 쓰기)
+
+생각하고, 기억을 읽고, 기억에 쓰는 걸 전부 "행동"으로 본다.
+
+-> ReAct가 thought를 action space에 넣었던 걸 프레임워크 전체로 넓힌 것 같다.
+
 ### **4.1 Memory**
 
 LLM은 stateless다. 호출 사이에 아무것도 기억하지 않는다.
@@ -147,22 +160,21 @@ Reflexion의 반성문은 경험 기록처럼 보이는데, 논문은 실패한 
 
 그래서 에이전트가 자기 코드를 고치는 건 절차 기억에 쓰는 행동이 된다.
 
-### **4.2–4.5 Grounding, Retrieval, Reasoning, Learning actions**
+### **4.2 Grounding actions**
 
-CoALA가 제일 많이 넓힌 곳이다.
+grounding은 외부 행동을 실행하고 환경의 피드백을 텍스트로 바꿔 working memory에 넣는다. 바깥 세계와의 상호작용을 관찰도 행동도 텍스트인 "텍스트 게임"처럼 단순하게 만든다고 한다.
 
-보통 도구 사용이라고 부르는 건 외부 행동뿐이다. CoALA는 그 옆에 내부 행동 3종을 같이 둔다.
-
-![행동 공간의 구분 (논문 Figure 5)](https://momozzing.github.io/assets/images/coala/fig5-action-space.png)
-
-- 외부 행동 = grounding : 물리 환경 제어, 사람과의 대화, 디지털 환경(API, 웹, 코드 실행) 조작
-- 내부 행동 3종 : retrieval(장기 기억 읽기), reasoning(LLM으로 working memory 갱신), learning(장기 기억에 쓰기)
-
-생각하고, 기억을 읽고, 기억에 쓰는 걸 전부 "행동"으로 본다.
-
--> ReAct가 thought를 action space에 넣었던 걸 프레임워크 전체로 넓힌 것 같다.
+### **4.3 Retrieval actions**
 
 retrieval은 규칙 기반, sparse(키워드), dense(임베딩) 검색으로 나뉜다. Voyager의 스킬 검색과 Generative Agents의 3점수 회상(최근성, 중요도, 관련도)이 예시로 나온다.
+
+### **4.4 Reasoning actions**
+
+reasoning은 working memory를 읽고 working memory에 쓴다. 장기 기억을 읽어오는 retrieval과 다른 점이다.
+
+최근 관찰이나 trajectory, 꺼내온 기억을 요약해 새 정보를 만들고, 그 결과는 learning(장기 기억에 쓰기)이나 다음 의사결정의 컨텍스트로 쓰인다.
+
+### **4.5 Learning actions**
 
 learning은 쓰는 대상에 따라 넷이다.
 
@@ -324,18 +336,6 @@ GPT-N이 기억, grounding, 의사결정을 통째로 컨텍스트 안에서 시
 
 -> 프레임워크 논문이 자기 프레임워크가 덜 중요해지는 조건을 직접 적어둔 게 재밌다.
 
-## **지금 관점: Planning/Memory/Tool Use 분류와 비교**
-
-이 논문에는 벤치마크 수치가 없다. 기여는 전부 개념 정리다.
-
-처음엔 Planning/Memory/Tool Use 3분류로도 같은 걸 물을 수 있지 않나 싶었다. 그런데 에이전트를 하나씩 놓고 보면 차이가 난다. 3분류로 물으면 "Memory 있음/없음"에서 답이 끝난다. Voyager와 Generative Agents는 둘 다 "Memory 있음"인데, CoALA로 보면 하나는 절차 기억(실행할 수 있는 코드)이고 하나는 일화·의미 기억(자연어)이다. 하나는 기억을 다시 실행하고 하나는 기억을 참고한다는 차이까지 나온다.
-
-Planning도 마찬가지다. ReAct와 ToT는 둘 다 "Planning 함"인데, 하나는 제안 하나를 바로 실행하고 하나는 제안-평가-선택을 전부 돌린다. 이 시리즈에서 논문마다 따로 봤던 memory stream, 스킬 라이브러리, 반성문도 같은 틀의 다른 칸이었다.
-
-아쉬운 건 어떤 조합이 좋은지에 대한 실험적인 답이 없다는 점이다. 분류는 해주지만 예측은 안 해준다.
-
-7장의 경계 질문은 오히려 더 어려워진 것 같다. function calling과 긴 컨텍스트가 모델에 들어가면서 working memory와 외부 기억의 경계, reasoning과 grounding의 경계가 논문이 쓰일 때보다 흐려졌다.
-
 ## **8. Conclusion**
 
 에이전트 연구가 각자 만들어내던 개념들(기억, 스킬, 반성, 계획)이 인지 아키텍처가 수십 년 전에 정리한 구조와 거의 그대로 맞아떨어진다.
@@ -343,5 +343,29 @@ Planning도 마찬가지다. ReAct와 ToT는 둘 다 "Planning 함"인데, 하�
 기억 4종, 내부/외부 행동, 제안-평가-선택 사이클이라는 말을 쓰면 흩어진 논문들이 한 장의 표로 정리된다.
 
 ReAct에서 시작해 Voyager와 스몰빌까지 온 이 시리즈의 논문들도 그 표의 행이었다. 다음에 새 에이전트를 볼 때도 어떤 기억을 쓰는지, 행동 공간에 뭐가 있는지, 의사결정이 얼마나 복잡한지부터 보면 위치가 잡힐 것 같다.
+
+## **9. 지금 관점: 흔히 쓰는 Planning/Memory/Tool Use 분류와 비교**
+
+이 논문에는 벤치마크 수치가 없다. 기여는 전부 개념 정리다.
+
+처음엔 Planning/Memory/Tool Use 3분류로도 같은 걸 물을 수 있지 않나 싶었다.
+
+그런데 에이전트를 하나씩 놓고 보면 차이가 난다. 3분류로 물으면 "Memory 있음/없음"에서 답이 끝난다.
+
+Voyager와 Generative Agents는 둘 다 "Memory 있음"이다.
+
+CoALA로 보면 Voyager의 기억은 절차 기억(실행할 수 있는 코드)이고 Generative Agents의 기억은 일화·의미 기억(자연어)이다. 하나는 기억을 다시 실행하고 하나는 기억을 참고한다는 차이까지 나온다.
+
+Planning도 마찬가지다. ReAct와 ToT는 둘 다 "Planning 함"인데, ReAct는 제안 하나를 바로 실행하고 ToT는 제안-평가-선택을 전부 돌린다.
+
+이 시리즈에서 논문마다 따로 봤던 memory stream, 스킬 라이브러리, 반성문도 같은 틀의 다른 칸이었다.
+
+다만 어떤 조합이 좋은지에 대한 실험 결과는 없다.
+
+-> 새 에이전트를 어디에 놓을지는 알려주는데, 어떻게 만들면 잘 되는지는 직접 해봐야 한다.
+
+7장의 경계 질문은 오히려 더 어려워진 것 같다.
+
+function calling과 긴 컨텍스트가 모델에 들어가면서 working memory와 외부 기억의 경계, reasoning과 grounding의 경계가 논문이 쓰일 때보다 흐려졌다.
 
 다음은 [LLM Agent Survey](https://momozzing.github.io/paper%20review/LLM-Agent-Survey-Paper-review/)다. 에이전트를 Profile·Memory·Planning·Action 네 모듈로 나눠 정리한 서베이다.

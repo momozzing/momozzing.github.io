@@ -219,7 +219,23 @@ HotpotQA는 검증셋에서 무작위로 뽑은 500문제로 따로 잰 것이�
 
 instruction following으로 파인튜닝된 모델이라 그럴 수 있다고 추정하고, ReAct가 특정 모델에만 통하는 방법은 아니라는 근거로 든다.
 
-## **지금 관점: LangChain create_agent와 비교**
+## **5. Related Work**
+
+reasoning 쪽(CoT, least-to-most, self-consistency, STaR 등)과 decision making 쪽(WebGPT, SayCan, Inner Monologue 등) 연구를 정리한다.
+
+ReAct는 고정된 reasoning에 그치지 않고 action과 observation을 같은 입력 흐름에 넣는다는 점, 비싼 사람 피드백 없이 reasoning 과정의 언어 설명만으로 정책을 배운다는 점이 다르다고 한다.
+
+## **6. Conclusion**
+
+thought와 action을 한 루프에서 번갈아 돌리면 CoT의 환각과 Act-only의 계획 부족을 서로 보완한다고 한다.
+
+단독으로 만능은 아니다. HotpotQA에서는 CoT보다 낮아서, CoT-SC fallback이나 finetuning으로 보완한다.
+
+여태까지 reasoning과 acting을 따로 연구했다면, 이 방법은 thought를 action의 하나로 넣어서 한 루프 안에서 같이 돌린다.
+
+덧붙이면 1저자 Shunyu Yao는 이후 Tree of Thoughts를 냈고 SWE-bench에도 참여했다.
+
+## **7. 지금 관점: LangChain create_agent와 비교**
 
 논문의 Thought → Action → Observation 루프가 코드로는 어떻게 되어 있는지 보자.
 
@@ -252,7 +268,7 @@ result = agent.invoke(
 
 논문의 `finish[answer]`는 tool로 안 만들어도 된다. 이유는 뒤에 나온다.
 
-### **내부 루프**
+### **7.1 내부 루프**
 
 create_agent는 model 노드와 tools 노드를 가진 graph를 만든다.
 
@@ -279,15 +295,17 @@ def agent_loop(messages):
                                              # Observation 추가
 ```
 
-### **논문 ↔ 구현 매핑**
+### **7.2 논문 ↔ 구현 매핑**
 
-- Thought : AIMessage의 `content` (tool_calls와 같이 생성됨)
-- Action : AIMessage의 `tool_calls`
-- Observation : `ToolMessage`
-- `finish[answer]` : tool_calls 없는 AIMessage = 루프 종료 조건
-- trajectory (context 누적) : `messages` 리스트
+Thought는 AIMessage의 `content`에 들어간다. tool_calls와 같이 생성된다.
 
-### **논문과 달라진 점**
+Action은 AIMessage의 `tool_calls`, Observation은 `ToolMessage`다.
+
+`finish[answer]`는 따로 없다. tool_calls가 없는 AIMessage가 나오면 루프가 끝난다.
+
+trajectory(context 누적)는 `messages` 리스트 그대로다.
+
+### **7.3 논문과 달라진 점**
 
 원논문(2022)은 function calling이 없던 시절이라 순수 텍스트로 동작했다.
 
@@ -311,16 +329,6 @@ sparse thought도 그냥 된다.
 
 create_agent는 ReAct 루프에서 텍스트 파싱을 function calling으로 바꾸고 graph로 감싼 형태다.
 
--> 프레임워크 이름은 바뀌어도 안에서 도는 건 2022년 이 논문의 while문이다.
-
-## **6. Conclusion**
-
-thought와 action을 한 루프에서 번갈아 돌리면 CoT의 환각과 Act-only의 계획 부족을 서로 보완한다고 한다.
-
-단독으로 만능은 아니다. HotpotQA에서는 CoT보다 낮아서, CoT-SC fallback이나 finetuning으로 보완한다.
-
-여태까지 reasoning과 acting을 따로 연구했다면, 이 방법은 thought를 action의 하나로 넣어서 한 루프 안에서 같이 돌린다.
-
-덧붙이면 1저자 Shunyu Yao는 이후 Tree of Thoughts를 냈고 SWE-bench에도 참여했다.
+-> 프레임워크는 바뀌었지만 안에서 도는 루프는 논문 때와 같다.
 
 다음은 [Reflexion](https://momozzing.github.io/paper%20review/Reflexion-Paper-review/)이다. ReAct 루프가 실패하면 그 실패를 언어로 반성해 두고 다음 시도에 넣는다.

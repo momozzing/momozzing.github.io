@@ -57,6 +57,12 @@ Figure 1 그래프를 보면 태스크가 진행되면서 테스트 정확도가
 
 ## **2. Method**
 
+### **2.1 Problem Setting**
+
+LLM이 태스크를 하나씩 풀면서 외부 메모리를 들고 간다. 풀고 나서 피드백을 받으면 기존 갱신기가 새 후보 메모리를 만든다.
+
+기존 방법은 이 후보를 바로 쓰는데, Janus는 이전 메모리와 후보 중 하나를 고르는 배포 결정으로 다룬다.
+
 ### **2.2 Janus: Plug-in Memory Control**
 
 ExpeL, DC-RS 같은 기존 갱신기를 감싸는 플러그인이다. 갱신 규칙 자체는 안 바꾼다.
@@ -207,17 +213,15 @@ DC-RS와 ExpeL 둘 다 갱신을 전부 받으면 초중반에는 좋아지다�
 
 앞에서 본 [Experience-Following 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)의 Add all 결과랑 같은 모양이다. 거기서는 최종 성능만 봤는데, 여기서는 곡선이 꺾이는 지점까지 보여준다.
 
-## **지금 관점: 갱신 전에 옛 버전과 비교하기**
+### **3.6 Hyperparameter Sensitivity**
 
-앞에서 본 Mem0, Zep, A-MEM은 갱신할 때 LLM 판단을 그대로 믿었다. 추가·수정·삭제를 LLM이 고르거나, 모순을 LLM이 판단해서 옛 사실을 무효화하거나, 이웃 메모리를 LLM이 고쳐 쓴다. 고친 다음에 그게 나아졌는지 재보는 단계는 없었다.
+support set 크기 K와 MMT 임계값 τ를 바꿔본다. K는 20일 때 제일 좋았고 더 늘리면 비용만 늘었다. τ를 키우면 트리거가 더 자주 걸려서 정확도는 오를 수 있지만 평가 비용도 늘어난다고 한다.
 
-Experience-Following은 넣기 전에 평가기로 거르고, Janus는 후보를 만든 뒤 배포 전에 옛 버전과 맞붙여서 나쁘면 옛 메모리를 유지한다. 평가기로 거르느냐, 옛 버전과 맞붙이느냐의 차이다.
+## **4. Related Work**
 
--> 옛 메모리를 유지하려면 이전 메모리가 남아 있어야 한다. 그 자리에서 덮어쓰면 Janus 같은 비교를 붙일 수가 없다. 버전을 남기든지 적어도 직전 상태는 들고 있어야 할 것 같다. 되돌릴 수 있게 남기는 문제는 바로 다음 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 다시 나온다.
+ExpeL, Dynamic Cheatsheet 같은 순차 메모리 방법과 피드백으로 테스트 시점에 적응하는 연구를 정리한다.
 
-평가 집합 셋 중에서는 fresh가 제일 쉽다. 안 본 질의를 조금 떼어두면 되고, 기여도 제일 컸다. boundary는 비교를 돌리다 보면 저절로 쌓이니까 처음 몇 번은 비어 있을 텐데, 그때는 coverage랑 fresh만으로 버티는 건지??
-
-그리고 이 실험은 정답이 있는 문제 풀이라서 옛 메모리와 새 메모리 중 어느 쪽이 나은지 바로 채점할 수 있다. 대화 메모리처럼 정답이 없는 곳에서는 무엇으로 점수를 매길지부터 정해야 할 것 같다.
+기존 방법은 메모리를 어떻게 만들고 갱신할지에 집중하고 새 메모리를 바로 쓴다고 가정하는데, Janus는 그걸 쓸지 말지를 다룬다고 한다.
 
 ## **5. Conclusion**
 
@@ -236,5 +240,17 @@ conclusion 부분을 보면 순차적으로 바뀌는 메모리는 경험을 더
 -> 두 번째는 [Experience-Following 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)랑 겹친다. 거기서는 태스크 분포가 바뀌면 history-based 삭제가 오히려 불리했다. Janus의 coverage도 본 분포를 전제로 하니까 분포가 바뀌면 같은 문제가 생길 것 같다.
 
 여태까지 메모리 갱신은 LLM이 제안하면 그대로 반영했다면, 이 방법은 옛 메모리와 비교해서 나을 때만 반영한다.
+
+## **6. 지금 관점: 메모리 갱신에 적용해볼 만한 부분**
+
+앞에서 본 Mem0, Zep, A-MEM은 갱신할 때 LLM 판단을 그대로 믿었다. 추가·수정·삭제를 LLM이 고르거나, 모순을 LLM이 판단해서 옛 사실을 무효화하거나, 이웃 메모리를 LLM이 고쳐 쓴다. 고친 다음에 그게 나아졌는지 재보는 단계는 없었다.
+
+Experience-Following은 넣기 전에 평가기로 거르고, Janus는 후보를 만든 뒤 배포 전에 옛 버전과 맞붙여서 나쁘면 옛 메모리를 유지한다.
+
+-> 옛 메모리를 유지하려면 이전 메모리가 남아 있어야 한다. 그 자리에서 덮어쓰면 Janus 같은 비교를 붙일 수가 없다. 버전을 남기든지 적어도 직전 상태는 들고 있어야 할 것 같다. 되돌릴 수 있게 남기는 문제는 바로 다음 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 다시 나온다.
+
+평가 집합 셋 중에서는 fresh가 제일 쉽다. 안 본 질의를 조금 떼어두면 되고, 기여도 제일 컸다. boundary는 비교를 돌리다 보면 저절로 쌓이니까 처음 몇 번은 비어 있을 텐데, 그때는 coverage랑 fresh만으로 버티는 건지??
+
+그리고 이 실험은 정답이 있는 문제 풀이라서 옛 메모리와 새 메모리 중 어느 쪽이 나은지 바로 채점할 수 있다. 대화 메모리처럼 정답이 없는 곳에서는 무엇으로 점수를 매길지부터 정해야 할 것 같다.
 
 다음은 [What to Keep, What to Forget](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)이다. KV 캐시 축출, 프롬프트 압축, 에이전트 메모리 요약을 하나의 rate-distortion 문제로 묶은 서베이다.

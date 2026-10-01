@@ -502,16 +502,6 @@ CoALA(2023년 9월)에서는 "기억을 지우거나 고치는 학습은 아직 
 
 지금 에이전트 메모리는 사람 기억 구조를 많이 닮았는데, 사람은 기억을 매번 새로 재구성하고 에이전트는 저장된 걸 그대로 꺼낸다. 그래서 사람이 잘 때 기억을 정리하는 것처럼 오프라인으로 정리하는 시간을 두자고 제안한다.
 
-## **지금 관점: CoALA 분류와 비교**
-
-CoALA 리뷰를 읽고 나서 제일 궁금했던 게, CoALA의 네 가지 기억이랑 이 논문의 세 가지가 어떻게 대응되냐였다.
-
-맞춰보면 working은 거의 그대로 Working으로 가고, 여기서는 KV 캐시 압축까지 들어간다. semantic 중 세계 지식은 Factual에 대응되는데 사용자/환경으로 한 번 더 나뉜다. 같은 semantic이라도 Reflexion의 반성문처럼 경험에서 뽑아낸 교훈은 Experiential의 strategy-based로 간다. episodic은 Experiential과 반만 맞는다. CoALA의 episodic은 있었던 일을 기록하는 거고, Experiential은 거기서 뽑아낸 교훈과 스킬까지 포함한다.
-
-procedural은 대응되는 게 없다. CoALA는 기억을 담긴 내용의 종류로 나눴고, 이 논문은 왜 기억하느냐(Functions)와 어디에 담느냐(Forms)를 따로 나눴다. 그래서 절차 기억은 Functions 쪽으로는 Experiential의 skill-based로, Forms 쪽으로는 스킬 코드면 Token-level, 모델 가중치면 Parametric으로 흩어졌다.
-
-실제로 쓴다면 Functions로 필요한 기억이 factual인지 experiential인지 먼저 정하고, Dynamics로 어떻게 만들고 고치고 꺼낼지 정하고, Forms는 마지막에 구현 방식으로 고르면 될 것 같다. 벡터 DB부터 정하고 기능을 맞추는 경우가 많은데, 6장 표를 보면 벡터 DB는 factual만 지원한다.
-
 ## **8. Conclusion**
 
 이 논문은 새 시스템을 만들지 않고, 흩어진 개념을 정리한 서베이다.
@@ -523,5 +513,29 @@ abstract를 보면 Functions 쪽에서 시간 기준의 거친 분류(장기/단
 *"memory is not merely an auxiliary storage mechanism, but an essential substrate through which agents achieve temporal coherence, continual adaptation, and long-horizon competence"*
 
 개인적으로는 분류보다 2장에서 RAG, 컨텍스트 엔지니어링이랑 경계를 나눈 부분이 더 쓸모 있었다. 내가 하려는 게 어느 쪽인지 정해야 벤치마크도 맞게 고를 수 있다.
+
+## **9. 지금 관점: CoALA 분류와 비교**
+
+CoALA 리뷰를 읽고 나서 제일 궁금했던 게, CoALA의 네 가지 기억이랑 이 논문의 세 가지가 어떻게 대응되냐였다.
+
+working은 거의 그대로 Working으로 간다. 여기서는 KV 캐시 압축까지 들어간다.
+
+semantic 중 세계 지식은 Factual로 가는데, 사용자/환경으로 한 번 더 나뉜다. 같은 semantic이라도 Reflexion의 반성문처럼 경험에서 뽑은 교훈은 Experiential의 strategy-based로 간다.
+
+episodic은 Experiential과 반만 맞는다. CoALA의 episodic은 있었던 일의 기록이고, Experiential은 거기서 뽑은 교훈과 스킬까지 포함한다.
+
+procedural은 대응되는 게 없다.
+
+나누는 방식이 달라서 그렇다. CoALA는 담긴 내용의 종류로 나눴고, 이 논문은 왜 기억하느냐(Functions)와 어디에 담느냐(Forms)를 따로 나눴다.
+
+그래서 절차 기억은 Functions로는 Experiential의 skill-based로 가고, Forms로는 스킬 코드면 Token-level, 모델 가중치면 Parametric으로 흩어진다.
+
+실제로 쓴다면 순서는 이렇게 하면 될 것 같다.
+
+1. Functions로 필요한 기억이 factual인지 experiential인지 정함
+2. Dynamics로 어떻게 만들고 고치고 꺼낼지 정함
+3. Forms는 마지막에 구현 방식으로 고름
+
+-> 벡터 DB부터 정하고 기능을 맞추는 경우가 많은데, 6장 표를 보면 벡터 DB는 factual만 지원한다.
 
 다음은 [SYNAPSE](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)다. 벡터 유사도 대신 활성 확산으로 기억 사이의 관련성을 찾고, 모르는 질문에는 모른다고 답하게 만드는 메모리 구조다.

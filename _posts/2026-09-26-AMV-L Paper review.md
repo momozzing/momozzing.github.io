@@ -37,11 +37,32 @@ AMV-L은 Georgia Tech에서 만든 에이전트 메모리 관리 방법이다. 2
 
 -> 앞 리뷰들에서 본 느린 검색 수치도 이런 경우가 아닐까 싶다. [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)의 MemoryOS 검색 31.2초, [Mem0 리뷰](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)의 LangMem p95 59.8초. 두 논문 모두 후보군 크기를 재지 않아서 확인은 못 한다.
 
+## **2. Background and Motivation**
+
+에이전트는 요청마다 메모리 일부를 검색해 프롬프트에 넣으니, 검색 대상 집합 크기가 곧 지연과 비용을 정한다고 본다.
+
+TTL은 보관량과 검색 대상을 구분하지 않아서, 프롬프트 상한을 둬도 검색 작업은 묶이지 않는다고 한다. 메모리를 저장소가 아니라 계산 자원으로 관리해야 한다는 게 이 절의 주장이다.
+
+## **3. Design Goals**
+
+설계 목표 네 가지를 둔다.
+
+1. 전체 보관량과 상관없이 요청 경로의 메모리 비용을 묶음
+2. 오래돼도 효용이 높은 메모리는 남김
+3. 접근 패턴이 바뀌면 온라인 신호로 따라감
+4. 관리 오버헤드를 작게 하고 기존 에이전트 스택에 쉽게 붙임
+
 ## **4. AMV-L Overview**
 
 에이전트 메모리를 그냥 쌓아두는 저장소로 보지 않고, 관리해야 하는 시스템 자원으로 본다.
 
 각 항목에 계속 갱신되는 효용 점수 `V(m)`을 매기고, 그 값에 따라 올리고(승격) 내리고(강등) 빼는(축출) 식으로 계층을 유지한다.
+
+### **4.1 Memory items and value state**
+
+메모리는 사실, 요약, 관측 같은 개별 항목으로 저장하고, 항목마다 내용·메타데이터·임베딩과 효용 점수 `V(m)`을 둔다.
+
+`V(m)`은 접근, 프롬프트 기여, 비활성 시간을 보며 항목 단위로 조금씩 갱신하고, 전체를 다시 훑지 않는다.
 
 ### **4.2 Tiered lifecycle organization**
 
@@ -70,6 +91,12 @@ AMV-L은 Georgia Tech에서 만든 에이전트 메모리 관리 방법이다. 2
 
 프롬프트 상한은 프롬프트 길이는 묶지만, 1번 없이는 큰 후보군을 검색하는 비용을 못 막는다.
 
+### **4.5 System invariant**
+
+요청마다 드는 메모리 비용이 전체 보관 항목 수가 아니라 검색 대상 집합 크기에 따라 정해지게 한다는 불변식을 둔다.
+
+TTL은 항목 나이만 묶고, LRU는 검색 대상을 최근성으로 줄이지만 효용을 보지 않는다는 점에서 이 불변식과 다르다고 한다.
+
 ## **5. Memory Value Model**
 
 `V(m)`은 세 가지 신호로 갱신한다.
@@ -89,6 +116,30 @@ AMV-L은 Georgia Tech에서 만든 에이전트 메모리 관리 방법이다. 2
 1. 국소성 : 항목별 상태와 그 요청의 이벤트만 본다
 2. 증분성 : 전체를 다시 계산하지 않고 온라인으로
 3. 저오버헤드 : 닿은 항목당 상수 시간
+
+## **6. Lifecycle Transitions**
+
+두 임계값으로 효용 점수를 hot·warm·cold에 대응시키고, 값이 오르면 승격, 감쇠로 내려가면 강등한다. 축출은 cold 계층에서 더 낮은 임계값 아래로 내려간 항목만 한다.
+
+경계 근처에서 계층이 왔다 갔다 하지 않게 올라갈 때와 내려갈 때 임계값을 다르게 둔다(hysteresis).
+
+## **7. Retrieval and Prompt Construction**
+
+검색 후보는 hot 전체와 warm에서 최대 `k`개 뽑은 샘플이고, cold는 보지 않는다. 그 안에서 유사도 top-`n`을 골라 시스템 프롬프트, 최근 대화와 함께 넣는다.
+
+프롬프트에 들어간 항목은 접근과 기여를, 후보에만 든 항목은 접근만 값에 반영해서 검색 결과가 다시 효용 점수로 돌아온다.
+
+## **8. System Architecture and Implementation**
+
+메모리 저장소, 검색 서비스, 생애주기 관리자, HTTP API 게이트웨이 네 부분으로 구현했다.
+
+계층은 메타데이터로만 두고 벡터 인덱스는 하나를 쓰며, 검색 대상 ID 목록을 먼저 만들어 그 안에서만 유사도 검색을 한다. 감쇠와 정리 같은 유지보수는 요청 경로 밖에서 비동기로 돈다.
+
+## **9. Evaluation Methodology**
+
+같은 서빙 스택에서 메모리를 비우고 같은 워크로드를 TTL, LRU, AMV-L 순으로 세 번 돌린다. 워크로드는 메모리 쓰기, 검색, LLM 요청을 섞은 합성 워크로드다.
+
+지연 분위수, 처리량, 1초·2초 초과 비율, 검색 후보군 크기, 스캔한 벡터 수 등을 재고, 프롬프트 주입 상한은 모든 정책에서 같게 둔다.
 
 ## **10. Results and Discussion**
 
@@ -167,20 +218,6 @@ TTL은 위쪽 꼬리가 길고, AMV-L은 hot 항목과 상한이 있는 warm 샘
 
 그래서 검색 대상을 먼저 묶고 그다음에 주입 개수를 묶는 두 단계 통제를 권한다.
 
-## **지금 관점: 지연 쪽에서 보면**
-
-이 시리즈 논문들이 주로 보는 건 정확도다. Mem0나 Anatomy도 지연을 재긴 했지만, 꼬리 지연의 원인(후보군 크기)을 직접 통제 변수로 다룬 건 이 논문뿐이다.
-
-앞 리뷰에서 본 LangMem이 이 논문에서 말하는 경우에 맞는 것 같다. 메모리 토큰은 127개까지 줄였는데 검색에 p95 59.8초가 걸렸다. 넣는 양은 묶었는데 후보군은 안 묶어서 그런 게 아닐까 싶다. 반대로 Mem0는 p95 0.2초였는데, 사실만 남겨서 후보군이 작았을 것 같다. 둘 다 내 추정이다.
-
-실제로 쓴다면 원본은 지우지 않고 검색 대상에서만 빼는 계층을 두면 될 것 같다. 앞에서 본 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)은 오래된 사실을 지우지 않고 무효 표시만 했는데, 그렇게 남긴 걸 전부 검색 대상으로 두면 이 논문의 문제가 그대로 생긴다.
-
-앞에서 본 [NEMORI](https://momozzing.github.io/paper%20review/NEMORI-Paper-review/)는 저장할 때 내용을 증류해서 성능을 올렸는데, 이 논문은 저장은 그대로 두고 검색 대상만 줄인다. 저장과 검색 중 어디가 병목인지는 뒤에서 볼 [MemMachine](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)에서, 원본을 남기는 쪽은 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)과 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서 다시 나온다.
-
-그리고 보통 응답 지연만 모니터링하는데, \|R\|(검색 후보군 크기)를 따로 재면 느려진 원인을 찾기 쉬울 것 같다. access·contribution·elapsed 세 값은 벡터 DB의 메타데이터 필드로도 충분히 만들 수 있어 보인다.
-
-다만 저자 1명이 시스템 하나로 한 실험이다. 합성 워크로드이고 비교 대상도 TTL, LRU 둘뿐이다. 중앙값, p95, 처리량은 LRU가 조금 낫고 AMV-L이 나은 건 극단 꼬리다. 논문도 둘이 "tradeoff frontier 위의 다른 지점"이라고 하고, p99나 2초 초과 비율이 중요한 서비스면 AMV-L, 중앙값과 처리량이 중요하면 LRU를 권한다.
-
 ## **11. Conclusion**
 
 conclusion 부분을 보면, AMV-L은 메모리를 관리해야 하는 시스템 자원으로 보고, 계속 갱신되는 효용 점수로 생애주기를 관리한다.
@@ -192,5 +229,35 @@ conclusion 부분을 보면, AMV-L은 메모리를 관리해야 하는 시스템
 한계는 논문 Discussion에 두 가지가 적혀 있다. LRU 베이스라인이 순수 recency 기반이라 recency와 value를 섞은 하이브리드가 더 나을 수 있다는 것, 그리고 AMV-L은 hot 계층 크기에 딱 정해진 상한이 없어서 최악의 경우를 확실하게 보장하지는 못한다는 것이다.
 
 정리하면 AMV-L은 기억은 그대로 두고, 그중 무엇을 검색 대상으로 둘지를 관리하는 방법이다.
+
+## **12. 지금 관점: 검색 지연을 줄일 때 해볼 만한 것**
+
+이 시리즈 논문들이 주로 보는 건 정확도다.
+
+Mem0나 Anatomy도 지연을 재긴 했지만, 꼬리 지연의 원인(후보군 크기)을 직접 통제 변수로 다룬 건 이 논문뿐이다.
+
+앞 리뷰에서 본 LangMem이 이 논문에서 말하는 경우에 맞는 것 같다. 메모리 토큰은 127개까지 줄였는데 검색에 p95 59.8초가 걸렸다.
+
+-> 넣는 양은 묶었는데 후보군은 안 묶어서 그런 게 아닐까?
+
+반대로 Mem0는 p95 0.2초였는데, 사실만 남겨서 후보군이 작았을 것 같다. 둘 다 내 추정이다.
+
+실제로 쓴다면 원본은 지우지 않고 검색 대상에서만 빼는 계층을 두면 될 것 같다.
+
+앞에서 본 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)은 오래된 사실을 지우지 않고 무효 표시만 했다. 그렇게 남긴 걸 전부 검색 대상으로 두면 이 논문의 문제가 그대로 생긴다.
+
+앞에서 본 [NEMORI](https://momozzing.github.io/paper%20review/NEMORI-Paper-review/)는 저장할 때 내용을 증류해서 성능을 올렸는데, 이 논문은 저장은 그대로 두고 검색 대상만 줄인다.
+
+저장과 검색 중 어디가 병목인지는 뒤에서 볼 [MemMachine](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)에서, 원본을 남기는 쪽은 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)과 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서 다시 나온다.
+
+보통 응답 지연만 모니터링하는데, \|R\|(검색 후보군 크기)를 따로 재면 느려진 원인을 찾기 쉬울 것 같다.
+
+access·contribution·elapsed 세 값은 벡터 DB의 메타데이터 필드로도 만들 수 있어 보인다.
+
+다만 저자 1명이 시스템 하나로 한 실험이다. 합성 워크로드이고 비교 대상도 TTL, LRU 둘뿐이다.
+
+중앙값, p95, 처리량은 LRU가 조금 낫고 AMV-L이 나은 건 극단 꼬리다.
+
+논문도 둘을 "tradeoff frontier 위의 다른 지점"이라고 한다. p99나 2초 초과 비율이 중요한 서비스면 AMV-L, 중앙값과 처리량이 중요하면 LRU를 권한다.
 
 다음은 [Multi-Layered Memory](https://momozzing.github.io/paper%20review/Multi-Layered-Memory-Paper-review/)다. 대화 이력을 working·episodic·semantic 세 계층으로 나누고, 계층을 하나씩 떼어보는 ablation으로 각 계층이 얼마나 기여하는지 잰 논문이다.

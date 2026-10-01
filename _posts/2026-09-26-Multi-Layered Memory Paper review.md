@@ -46,6 +46,12 @@ introduction 부분을 보면, 연구 문제는 이렇다.
 
 그래서 대화 이력을 세 계층으로 나누고, 계층별 검색 가중치와 드리프트를 막는 손실항을 붙인 구조를 제안한다.
 
+## **2. Literature Review**
+
+계층형 working memory, 3계층 메모리 OS, 사실 유지 메모리 에이전트, 파라미터 메모리 보존, KV 축출과 컨텍스트 압축 같은 선행 연구를 하나씩 소개하고 각 논문이 보고한 수치를 옮겨 적는다.
+
+이 연구들이 다층 메모리와 컨텍스트 관리의 바탕이 됐다고 정리한다.
+
 ## **3. Proposed Methodology**
 
 논문은 이 구조를 MLMF라고 부른다.
@@ -76,6 +82,12 @@ Algorithm 1을 보면 θ는 상태를 합치는 f_θ와 답을 만드는 P_θ에
 
 겪은 경험에서 배우는 Experiential은 없다. CoALA의 procedural에 해당하는 계층도 없다.
 
+## **4. Experimental Setup**
+
+같은 디코딩 설정에서 계층형 working memory, 메모리 OS, 파라미터 메모리 보존 쪽 베이스라인과 비교하고, SR, F1, BLEU-1, 여러 기간 뒤 보존율, 컨텍스트 사용률을 잰다.
+
+벤치마크는 LOCOMO, LOCCO, LoCoMo 세 개라고 적고, α, β, λ는 검증 분할에서 맞췄다고 한다.
+
 ## **5. Results and Analysis**
 
 결과를 보기 전에, 앞에서 본 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서 평가가 타당한지 따져보라고 했으니 그 기준을 여기에도 대본다. 확인이 안 되는 게 네 가지 있다.
@@ -99,6 +111,16 @@ full-context와 비교가 없다.
 Anatomy에서 본 Context Saturation Gap(∆, 메모리 시스템 점수에서 대화 전체를 프롬프트에 넣었을 때 점수를 뺀 값)을 계산할 수 없다. 메모리 구조를 쓰는 게 그냥 다 넣는 것보다 나은지를 모른다.
 
 그래서 절대 수치는 인용하기 어렵다. 대신 같은 시스템 안에서 계층을 하나씩 떼는 ablation은 조건이 같으니까 상대 비교로는 볼 만하다. 아래는 그 부분 위주로 본다.
+
+### **A. Training and Evaluation Across Benchmarks**
+
+세 벤치마크에서 MLMF가 SR, F1, BLEU-1, 보존율, 컨텍스트 사용률 모두 각 참조 논문이 보고한 수치보다 낫다고 한다. 다섯 번 돌린 평균이고, F1과 보존율 차이는 paired t-test로 유의하다고 적는다.
+
+### **B. Long-Term Retention and Stability Analysis**
+
+LOCCO에서 6기간 뒤 보존율과 거짓 기억률을 따로 보고, 보존율은 오르고 거짓 기억률과 컨텍스트 사용률은 내려갔다고 한다.
+
+논문은 이걸 세션 간 드리프트를 막는 retention regularization 덕분으로 본다.
 
 ### **C. Ablation Study**
 
@@ -136,16 +158,6 @@ F1은 0~1 값이라 같은 눈금에서는 막대가 거의 안 보인다. F1 �
 
 2번은 드리프트를 막는 장치가 정확도보다는 없는 걸 지어내는 쪽을 막는 데 효과가 있다는 결과다. 앞에서 본 [LongMemEval 리뷰](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서 ABS(답이 없는 질문에 모른다고 하는 능력)를 따로 잰 것과 이어진다.
 
-## **지금 관점: 계층을 몇 개 둘까**
-
-ablation에서 보존율이 떨어진 폭으로 줄 세우면 semantic(−6.06%p), episodic(−4.77%p), adaptive gating(−3.92%p), 보존 손실(−3.63%p) 순이다. 보존 손실은 보존율로는 꼴찌지만 FMR로는 제일 크다.
-
-semantic 계층이 1순위라는 건 앞에서 본 Zep, [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)와 맞는다. 둘 다 엔티티를 중심에 둔다. Zep은 semantic entity subgraph를, Mem0g는 엔티티 노드를 둔다. 계층을 몇 개 둘지 고민한다면 세션 요약보다 엔티티 정리를 먼저 두는 게 맞아 보인다.
-
-다만 앞에서 본 [Experience-Following 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)에서는 과거 실행 경험이 행동을 직접 바꿨는데, 여기 ablation에는 experiential 계층이 아예 없다. 사실 기억만 다룬 실험이라 경험 계층을 둘지는 이 표로 판단할 수 없다.
-
-FMR을 정확도와 따로 재는 건 가져와 볼 만하다. 정확도가 같아도 지어내는 비율은 다를 수 있고, 사용자 입장에서는 모른다고 하는 것보다 틀린 걸 기억이라고 말하는 쪽이 더 곤란하다. 절대 수치(0.618, 56.90%, 5.1%)는 5장 첫머리에 적은 문제들 때문에 인용하지 않고, ablation의 상대 순서만 참고한다.
-
 ## **6. Conclusion**
 
 conclusion 부분을 보면, 계층적 메모리 분해에 adaptive retrieval gating과 retention regularization을 붙인 프레임워크를 제안했다. working·episodic·semantic을 나눠서 세션 간 드리프트를 막으면서 컨텍스트가 늘어나는 것도 막는다.
@@ -157,5 +169,25 @@ conclusion 부분을 보면, 계층적 메모리 분해에 adaptive retrieval ga
 계층을 몇 개 둘지는 앞의 논문들이 각자 정해서 썼는데, 이 논문은 계층을 하나씩 빼보면서 얼마나 기여하는지를 쟀다. 앞에서 본 [SYNAPSE](https://momozzing.github.io/paper%20review/SYNAPSE-Paper-review/)는 episodic과 semantic을 잇는 방식까지 다뤘는데, 이 논문은 식 (6) M(s)=A(M(e))처럼 episodic에서 semantic을 한 방향으로 뽑기만 하고, 질의 때 두 계층을 오가며 잇지는 않는다.
 
 검증이 안 되는 부분이 많아서 계층 ablation 표 하나 말고는 가져오기 어렵다. 그래도 그 표는 다른 데서 못 본 수치다.
+
+## **7. 지금 관점: 메모리 계층을 나눌 때 참고할 것**
+
+ablation에서 보존율이 떨어진 폭으로 줄 세우면 semantic(−6.06%p), episodic(−4.77%p), adaptive gating(−3.92%p), 보존 손실(−3.63%p) 순이다.
+
+보존 손실은 보존율로는 꼴찌지만 FMR로는 제일 크다.
+
+semantic 계층이 1순위라는 건 앞에서 본 Zep, [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)와 맞는다. 둘 다 엔티티를 중심에 둔다. Zep은 semantic entity subgraph를, Mem0g는 엔티티 노드를 둔다.
+
+-> 계층을 몇 개 둘지 고민한다면 세션 요약보다 엔티티 정리를 먼저 두는 게 맞아 보인다.
+
+다만 앞에서 본 [Experience-Following 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)에서는 과거 실행 경험이 행동을 직접 바꿨는데, 여기 ablation에는 experiential 계층이 아예 없다.
+
+사실 기억만 다룬 실험이라 경험 계층을 둘지는 이 표로 판단할 수 없다.
+
+FMR을 정확도와 따로 재는 건 가져와 볼 만하다. 정확도가 같아도 지어내는 비율은 다를 수 있다.
+
+사용자 입장에서는 모른다고 하는 것보다 틀린 걸 기억이라고 말하는 쪽이 더 곤란하다.
+
+절대 수치(0.618, 56.90%, 5.1%)는 5장 첫머리에 적은 문제들 때문에 인용하지 않고, ablation의 상대 순서만 참고한다.
 
 다음은 [MemMachine](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)이다. 대화 원문을 그대로 보관하고 LLM 추출을 최소화하는 개인화 메모리 시스템인데, ablation을 보면 저장 방식을 바꾼 것보다 검색 단계를 손본 쪽이 점수를 더 많이 올렸다.

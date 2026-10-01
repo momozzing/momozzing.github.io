@@ -159,19 +159,11 @@ GPT-3.5는 중첩 1단계에서, GPT-4와 GPT-4 Turbo는 3단계에서 정확도
 
 Wikipedia 2천만 문서 임베딩 데이터셋도 같이 공개했다.
 
-## **지금 관점: 이후 시스템에 남은 것들**
+## **4. Related Work**
 
-벤치마크 숫자보다 여기서 나온 용어가 더 오래 남았다. main context와 external context를 나누는 구도는 뒤에 나오는 시스템 대부분이 그대로 쓴다. LLM이 함수 호출로 자기 메모리를 고치는 것도 뒤에서 볼 Mem0의 추가·수정·삭제 연산으로 이어진다.
+컨텍스트 길이를 늘리는 연구, 외부 검색기를 붙이는 retrieval-augmented 모델, LLM을 에이전트로 쓰는 연구를 정리한다.
 
-MemGPT 안에는 원본이 남는 부분과 안 남는 부분이 섞여 있다. recall storage와 archival storage에는 원본이 남는다. FIFO 큐에서 밀려난 메시지의 재귀 요약과 working context의 `replace`는 원본을 덮는다. 요약이 또 요약되면서 오차가 쌓이는 문제는 나중에 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 따로 다룬다.
-
-그래도 recall storage에 원본을 남기니까 요약에서 빠진 걸 검색으로 다시 찾을 수는 있다.
-
--> 설계는 되어 있는데, 에이전트가 검색을 안 하면 소용없는 거 아닌가??
-
-지금 봐도 쓸 만한 건 프롬프트를 세 구역으로 나눈 것이다. 시스템 지시(정적), 에이전트가 관리하는 사실(함수로 씀), 최근 메시지(자동으로 씀)로 쓰는 주체를 나누면 프롬프트 관리가 깔끔해진다. 토큰이 차면 그냥 자르지 않고 메모리 압력 경고로 LLM한테 알려서 뭘 남길지 판단하게 하는 것도 괜찮아 보인다.
-
-한계는 전부 LLM 판단에 달려 있다는 점이다. 언제 저장할지, 뭘 검색할지, 언제 함수를 연쇄할지 다 모델이 정한다. 2023년 GPT-4 기준으로 설계됐고, 이 논문에서도 GPT-3.5로 돌리면 문서 QA가 크게 떨어졌다. 뒤에서 볼 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/) 논문의 비교에서도 작은 모델에서 MemGPT가 약하고 토큰을 많이 쓰는 쪽으로 나온다. 토큰을 많이 쓰는 이유는 main context에 FIFO 큐를 들고 가는 구조 때문일 것 같은데, 논문에서 따로 재지는 않았다. 반복 검색을 하는 구조가 나중에 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서 어떻게 다시 나오는지도 뒤에서 본다.
+긴 컨텍스트 LLM은 MemGPT의 main context 크기를 키워주는 쪽이고, 이 논문은 그 위에 계층형 메모리를 얹는 거라고 한다.
 
 ## **5. Conclusion**
 
@@ -184,5 +176,27 @@ conclusion 부분을 보면 OS에서 아이디어를 가져와 LLM의 제한된 
 여태까지 LLM이 컨텍스트 창 안의 정보만 썼다면, MemGPT는 LLM이 함수로 직접 컨텍스트와 외부 저장소 사이를 오가게 한다.
 
 3년이 지난 지금 벤치마크 수치는 대부분 추월당했지만, 여기서 나온 용어들은 이후 논문들에서 계속 쓰이고 있다.
+
+## **6. 지금 관점: 현재에도 쓰이는 개념**
+
+벤치마크 숫자보다 여기서 나온 용어가 더 오래 갔다.
+
+main context와 external context를 나누는 구도는 뒤에 나오는 시스템 대부분이 그대로 쓴다. LLM이 함수 호출로 자기 메모리를 고치는 것도 뒤에서 볼 Mem0의 추가·수정·삭제 연산으로 이어진다.
+
+MemGPT 안에는 원본이 남는 부분과 안 남는 부분이 섞여 있다. recall storage와 archival storage에는 원본이 남는다. FIFO 큐에서 밀려난 메시지의 재귀 요약과 working context의 `replace`는 원본을 덮는다. 요약이 또 요약되면서 오차가 쌓이는 문제는 나중에 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 따로 다룬다.
+
+그래도 recall storage에 원본을 남기니까 요약에서 빠진 걸 검색으로 다시 찾을 수는 있다.
+
+-> 설계는 되어 있는데, 에이전트가 검색을 안 하면 소용없는 거 아닌가??
+
+지금 써볼 만한 건 프롬프트를 세 구역으로 나눈 것이다. 시스템 지시(정적), 에이전트가 관리하는 사실(함수로 씀), 최근 메시지(자동으로 씀)로 쓰는 주체를 나누면 프롬프트 관리가 편해진다.
+
+토큰이 차면 그냥 자르지 않고 메모리 압력 경고로 LLM한테 알려서 뭘 남길지 고르게 하는 것도 괜찮아 보인다.
+
+대신 전부 LLM 판단에 달려 있다. 언제 저장할지, 뭘 검색할지, 언제 함수를 연쇄할지 다 모델이 정한다. 2023년 GPT-4 기준으로 설계됐고, 이 논문에서도 GPT-3.5로 돌리면 문서 QA가 크게 떨어졌다.
+
+뒤에서 볼 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/) 논문의 비교에서도 작은 모델에서 MemGPT가 약하고 토큰을 많이 쓰는 쪽으로 나온다. main context에 FIFO 큐를 들고 가는 구조 때문일 것 같은데, 논문에서 따로 재지는 않았다.
+
+반복 검색을 하는 구조가 나중에 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서 어떻게 다시 나오는지도 뒤에서 본다.
 
 다음은 [HippoRAG](https://momozzing.github.io/paper%20review/HippoRAG-Paper-review/)다. 해마 색인 이론을 RAG에 옮겨서, LLM으로 스키마 없는 지식그래프를 만들고 Personalized PageRank로 한 번의 검색에 다중홉을 푼다.

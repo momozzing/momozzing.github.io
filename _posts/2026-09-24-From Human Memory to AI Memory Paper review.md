@@ -23,7 +23,7 @@ From Human Memory to AI Memory는 Huawei Noah's Ark Lab에서 쓴 LLM 메모리 
 
 사람의 기억 분류에서 출발해서, AI 메모리를 대상·형태·시간 세 축으로 8분면에 나눈다. 2025년 4월 arXiv에 올라왔다.
 
-뒤에서 볼 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)보다 8개월 먼저 나왔고, 같은 대상을 다르게 나눈다. 두 서베이 비교는 뒤의 지금 관점 절에 적었다.
+뒤에서 볼 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)보다 8개월 먼저 나왔고, 같은 대상을 다르게 나눈다. 두 서베이 비교는 글 맨 끝 지금 관점 절에 적었다.
 
 좀 더 자세히 알아보자.
 
@@ -59,7 +59,13 @@ Atkinson-Shiffrin 다중저장 모델로 단기와 장기를 나눈다.
 
 ### **2.2 Memory of LLM-driven AI Systems**
 
-논문은 먼저 사람 기억 범주를 AI 메모리에 하나씩 짝지어 그림으로 보여준다.
+#### **2.2.1 Fundamental Dimensions of AI Memory**
+
+AI 메모리를 대상(personal/system), 형태(non-parametric/parametric), 시간(short-term/long-term) 세 차원으로 나눈다. 모달리티나 정적/스트리밍 같은 기준도 있지만 여기서는 주 기준으로 두지 않는다고 한다.
+
+#### **2.2.2 Parallels Between Human and AI Memory**
+
+사람 기억 범주를 AI 메모리에 하나씩 짝지어 그림으로 보여준다.
 
 ![사람 기억과 AI 메모리의 대응 (논문 Figure 1)](https://momozzing.github.io/assets/images/human-to-ai-memory/fig1-human-ai-memory-parallels.png)
 
@@ -129,6 +135,10 @@ III은 사용자 대화 히스토리를 프롬프트 캐시로 들고 있다가 
 
 IV는 PEFT 같은 지식 편집으로 사용자 데이터를 모델에 학습시킨다. Character-LLM이 특정 인물을 학습해 역할극을 하는 게 예시다. 사용자마다 파인튜닝해야 해서 계산 비용이 커서 확장하기 어렵다고 한다.
 
+### **3.3 Discussion**
+
+personal memory 연구는 비파라미터 장기 메모리를 만들고 관리하고 검색하는 시스템 쪽에 몰려 있다고 정리한다. 최근에는 파라미터 메모리와 비파라미터 메모리를 같이 쓰는 흐름이 늘고 있다고 한다.
+
 ## **4. System Memory**
 
 과제를 하면서 생긴 중간 결과를 담는 메모리다. 추론·계획을 돕고 시스템이 스스로 나아지게 하는 게 목적이다. 논문 Table 3에 정리돼 있다.
@@ -147,6 +157,10 @@ VIII는 모델 파라미터 자체를 장기 메모리로 본다. MemoryLLM, WIS
 
 -> VII는 메모리라기보다 서빙 최적화에 가까워 보이는데, 8분면을 채우려고 넣은 건지 잘 모르겠다??
 
+### **4.3 Discussion**
+
+비파라미터 system memory는 지금 과제의 추론·계획을 돕고 지난 경험을 다시 쓰게 해준다. 파라미터 쪽은 단기면 추론 비용을 줄이고, 장기면 오랜 기간의 정보를 쌓는 지식 체계가 된다고 정리한다.
+
 ## **5. Open Problems and Future Directions**
 
 `From X to Y` 형식으로 여섯 가지를 제시한다.
@@ -158,16 +172,6 @@ VIII는 모델 파라미터 자체를 장기 메모리로 본다. MemoryLLM, WIS
 5. Individual Privacy → Collective Privacy : 데이터 공유가 늘면서 프라이버시 보호 대상이 개인에서 집단으로 넓어진다
 6. Rule-Based Evolution → Automated Evolution : 사람이 만든 규칙으로 과거 경험을 반영하던 데서, 시스템이 스스로 병목을 찾아 고치는 쪽으로
 
-## **지금 관점: 뒤에 나온 서베이와 비교**
-
-8개월 뒤에 나온 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)와 나란히 놓고 보면 제일 큰 차이는 시간 축이다.
-
-이 논문은 단기/장기를 세 축 중 하나로 세운다. 뒤의 서베이는 이전 서베이들의 long-term/short-term 이분법이 거칠다고 보고, 그 자리에 Functions(factual, experiential, working)를 넣는다. 다만 이 논문도 시간만으로 나눈 게 아니고 대상·형태랑 섞어서 8분면을 만들었으니, 그 비판이 이 논문에 그대로 맞지는 않는 것 같다.
-
-personal/system 구분은 뒤의 서베이에 없는데, 나는 이게 이 논문에서 제일 오래 쓸 만한 부분이라고 본다. 사용자에게서 온 정보와 에이전트가 일하면서 만든 기록은 누가 지울 권리가 있는지, 얼마나 보관할지가 다르다. 이 얘기는 뒤에서 볼 [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서 다시 나온다.
-
-분량도 다르다. 이 논문은 26쪽이고 벤치마크·프레임워크 비교가 없다. 뒤의 서베이는 107쪽이고 6장 전체를 벤치마크와 프레임워크 정리에 쓴다.
-
 ## **6. Conclusion**
 
 conclusion 부분을 보면, 사람 기억과 LLM 기반 AI 메모리의 관계를 정리하고, 사람의 인지 원리가 더 효율적이고 유연한 메모리 구조를 만드는 데 어떻게 도움이 될 수 있는지 살펴봤다고 한다.
@@ -177,5 +181,17 @@ conclusion 부분을 보면, 사람 기억과 LLM 기반 AI 메모리의 관계�
 이 논문은 누구의 기억인지(personal/system)까지 분류 기준에 넣었다. 8분면으로 나눠두니 어느 칸이 비어 있는지도 보인다.
 
 한계는 벤치마크도 프레임워크 비교도 없다는 점이다. 분류만 있고 "그래서 뭘 쓰면 되나"는 없다.
+
+## **7. 지금 관점: 뒤에 나온 서베이와 비교**
+
+8개월 뒤에 나온 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)와 나란히 놓고 보면 제일 큰 차이는 시간 축이다.
+
+이 논문은 단기/장기를 세 축 중 하나로 세운다. 뒤의 서베이는 이전 서베이들의 long-term/short-term 이분법이 거칠다고 보고, 그 자리에 Functions(factual, experiential, working)를 넣는다.
+
+-> 다만 이 논문은 시간만으로 나누지 않고 대상·형태랑 섞어서 8분면을 만들었다. 그 비판이 이 논문에 그대로 맞지는 않는 것 같다.
+
+personal/system 구분은 뒤의 서베이에 없다. 지금 메모리를 설계할 때도 이 구분은 그대로 쓸 수 있을 것 같다. 사용자에게서 온 정보와 에이전트가 일하면서 만든 기록은 누가 지울 수 있는지, 얼마나 보관할지가 다르다. 이 얘기는 뒤에서 볼 [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서 다시 나온다.
+
+분량도 다르다. 이 논문은 26쪽이고 벤치마크·프레임워크 비교가 없다. 뒤의 서베이는 107쪽이고 6장 전체를 벤치마크와 프레임워크 정리에 쓴다.
 
 다음은 [Experience-Following](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)이다. 메모리에 무엇을 넣고 무엇을 지우는지가 에이전트 행동을 어떻게 바꾸는지를 네 에이전트로 잰 논문이다.

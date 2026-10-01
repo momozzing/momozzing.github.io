@@ -37,9 +37,17 @@ introduction 부분을 보면 기존 장기 대화 벤치마크가 못 보던 �
 
 그리고 기존 벤치마크는 대화 이력이 너무 짧고, 실제 과제를 하는 대화랑은 성격이 다르다고 한다.
 
+## **2. Related Work**
+
+장기 대화 벤치마크(MemoryBank, LoCoMo, PerLTQA, DialSim 등)와 장기 메모리 방법을 정리한다. 기존 벤치마크와의 비교는 Table 1에 있다.
+
 ## **3. LongMemEval**
 
 벤치마크 설계부터 보자.
+
+### **3.1 Problem Formulation**
+
+평가 단위는 (S, q, t_q, a) 네 개다. 타임스탬프가 붙은 이력 세션 S를 시스템에 하나씩 넣고, 마지막 세션 뒤 날짜 t_q에 질문 q를 던져서 답 a와 비교한다.
 
 ### **3.2 LongMemEval: Benchmark Curation**
 
@@ -87,6 +95,12 @@ abstention은 따로 모으지 않고 기존 질문을 틀린 전제로 바꿔�
 - LongMemEval-M : 500세션, 약 150만 토큰
 
 세션을 더 넣으면 이력을 얼마든지 늘릴 수 있다.
+
+### **3.3 Evaluation Metric**
+
+답 형태가 자유로워서 exact match 대신 gpt-4o로 채점한다. 사람 전문가와 97% 넘게 일치했다고 한다.
+
+답이 있는 위치를 사람이 표시해뒀기 때문에, 시스템이 검색 결과를 보여주면 Recall@k와 NDCG@k도 잴 수 있다.
 
 ### **3.4 LongMemEval represents a significant challenge**
 
@@ -145,6 +159,10 @@ CP 4: Reading Strategy
 
 제어점마다 실험을 돌려서 설계 지침을 냈다.
 
+### **5.1 Experimental Setup**
+
+GPT-4o, Llama 3.1 70B Instruct, Llama 3.1 8B Instruct 세 모델로 돌린다. 검색기는 Stella V5(1.5B) dense retrieval이고, 색인 단계의 요약·키프레이즈·사실 추출은 Llama 3.1 8B Instruct로 한다.
+
 ### **5.2 Value: Decomposition improves RAG performance**
 
 저장 단위는 세션보다 라운드가 낫다고 한다(CP 1). 라운드는 사용자 메시지 하나와 그에 대한 어시스턴트 응답 하나를 묶은 단위다.
@@ -193,16 +211,6 @@ Chain-of-Note(답하기 전에 필요한 내용을 먼저 뽑음)랑 구조화�
 
 -> oracle 설정이라 검색이 완벽할 때 얘기다. 검색까지 붙인 실제 설정에서도 10점이 그대로 나오는지는 이 그림만으로는 모르겠다.
 
-## **지금 관점: 네 제어점으로 보기**
-
-벤치마크보다 네 제어점 틀이 더 오래 쓰일 것 같다. 새 메모리 시스템이 나오면 "Value를 뭘로 잡았고, Key를 어떻게 늘렸고, 시간은 어디서 처리하고, 읽을 때 뭘 붙였나"로 물어보면 대부분 한 표에 들어간다. 뒤에 나오는 시스템들도 이 네 칸으로 정리해 보려고 한다.
-
-키 확장은 검색을 한 번만 하는 설정에서 잰 결과다. 검색을 여러 번 하는 에이전트라면 키 확장이 하던 일을 반복 검색이 대신할 수도 있을 것 같다. 이 부분은 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서 다시 나온다.
-
-바로 가져다 쓸 수 있는 건 CP 4다. 검색을 어떻게 짜든 읽는 단계에 Chain-of-Note랑 구조화 포맷은 붙일 수 있다.
-
--> 평가할 때는 다섯 능력 중 KU랑 ABS를 먼저 보면 될 것 같다. 바뀐 사용자 정보를 못 따라가거나 없는 걸 지어내는 게 챗봇에서는 더 큰 문제다.
-
 ## **6. Conclusion**
 
 장기기억을 다섯 능력(정보 추출, 다중 세션 추론, 시간 추론, 지식 갱신, 회피)으로 나눈 벤치마크와, 메모리 설계를 indexing·retrieval·reading 세 단계 네 제어점으로 나눈 틀을 같이 내놓았다.
@@ -210,5 +218,17 @@ Chain-of-Note(답하기 전에 필요한 내용을 먼저 뽑음)랑 구조화�
 상용 시스템이랑 long-context LLM 모두 크게 떨어진다는 걸 보여줬고, 세션 분해, 사실 기반 키 확장, 시간을 고려한 질의 확장이 검색과 QA를 같이 올린다고 한다.
 
 뒤에서 볼 [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)는 메모리를 형태·기능·동역학으로 분류하는데, 이 논문은 구현할 때 정해야 하는 지점으로 나눴다.
+
+## **7. 지금 관점: 메모리 시스템을 볼 때 확인할 것**
+
+벤치마크 자체보다 네 제어점 틀을 더 오래 쓸 것 같다.
+
+새 메모리 시스템이 나오면 "Value를 뭘로 잡았고, Key를 어떻게 늘렸고, 시간은 어디서 처리하고, 읽을 때 뭘 붙였나"로 물어보면 대부분 한 표에 들어간다. 뒤에 나오는 시스템들도 이 네 칸으로 정리해 보려고 한다.
+
+키 확장은 검색을 한 번만 하는 설정에서 잰 결과다. 검색을 여러 번 하는 에이전트라면 키 확장이 하던 일을 반복 검색이 대신할 수도 있을 것 같다. 이건 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서 다시 나온다.
+
+바로 가져다 쓸 수 있는 건 CP 4다. 검색을 어떻게 짜든 읽는 단계에 Chain-of-Note랑 구조화 포맷은 붙일 수 있다.
+
+-> 평가할 때는 다섯 능력 중 KU랑 ABS를 먼저 보면 될 것 같다. 바뀐 사용자 정보를 못 따라가거나 없는 걸 지어내는 게 챗봇에서는 더 큰 문제다.
 
 다음은 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)이다. 사실을 지우지 않고 무효화하는 방식이고, 네 개의 타임스탬프로 무엇이 언제 참이었는지와 언제 그렇게 알았는지를 함께 남기는 지식그래프다.

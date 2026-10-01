@@ -40,6 +40,12 @@ LLM 에이전트 메모리는 어떤 정보를 남길 가치가 있는지 정하
 
 앞에서 본 [Generative Agents](https://momozzing.github.io/paper%20review/Generative-Agents-Paper-review/)의 recency·relevance·importance 3점수 회상이 딱 이런 휴리스틱이다. importance를 LLM한테 1~10점으로 매기게 하는 방식이 여기서 말하는 설계자 직관이다.
 
+## **2. Related Works**
+
+에이전트 메모리를 증류(무엇을 남길지), 관리, 검색 세 단계로 나누고, 기존 연구를 메타데이터를 관리 시점에 붙이는지 증류 시점에 붙이는지로 나눠 정리한다.
+
+인지 쪽에서는 Predictive Coding Theory와 Free Energy Principle을 소개하고, 예측 오차가 남길 정보라는 생각을 여기서 가져왔다고 한다.
+
 ## **3. Methodology**
 
 ### **3.1 Overview & Motivations**
@@ -92,7 +98,19 @@ Predictive Coding Theory(Rao & Ballard 1999, Friston 2010, Clark 2013)에서 기
 
 -> 예측 오차 기준은 넣을 때만 쓰고, 합치거나 지우는 건 결국 LLM 판단이다.
 
+### **3.4 Response Generation**
+
+질문 임베딩으로 에피소드 DB에서 top-k, 의미 DB에서 top-m을 따로 검색하고, 이야기 에피소드·원시 에피소드 일부·의미 지식을 이어 붙여 LLM에 넣어 답을 만든다.
+
+답변 단계는 메모리 구축과 따로 놀아서 다른 검색 전략으로 바꿔도 된다고 한다.
+
 ## **4. Experiments**
+
+### **4.1 Experimental Setup**
+
+벤치마크는 LoCoMo와 LongMemEvalS 두 개, 베이스라인은 Full Context, RAG-4096, LangMem, Zep, Mem0, A-MEM, MemoryOS 일곱 개다.
+
+지표는 gpt-4o-mini가 채점하는 LLM-judge 점수가 주이고, 백본은 gpt-4o-mini와 gpt-4.1-mini 두 가지를 쓴다.
 
 ### **4.2 Main Results (RQ1)**
 
@@ -169,6 +187,12 @@ native 관리 모듈(3.3의 new/merge/conflict 처리)은 켜고 꺼도 거의 �
 
 관측 창 길이 `w`도 5~40으로 바꿔 봤다. gpt-4.1-mini에서 80.4~81.2로 거의 같다(기본값 20에서 80.8). 경계를 LLM이 찾고 잘린 건 뒤에서 합치니 창 길이에 덜 민감하다는 설명이다.
 
+### **4.5 Retrieval Hyperparameter Analysis (RQ4)**
+
+검색 개수 k를 2에서 30까지 바꿔 보면 10까지는 크게 오르고, 그 뒤로는 Full Context보다 높은 수준에서 평평하다.
+
+검색해 넣는 내용을 고정하고 인덱스만 바꾸면, 이야기 에피소드로 만든 임베딩이 원시 에피소드 임베딩보다 낫다고 한다.
+
 ### **4.6 Third-Party Integration (RQ5)**
 
 NEMORI를 다른 메모리 시스템 앞단의 증류 모듈로 붙여본다.
@@ -203,16 +227,6 @@ gpt-4.1-mini에서는 single-session-assistant에서만 진다(92.9 vs 98.2). �
 
 gpt-4o-mini에서는 single-session-assistant(89.3 → 83.9)에 더해 Knowledge Update에서도 크게 진다(78.2 → 61.5). 이건 논문이 따로 설명하지 않는다.
 
-## **지금 관점: importance 점수를 대체할 수 있나**
-
-앞에서 본 시스템들은 무엇을 남길지를 대부분 LLM이 판단했다. Generative Agents는 LLM이 importance를 1~10점으로 매기고, Mem0는 LLM이 대화에서 기억할 사실을 골라 뽑는다. [Experience-Following](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)은 조금 다르다. 넣을 때는 평가기가 채점하지만, 지울 때는 몇 번 검색됐고 그때 결과가 어땠는지 같은 사용 기록을 본다.
-
-NEMORI도 예상 스키마를 LLM이 만드니 LLM 판단이 빠지진 않는다. 다른 건 묻는 질문이다. "무엇이 중요한가" 대신 "지금 메모리로 맞힐 수 있나"를 묻는다. 기준이 이미 쌓인 메모리에 따라 바뀌니 importance 점수보다는 데이터 쪽에 가깝다고 본다.
-
-실제로 쓴다면 제3자 통합 실험처럼 지금 쓰는 메모리 앞에 증류 층으로 끼우는 게 제일 현실적일 것 같다. 저장이 45~64% 줄고 평균 성능은 ±4% 안이다. 다만 어시스턴트 발화에 약해서, 안내나 추천처럼 어시스턴트가 한 말을 다시 찾아야 하는 경우라면 그 부분은 원문을 따로 남겨두는 게 나을 것 같다.
-
--> 예상 스키마를 만드는 데 LLM 호출이 하나 더 붙는다. 구축 비용이 줄어든 건(LLM 호출 −59.5%, 총 토큰 −38.7%) 에피소드 단위로 처리해서인데, 메시지가 올 때마다 바로 반영해야 하는 구조라면 어떻게 될지??
-
 ## **5. Conclusion**
 
 conclusion 부분을 보면, 인지과학 아이디어를 가져와 증류 단계에서 경험이 나중에 쓸모 있을지를 판단하는, 학습이 필요 없는 프레임워크를 만들었다고 한다. 예측 오차가 기억으로 남길 가치가 있다고 본다.
@@ -224,5 +238,27 @@ conclusion 부분을 보면, 인지과학 아이디어를 가져와 증류 단�
 여태까지 나온 방법들이 무엇을 남길지를 점수나 LLM 판단으로 정했다면, 이 방법은 기존 지식으로 예측해보고 틀린 부분만 남긴다.
 
 뒤에서 볼 [MemMachine](https://momozzing.github.io/paper%20review/MemMachine-Paper-review/)은 반대로 검색 쪽을 손보는 논문이라 거기서 다시 비교해본다.
+
+## **6. 지금 관점: importance 점수 대신 써볼 만한가**
+
+앞에서 본 시스템들은 무엇을 남길지를 대부분 LLM이 판단했다.
+
+Generative Agents는 LLM이 importance를 1~10점으로 매기고, Mem0는 LLM이 대화에서 기억할 사실을 골라 뽑는다.
+
+[Experience-Following](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)은 조금 다르다. 넣을 때는 평가기가 채점하고, 지울 때는 몇 번 검색됐고 그때 결과가 어땠는지 같은 사용 기록을 본다.
+
+NEMORI도 예상 스키마를 LLM이 만드니 LLM 판단이 빠지진 않는다.
+
+다른 건 묻는 질문이다. "무엇이 중요한가" 대신 "지금 메모리로 맞힐 수 있나"를 묻는다. 기준이 이미 쌓인 메모리에 따라 바뀐다.
+
+-> 그래서 importance 점수보다는 데이터 쪽에 가깝다고 본다.
+
+실제로 쓴다면 제3자 통합 실험처럼 지금 쓰는 메모리 앞에 증류 층으로 끼우는 게 제일 현실적일 것 같다. 저장이 45~64% 줄고 평균 성능은 ±4% 안이었다.
+
+다만 어시스턴트 발화에 약했다. 안내나 추천처럼 어시스턴트가 한 말을 다시 찾아야 하면 그 부분은 원문을 따로 남겨두는 게 나을 것 같다.
+
+예상 스키마를 만드는 데 LLM 호출이 하나 더 붙는다. 구축 비용이 줄어든 건(LLM 호출 −59.5%, 총 토큰 −38.7%) 에피소드 단위로 처리해서다.
+
+-> 메시지가 올 때마다 바로 반영해야 하는 구조라면 어떻게 될지??
 
 다음은 [Memory in the Age of AI Agents](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)다. 장기기억·단기기억 이분법 대신 Forms·Functions·Dynamics 세 가지 기준으로 에이전트 메모리를 다시 정리한 107쪽짜리 서베이다.
