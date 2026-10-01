@@ -37,7 +37,11 @@ introduction 부분을 보면 기존 장기 대화 벤치마크가 못 보던 �
 
 ## **2. Related Work**
 
-장기 대화 벤치마크(MemoryBank, LoCoMo, PerLTQA, DialSim 등)와 장기 메모리 방법을 정리한다. 기존 벤치마크와의 비교는 Table 1에 있다.
+장기 대화 벤치마크(MemoryBank, LoCoMo, PerLTQA, DialSim 등)와 장기 메모리 방법을 정리한다. 기존 벤치마크와의 비교는 아래 표다(논문 Table 1). Context Depth 열이 대화 이력의 토큰 수이고, 오른쪽 다섯 열이 벤치마크가 보는 메모리 능력이다.
+
+![기존 장기기억 벤치마크와 LongMemEval 비교 (논문 Table 1)](https://momozzing.github.io/assets/images/longmemeval/table1-benchmark-comparison.png)
+
+KU(knowledge update)까지 다섯 능력을 전부 보는 건 LongMemEval뿐이다.
 
 ## **3. LongMemEval**
 

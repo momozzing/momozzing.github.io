@@ -109,6 +109,8 @@ Reflexion을 붙이면 baseline보다 20% 오른다.
 CoT (GT)는 정답 문맥을 받고도 39%를 틀리는데, Reflexion을 붙이면 정답을 보지 않고도 14% 오른다.
 부록 Table 5에서 모델별로 보면 ReAct + gpt-4는 0.39 → 0.51, CoT (GT) + gpt-4는 0.68 → 0.80이다.
 
+![모델별 HotpotQA 정확도 (논문 Table 5)](https://momozzing.github.io/assets/images/reflexion/table5-hotpotqa-models.png)
+
 baseline의 재시도는 다르다. ReAct-only, CoT-only에 temperature 0.7로 재시도를 시켜도 첫 trial에 틀린 문제는 하나도 더 못 푼다.
 -> 그냥 다시 굴리는 걸로는 안 되고, 뭐가 틀렸는지 말로 알려줘야 나아지는 것 같다.
 

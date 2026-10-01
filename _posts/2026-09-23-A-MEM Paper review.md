@@ -137,9 +137,9 @@ GPT 모델에서는 다르다. GPT-4o의 Single Hop은 LOCOMO가 더 높고(61.5
 
 Link Generation(LG)과 Memory Evolution(ME)을 하나씩 빼본다.
 
-![LG·ME ablation (논문 Table 3)](https://momozzing.github.io/assets/images/a-mem/table3-ablation.png)
+아래는 GPT-4o-mini를 기반 모델로 잰 LoCoMo 결과다(논문 Table 3). 범주별 F1 열을 세 줄끼리 비교하면 된다.
 
-GPT-4o-mini를 기반 모델로 잰 LoCoMo 결과다. 위 Table 3에서 범주별 F1 열을 세 줄끼리 비교하면 된다.
+![LG·ME ablation (논문 Table 3)](https://momozzing.github.io/assets/images/a-mem/table3-ablation.png)
 
 둘 다 빼면 모든 범주에서 크게 떨어진다. Multi Hop은 27.02 → 9.65다. 링크만 두면(w/o ME) 중간이고, 진화까지 켜면 Temporal이 31.24 → 45.85로 제일 많이 오른다.
 링크 생성이 메모리 조직의 토대고, 진화는 거기에 정제를 더하는 거라고 한다.

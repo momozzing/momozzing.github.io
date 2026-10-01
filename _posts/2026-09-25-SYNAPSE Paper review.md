@@ -157,7 +157,9 @@ A-Mem보다 +7.2점이다. AriGraph는 지식 그래프를 쓰는 에이전트 �
 
 베이스라인들은 거절하는 장치가 없어서 그럴듯한 답을 지어낸다고 한다. 게이트를 끄고도 평균 F1이 40.3이라 Zep(39.7)보다 높다는 점도 따로 밝혔다. 점수가 거절 덕분만은 아니라는 얘기다.
 
-논문의 정성 비교 표(Table 2)에 실제 예시가 있다.
+논문의 정성 비교 표(Table 2)에 실제 예시가 있다. 위쪽 두 행(Uncertainty-Aware Rejection, Spreading Activation)에서 왼쪽 A-Mem 칸과 오른쪽 Synapse 칸을 비교하면 된다.
+
+![A-Mem과 SYNAPSE의 검색 동작 정성 비교 (논문 Table 2)](https://momozzing.github.io/assets/images/synapse/table2-qualitative-comparison.png)
 
 - A-Mem : 질의 'dog'를 의미가 비슷한 'Rex'에 매칭해서 "She has a dog named Rex"라고 지어냄
 - SYNAPSE : `C_ret < 0.12`로 게이팅이 걸려서 "No record of such pet found."

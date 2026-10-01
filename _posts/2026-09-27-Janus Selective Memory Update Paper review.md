@@ -174,7 +174,11 @@ DC-RS와 ExpeL 둘 다 갱신을 전부 받으면 초중반에는 좋아지다�
 
 ### **3.6 Hyperparameter Sensitivity**
 
-support set 크기 K와 MMT 임계값 τ를 바꿔본다. K는 20일 때 제일 좋았고 더 늘리면 비용만 늘었다. τ를 키우면 트리거가 더 자주 걸려서 정확도는 오를 수 있지만 평가 비용도 늘어난다고 한다.
+support set 크기 K와 MMT 임계값 τ를 바꿔본다. Qwen3-8B, DC-RS, GPQA 기준이고 논문 Table 3이다. 맨 위 Default 행(K=20, τ=0.0)이 기본 설정이고, Cost는 평가 비용 근사치(#Trig. × (K + fresh 5개))다.
+
+![support set 크기와 MMT 임계값 민감도 (논문 Table 3)](https://momozzing.github.io/assets/images/janus/table3-hyperparameter-sensitivity.png)
+
+K는 20일 때 제일 좋았고 더 늘리면 비용만 늘었다. τ를 키우면 트리거가 더 자주 걸려서 정확도는 오를 수 있지만 평가 비용도 늘어난다고 한다. τ=0.2는 82.1로 기본보다 0.6점 높지만, 비교 비율이 90.8%로 오르고 비용도 5,200이다.
 
 ## **4. Related Work**
 

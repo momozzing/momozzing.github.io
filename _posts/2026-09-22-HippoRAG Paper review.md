@@ -152,7 +152,11 @@ All-Recall로 본다. 근거 구절을 전부 찾은 질문의 비율이다(논�
 
 ### **5.3 HippoRAG's Potential: Path-Finding Multi-Hop Retrieval**
 
-앞에서 본 "알츠하이머 연구하는 스탠퍼드 교수?" 질문에 대한 상위 3개 결과는 이렇다.
+앞에서 본 두 질문에 대한 방법별 상위 3개 결과다(논문 Table 7). 아래쪽 Path-Finding 줄이 "알츠하이머 연구하는 스탠퍼드 교수?" 질문이다.
+
+![경로 탐색형 다중홉 질문의 검색 결과 예시 (논문 Table 7)](https://momozzing.github.io/assets/images/hipporag/table7-path-finding.png)
+
+Path-Finding 줄만 옮기면 이렇다.
 
 - HippoRAG : Thomas Südhof, Karl Deisseroth, Robert Sapolsky
 - ColBERTv2 : Brian Knutson, Eric Knudsen, Lisa Giocomo

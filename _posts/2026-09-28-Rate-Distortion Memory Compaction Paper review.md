@@ -90,6 +90,10 @@ Figure 2는 가로축이 예산, 세로축이 태스크 성능이다. 파란 선
 나머지 넷(손실성과 충실도, 학습 가능성, 메커니즘, 저장 위치)은 층끼리 차이가 훨씬 작다. 가역·비가역 구분은 손실성 축 안에 들어 있다.
 그래서 KV 축출이랑 에이전트 요약이 생각보다 가깝다.
 
+층별 축 값은 논문 Table 2에 있다. 논문이 층을 가른다고 본 세 축이 Granularity, Lifecycle stage, Adaptivity 열이다.
+
+![층별 대표 축 값 (논문 Table 2)](https://momozzing.github.io/assets/images/rate-distortion/table2-layer-axes.png)
+
 Figure 3은 생애주기 축을 그린 그림이다. 맨 왼쪽 Mamba, RMT(아키텍처 단계)부터 맨 오른쪽 Mem0, RAPTOR(태스크 사이 통합, 오프라인 색인)까지 한 줄에 놓여 있다.
 
 ![생애주기 축 (논문 Figure 3)](https://momozzing.github.io/assets/images/rate-distortion/fig3-lifecycle.png)
@@ -132,6 +136,10 @@ Figure 3은 생애주기 축을 그린 그림이다. 맨 왼쪽 Mamba, RMT(아�
 1. 망각 곡선을 KV prior로
 2. 축출 없는 검색을 에이전트 메모리 설계로
 3. 출력 오차 한계를 요약의 정지 규칙으로
+
+논문 Table 4는 같은 설계 손잡이(design knob)가 KV 캐시와 에이전트 장기 메모리에서 각각 무엇인지 나란히 놓은 표다. 세 예시는 Forgetting, Query-cond.·Reversibility, Stop rule 행에 해당하고, Stop rule 행의 에이전트 칸은 (open)으로 비어 있다.
+
+![KV 캐시와 에이전트 메모리의 설계 손잡이 대응 (논문 Table 4)](https://momozzing.github.io/assets/images/rate-distortion/table4-bridge-knobs.png)
 
 첫 번째를 보면, H2O 같은 KV 축출은 누적 어텐션만 보고 버리는데 이 신호는 앞쪽 토큰에 치우친다. MemoryBank(에이전트 메모리)의 Ebbinghaus식 망각 곡선은 최근에 다시 쓰인 기억일수록 오래 남기니까, 이걸 KV 축출 점수로 바꿔 끼울 수 있다는 게 논문 설명이다.
 

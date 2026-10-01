@@ -148,7 +148,9 @@ ChainOfQuery는 검색, 충분한지 판단하고 질의 다시 쓰기, 증거 �
 
 ### **5.6 Benchmark Results**
 
-다중홉 에이전트 결과다. 정확도는 LLM 판정 점수이고, 세 가지 방식을 비교한다. 메모리 없이 전체 텍스트를 LLM에 넣는 베이스라인, 기본 MemMachine 검색, Retrieval Agent다.
+다중홉 에이전트 결과다. 정확도는 LLM 판정 점수이고, 세 가지 방식을 비교한다. 메모리 없이 전체 텍스트를 LLM에 넣는 베이스라인, 기본 MemMachine 검색, Retrieval Agent다. 논문 Table 3이다. 벤치마크별로 Acc.가 정확도, Recall이 정답 근거 재현율이고, 맨 오른쪽 Baseline 열이 전체 텍스트 베이스라인이다.
+
+![벤치마크별 Retrieval Agent 결과 (논문 Table 3)](https://momozzing.github.io/assets/images/memmachine/table3-retrieval-agent-results.png)
 
 HotpotQA hard 500문항(답변 모델 gpt-5-mini)에서 Retrieval Agent는 93.2%다. 기본 MemMachine 검색은 91.2%, 전체 텍스트 베이스라인은 93.0%였다.
 
@@ -209,11 +211,21 @@ Temporal과 Open-domain에서 진다. Temporal은 Memobase가 0.8505, Open-domai
 
 추가 속도는 다른 시스템이 아니라 자기 이전 버전과 비교한 수치다. 검색 속도는 무엇과 비교했는지 논문에 안 나온다.
 
+입력 토큰 수치는 논문 Table 8이다. 답변 모델은 gpt-4.1-mini이고, 맨 위 MemMachine memory 행과 맨 아래 Mem0 행의 Input Tokens 열을 보면 된다.
+
+![LoCoMo 토큰 사용량 비교 (논문 Table 8)](https://momozzing.github.io/assets/images/memmachine/table8-token-usage.png)
+
+표대로 계산하면 4.20M / 19.21M로 약 78% 절감이다.
+
 ### **8.4 LongMemEvalS Ablation Study**
 
 LongMemEval_S는 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서 질문마다 약 115k 토큰짜리 대화 이력을 붙인 버전이다. 500문항 전체에서 설정을 하나씩 바꿔가며 쟀고, 최고 점수는 93.0%다.
 
-아래는 논문 Table 13이다. 한 가지만 다른 설정 두 개를 비교한 점수 차이(%p)이고, 단계 구분(Retrieval-stage, Ingestion-stage, Model selection)은 논문 분류를 따랐다.
+설정 조합별 점수는 논문 Table 12다. C5~C17이 설정 ID이고, 맨 오른쪽 LLM Score 열이 500문항 점수다.
+
+![LongMemEval_S 설정별 점수 (논문 Table 12)](https://momozzing.github.io/assets/images/memmachine/table12-longmemeval-configs.png)
+
+아래는 논문 Table 13이다. 한 가지만 다른 설정 두 개(Comparison 열의 설정 ID)를 비교한 점수 차이(%p)이고, 단계 구분(Retrieval-stage, Ingestion-stage, Model selection)은 논문 분류를 따랐다.
 
 ![LongMemEval_S 최적화별 기여 (논문 Table 13)](https://momozzing.github.io/assets/images/memmachine/table13-longmemeval-ablation.png)
 

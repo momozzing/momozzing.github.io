@@ -186,9 +186,13 @@ TTL은 위쪽 꼬리가 길고, AMV-L은 hot 항목과 상한이 있는 warm 샘
 
 ### **10.3 Cost and quality tradeoffs**
 
-토큰 오버헤드는 LRU보다 약 6% 낮다.
+토큰 오버헤드는 LRU보다 약 6% 낮다. 아래 논문 Table 4의 Tokens/request mean 행에서 LRU 716.782, AMV-L 675.388이다. 주입 상한을 고정했으니 Chunks/request p95와 Memory refs/request p95는 세 정책 모두 48로 같다.
 
-검색 품질은 검색된 항목의 값 평균(retrieved value mean)으로 잰다. 워크로드가 항목마다 붙여둔 값 라벨의 평균이라, AMV-L과 LRU는 0.947 vs 0.949로 거의 같고 TTL(0.714)보다는 높다.
+![요청당 토큰과 주입 항목 수 (논문 Table 4)](https://momozzing.github.io/assets/images/amv-l/table4-token-cost.png)
+
+검색 품질은 검색된 항목의 값 평균(retrieved value mean)으로 잰다. 워크로드가 항목마다 붙여둔 값 라벨의 평균이라, AMV-L과 LRU는 0.947 vs 0.949로 거의 같고 TTL(0.714)보다는 높다. 아래 논문 Table 5의 Retrieved value mean 행이다.
+
+![검색 품질과 값 효용 (논문 Table 5)](https://momozzing.github.io/assets/images/amv-l/table5-retrieval-quality.png)
 -> 에이전트가 과제를 맞혔는지(과제 정확도)는 안 쟀다. 그래서 "품질은 그대로"라고 하려면 이 값 라벨이 실제 과제 품질을 따라간다는 가정이 필요하다.
 
 ### **10.4 Discussion**

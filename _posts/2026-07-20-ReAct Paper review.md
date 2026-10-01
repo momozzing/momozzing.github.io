@@ -181,6 +181,8 @@ IM처럼 "환경 상태 관찰 + 목표 확인" 수준의 생각만 하게 하�
 부록(A.1)에서 GPT-3(text-davinci-002)로도 재현한다.
 ReAct 프롬프팅 기준으로 GPT-3가 HotpotQA 30.8 vs PaLM-540B 29.4, ALFWorld 78.4 vs 70.9로 더 높다 (논문 Table 5).
 
+![PaLM-540B vs GPT-3 ReAct 프롬프팅 결과 (논문 Table 5)](https://momozzing.github.io/assets/images/react/table5-gpt3.png)
+
 HotpotQA는 검증셋에서 무작위로 뽑은 500문제로 따로 잰 것이라, PaLM ReAct 점수가 Table 1의 27.4와 다르다.
 instruction following으로 파인튜닝된 모델이라 그럴 수 있다고 추정하고, ReAct가 특정 모델에만 통하는 방법은 아니라는 근거로 든다.
 

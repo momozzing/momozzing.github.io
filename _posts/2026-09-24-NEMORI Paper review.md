@@ -167,13 +167,18 @@ native 관리 모듈(3.3의 new/merge/conflict 처리)은 켜고 꺼도 거의 �
 
 검색 개수 k를 2에서 30까지 바꿔 보면 10까지는 크게 오르고, 그 뒤로는 Full Context보다 높은 수준에서 평평하다.
 
-검색해 넣는 내용을 고정하고 인덱스만 바꾸면, 이야기 에피소드로 만든 임베딩이 원시 에피소드 임베딩보다 낫다고 한다.
+검색해 넣는 내용을 고정하고 인덱스만 바꾸면, 이야기 에피소드로 만든 임베딩이 원시 에피소드 임베딩보다 낫다고 한다. 아래 논문 Table 6(LoCoMo, gpt-4.1-mini)에서 Retrieve가 같은 두 행끼리 Index N(이야기 에피소드)과 P(원시 에피소드)의 LLM 열을 비교하면 된다. N을 꺼낼 때 76.9 vs 76.4, P를 꺼낼 때 77.0 vs 75.3이다.
+
+![인덱스·검색 대상 조합별 결과 (논문 Table 6)](https://momozzing.github.io/assets/images/nemori/table6-retrieval-strategy.png)
 
 ### **4.6 Third-Party Integration (RQ5)**
 
 NEMORI를 다른 메모리 시스템 앞단의 증류 모듈로 붙여본다.
 
 원시 메시지 대신 증류한 의미 지식을 넣어주면, A-MEM과 MemoryOS 둘 다 저장량이 45~64% 줄고 평균 성능은 ±4% 안에서 유지된다. Temporal을 뺀 나머지 유형의 가중 평균(core)은 +1.9% ~ +6.1% 올랐다.
+아래 논문 Table 7에서 P는 원시 메시지, K는 NEMORI가 증류한 의미 지식을 넣은 경우이고, Δ 행이 그 차이다.
+
+![제3자 메모리 시스템에 붙였을 때 성능과 저장량 (논문 Table 7)](https://momozzing.github.io/assets/images/nemori/table7-third-party.png)
 
 기존 시스템을 바꾸지 않고 앞에 끼워 넣을 수 있다는 얘기다.
 

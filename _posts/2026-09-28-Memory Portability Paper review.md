@@ -69,7 +69,7 @@ RAG는 검색 실패와 임베딩 버전 불일치, NOTES는 쓰는 모델에 �
 - 컨텍스트 예산을 맞춤
 - 결과를 보기 전에 가설과 분석 계획을 서명된 Git 태그로 고정
 
-미리 정한 가설은 넷인데 이 리뷰에서는 셋이 나온다.
+미리 정한 가설은 넷이다. 쓰는 모델·임베딩 쪽 셋은 이렇고, 나머지 하나(H7a, 복구)는 4.1에서 나온다.
 
 - H1 : 쓰는 모델을 바꾸면 NOTES 성능이 떨어진다
 - H2 : 50/50 혼합 인덱스가 완전 재임베딩보다 정확도가 낮다
@@ -93,7 +93,11 @@ Figure 2는 고정된 합성 이력을 네 형식으로 바꾼 다음, 모델·�
 
 ### **4.1 Learnings from the tests**
 
-미리 정한 네 검정 결과다. 5pp 임계를 넘은 건 혼합 인덱스(H2)와, 원본 이력으로 복구하는 쪽이 저장소만으로 고치는 쪽보다 낫다는 가설 둘이다. 쓰는 모델 교체(H1, H4a)는 넘지 못했다.
+미리 정한 네 검정 결과는 논문 Table 2다. Estimate가 효과 추정치이고, Margin vs. 5 pp는 추정치에서 5pp를 뺀 값, Decision 열이 지지 여부다.
+
+![사전 등록한 네 검정 결과 (논문 Table 2)](https://momozzing.github.io/assets/images/memory-portability/table2-planned-tests.png)
+
+5pp 임계를 넘은 건 혼합 인덱스(H2, +6.95pp)와, 원본 이력으로 복구하는 쪽이 저장소만으로 고치는 쪽보다 낫다는 가설(H7a, +8.90pp) 둘이다. 쓰는 모델 교체(H1, H4a)는 넘지 못했다.
 
 ### **4.2 A fixed schema transfers better than free-form notes**
 
@@ -149,7 +153,7 @@ H2는 완전 재임베딩과 혼합 인덱스의 정확도 차이다. 이력·�
 모델이 쓴 노트는 원본을 압축한 사본이다. 쓰는 모델이 사실을 빠뜨렸으면 노트를 다시 써도 되살릴 수 없다.
 그래서 원본 이력을 남겨두면 복구가 되는지 시험했다. 목표는 새 리더가 자기 저장소에서 내는 성능의 90%까지 회복하는 것이다.
 
-복구 방식별로 목표를 넘긴 건수와 비용은 논문 Table 7에 있다. 위 블록은 Llama가 쓰고 Qwen이 복구한 경우, 아래 블록은 Qwen이 쓰고 Llama가 복구한 경우다. 90% target 열을 보면 NOTES store-only는 양쪽 다 0/48, NOTES raw-retained는 Qwen이 복구할 때만 34/48(중앙값 $0.76)이다. RAG re-embed와 KG-fixed schema rebuild는 양쪽 다 48/48이고, KG-fixed는 99% 목표에서 45/48, 46/48로 합쳐 91건이다.
+복구 방식별로 목표를 넘긴 건수와 비용은 논문 Table 7에 있다. 위 블록은 Llama가 쓰고 Qwen이 복구한 경우, 아래 블록은 Qwen이 쓰고 Llama가 복구한 경우다. 90% target 열을 보면 NOTES store-only는 양쪽 다 0/48, NOTES raw-retained는 Qwen이 복구할 때만 34/48(중앙값 $0.76)이다. RAG re-embed와 KG-fixed schema rebuild는 양쪽 다 48/48이고, KG-fixed는 99% 목표에서 45/48, 46/48로 합쳐 96건 중 91건이다.
 
 ![복구 방식별 성공 건수와 비용 (논문 Table 7)](https://momozzing.github.io/assets/images/memory-portability/table7-repair-success.png)
 

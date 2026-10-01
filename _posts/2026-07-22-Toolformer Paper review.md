@@ -140,11 +140,16 @@ WebQS, NQ, TriviaQA에서는 같은 크기 베이스라인은 이기는데 GPT-3
 
 MLQA(영어 문단 + 다른 언어 질문)에서는 번역 도구를 쓰긴 하는데 GPT-J를 일관되게 이기지는 못한다.
 논문은 CCNet으로 추가 학습한 게 다국어 성능을 떨어뜨렸다고 본다.
+GPT-J와 GPT-J + CC 행을 비교하면 추가 학습으로 떨어진 폭이, Toolformer (disabled)와 Toolformer 행을 비교하면 번역 도구로 오른 폭이 보인다.
+
+![MLQA 언어별 결과 (논문 Table 6)](https://momozzing.github.io/assets/images/toolformer/table6-mlqa.png)
 
 #### **4.2.5 Temporal Datasets**
 
 달력 도구의 효과는 TempLAMA(시기마다 답이 바뀌는 사실 조회)와 새로 만든 Dateset("30일 전은 무슨 요일이었나" 같은 날짜 질문)으로 본다.
 Toolformer가 두 데이터셋 모두 가장 높다. TempLAMA 16.3, Dateset 27.3이고 GPT-3 175B는 각각 15.5, 0.8이다.
+
+![시간 관련 데이터셋 결과 (논문 Table 7)](https://momozzing.github.io/assets/images/toolformer/table7-temporal.png)
 
 그런데 TempLAMA에서 달력 도구를 부른 건 0.2%뿐이다. 오른 건 대부분 Wikipedia 검색과 QA 도구 덕분이다.
 Dateset에서는 54.8%에서 달력을 불렀고, 오른 폭은 달력 도구 덕분이다.
@@ -155,6 +160,8 @@ TempLAMA에 맞는 방법은 달력으로 오늘 날짜를 얻고 그 날짜로 
 
 API 호출을 넣어 학습해도 원래 언어 모델링 능력이 떨어지지 않는지 perplexity로 확인한다.
 WikiText와, 학습에 안 쓴 CCNet 문서 1만 개로 잰다. 결과는 GPT-J 9.9 / 10.6, GPT-J + CC 10.3 / 10.5, Toolformer (disabled) 10.3 / 10.5 (WikiText / CCNet, 낮을수록 좋음)다.
+
+![WikiText·CCNet perplexity (논문 Table 8)](https://momozzing.github.io/assets/images/toolformer/table8-perplexity.png)
 
 CCNet으로 학습하면 WikiText에서 조금 나빠지긴 하는데, API 호출을 넣은 데이터로 학습한 것과 안 넣은 것은 perplexity가 같다. 도구 호출을 배우느라 생긴 손해는 없다는 얘기다.
 
@@ -170,6 +177,9 @@ GPT-2 계열 작은 모델들(124M~1.6B)로 같은 실험을 해보면, 도구�
 ## **5. Analysis**
 
 디코딩 때 `<API>` 토큰이 상위 k개 안에만 들어도 호출하게 하는 방식을 k를 바꿔가며 본다. k를 키우면 호출하는 예시가 늘고, k=1일 때는 모델이 API 없이 못 풀 만한 예시에서 호출하는 경향이 어느 정도 있다고 한다.
+아래 표에서 % 열이 호출 비율이고, AC/NC는 호출한 예시와 안 한 예시 각각의 성능이다.
+
+![디코딩 k값에 따른 결과 (논문 Table 9)](https://momozzing.github.io/assets/images/toolformer/table9-decoding-k.png)
 
 생성된 API 호출 예시도 직접 보여준다. 필터 점수가 높은 호출은 대체로 쓸모 있고 낮은 호출은 쓸모가 없으며, 걸러지지 않은 약간의 잡음은 모델이 호출 결과를 무조건 따르지 않게 해줘서 오히려 도움이 될 수 있다고 한다.
 

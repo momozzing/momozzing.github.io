@@ -74,7 +74,9 @@ AI 메모리를 대상(personal/system), 형태(non-parametric/parametric), 시�
 2. Form (형태) : non-parametric / parametric
 3. Time (시간) : short-term / long-term
 
-2×2×2 = 여덟 분면이다. 논문 Table 1은 분면마다 사람 기억 쪽 이름(Working, Episodic 등)을 붙여 둔다.
+2×2×2 = 여덟 분면이다. 논문 Table 1은 분면마다 사람 기억 쪽 이름(Working, Episodic 등)을 붙여 둔다. Role 열이 그 이름이고, Function 열이 분면별 역할이다.
+
+![3D-8Q 메모리 분류 (논문 Table 1)](https://momozzing.github.io/assets/images/human-to-ai-memory/table1-3d-8q-taxonomy.png)
 
 - I (Working, personal·비파라미터·단기) : 세션 안에서 실시간으로 맥락을 보충
 - II (Episodic, personal·비파라미터·장기) : 세션을 넘어 과거 사용자 대화를 떠올려서 개인화
@@ -106,7 +108,9 @@ MemGPT의 working context도 사용자 정보를 담으니 system보다는 perso
 
 ## **3. Personal Memory**
 
-사용자와 주고받은 데이터를 담는 메모리다. 개인화가 목적이다. 논문 Table 2에 분면별 연구를 정리해 뒀다.
+사용자와 주고받은 데이터를 담는 메모리다. 개인화가 목적이다. 논문 Table 2에 분면별 연구를 정리해 뒀다. II 분면은 Construction, Management, Retrieval 같은 단계별로 다시 나뉜다.
+
+![Personal memory 분면별 연구 (논문 Table 2)](https://momozzing.github.io/assets/images/human-to-ai-memory/table2-personal-memory.png)
 
 ### **3.1 Contextual Personal Memory**
 
@@ -128,7 +132,9 @@ personal memory 연구는 비파라미터 장기 메모리를 만들고 관리�
 
 ## **4. System Memory**
 
-과제를 하면서 생긴 중간 결과를 담는 메모리다. 추론·계획을 돕고 시스템이 스스로 나아지게 하는 게 목적이다. 논문 Table 3에 정리돼 있다.
+과제를 하면서 생긴 중간 결과를 담는 메모리다. 추론·계획을 돕고 시스템이 스스로 나아지게 하는 게 목적이다. 논문 Table 3에 분면별 연구가 정리돼 있다. VII 분면이 KV Management와 KV Reuse로 나뉘어 제일 길다.
+
+![System memory 분면별 연구 (논문 Table 3)](https://momozzing.github.io/assets/images/human-to-ai-memory/table3-system-memory.png)
 
 ### **4.1 Contextual System Memory**
 

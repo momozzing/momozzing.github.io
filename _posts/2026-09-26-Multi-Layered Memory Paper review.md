@@ -83,10 +83,17 @@ Algorithm 1을 보면 θ는 상태를 합치는 f_θ와 답을 만드는 P_θ에
 
 같은 벤치마크를 두 번 센 것 같다.
 abstract에 *"Experiments on LOCOMO, LOCCO, and LoCoMo"* 라고 쓰고, 표에서도 `LOCOMO`와 `LoCoMo`를 다른 행으로 둔다. 실험 설정을 보면 `LOCOMO`에는 [15] Maharana et al.(평균 588.2턴, 27.2세션짜리 대화 메모리 벤치마크)을 붙이고, `LoCoMo`에는 [18] EvolveMem을 붙인다. EvolveMem은 데이터셋이 아니라 메모리 시스템 논문이다.
+아래 논문 Table II에서 Dataset 열의 LOCOMO 두 행과 LoCoMo 두 행이 따로 있는 걸 볼 수 있다.
+
+![벤치마크별 MLMF와 참조 논문 수치 비교 (논문 Table II)](https://momozzing.github.io/assets/images/mlmf/table2-benchmark-comparison.png)
+
 -> 이름만 보면 둘 다 Maharana et al.의 LoCoMo인데, 한쪽은 원래 벤치마크고 한쪽은 EvolveMem이 LoCoMo에서 낸 수치와 비교한 것 같다. 그러면 데이터셋은 세 개가 아니라 두 개다. 본문 설명만으로는 확실하게 모르겠다.
 
 베이스라인이 참조 번호로만 나온다.
 표에 `[10]`, `[12]`, `[13]`, `[14]`, `[18]`, `[20]`으로만 적혀 있다. 따라가 보면 HiAgent, MemoryOS, Truth-Maintained Memory Agent, Jia et al., EvolveMem, LaVa다. 서로 다른 과제와 지표를 쓰는 논문들이라, 각 논문이 보고한 수치를 한 표에 가져다 놓은 건지 같은 조건에서 다시 돌린 건지 알 수 없다.
+아래 논문 Table III의 Ref 열이 그 참조 번호다. 칸마다 지표가 SR, Acc, FMR, LongBench Avg처럼 제각각인 것도 보인다.
+
+![참조 논문들과의 지표 비교 (논문 Table III)](https://momozzing.github.io/assets/images/mlmf/table3-prior-work.png)
 
 날짜가 안 맞는다.
 PDF 머리에는 *"Published online in June 2025"* 라고 찍혀 있는데 arXiv 제출은 2026년 3월 31일이다. `journal_ref`는 비어 있어서 어디에 실렸는지 확인이 안 된다.
@@ -103,6 +110,10 @@ Anatomy에서 본 Context Saturation Gap(∆, 메모리 시스템 점수에서 �
 ### **B. Long-Term Retention and Stability Analysis**
 
 LOCCO에서 6기간 뒤 보존율과 거짓 기억률을 따로 보고, 보존율은 오르고 거짓 기억률과 컨텍스트 사용률은 내려갔다고 한다.
+아래 논문 Table IV다. 비교 대상이 지표마다 다른 논문([14], [13], [10])이라 한 행에 한 칸씩만 채워져 있다.
+
+![LOCCO 장기 보존·거짓 기억률·컨텍스트 사용률 비교 (논문 Table IV)](https://momozzing.github.io/assets/images/mlmf/table4-retention-locco.png)
+
 논문은 이걸 세션 간 드리프트를 막는 retention regularization 덕분으로 본다.
 
 ### **C. Ablation Study**
