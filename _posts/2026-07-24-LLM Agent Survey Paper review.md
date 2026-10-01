@@ -20,31 +20,23 @@ A Survey on Large Language Model based Autonomous Agents
 
 [https://arxiv.org/abs/2308.11432](https://arxiv.org/abs/2308.11432)
 
-이 논문은 중국 인민대학교(Renmin University of China)의 Lei Wang 등이 쓴 LLM 기반 자율 에이전트 서베이다.
-
-2023년 8월 arXiv에 처음 나왔고, 이후 Frontiers of Computer Science 저널에 실렸다.
+이 논문은 중국 인민대학교(Renmin University of China)의 Lei Wang 등이 쓴 LLM 기반 자율 에이전트 서베이다. 2023년 8월 arXiv에 처음 나왔고, 이후 Frontiers of Computer Science 저널에 실렸다.
 
 [CoALA 리뷰](https://momozzing.github.io/paper%20review/CoALA-Paper-review/)에서 CoALA가 자기와 구분하려고 "empirical survey"로 인용한 정리들이 있었는데, 이 논문이 그중 하나다.
 
-CoALA가 인지 아키텍처 이론에서 출발했다면, 이 서베이는 2021~2023년에 나온 에이전트 연구들을 읽고 공통점을 묶어 정리했다.
-
-같은 대상을 반대 방향에서 정리한 두 논문이라 같이 읽어보면 좋다.
+CoALA가 인지 아키텍처 이론에서 출발했다면, 이 서베이는 2021~2023년에 나온 에이전트 연구들을 읽고 공통점을 묶어 정리했다. 같은 대상을 반대 방향에서 정리한 두 논문이라 같이 읽어보면 좋다.
 
 좀 더 자세히 알아보자.
 
 ## **1. Introduction**
 
-예전 자율 에이전트 연구(강화학습 계열)는 고립된 환경에서 제한된 지식으로 정책을 학습했다.
-
-LLM 기반 에이전트는 출발점이 다르다. 웹 지식을 학습한 모델이 중심 제어기가 되니까, 도메인 데이터로 학습하지 않아도 행동할 수 있고 자연어로 상호작용할 수 있다.
+예전 자율 에이전트 연구(강화학습 계열)는 고립된 환경에서 제한된 지식으로 정책을 학습했다. LLM 기반 에이전트는 출발점이 다르다. 웹 지식을 학습한 모델이 중심 제어기가 되니까, 도메인 데이터로 학습하지 않아도 행동할 수 있고 자연어로 상호작용할 수 있다.
 
 ![분야의 성장 추세 (논문 Figure 1)](https://momozzing.github.io/assets/images/wang-survey/fig1-growth.png)
 
 2021년 1월부터 2023년 8월까지 나온 에이전트 논문 수를 누적한 그래프다. 첫 이름은 WebGPT(2021-12, 웹 검색을 하며 답하는 GPT-3)이고, 2023년에 들어 확 늘어난다.
 
-Toolformer(2023-2), Generative Agents(2023-4), Voyager(2023-5), ToT(2023-5, Tree of Thoughts)도 전부 이 타임라인 위에 있다.
-
-이렇게 따로따로 나온 연구들을 하나의 틀로 정리하는 게 이 논문의 목표다.
+Toolformer(2023-2), Generative Agents(2023-4), Voyager(2023-5), ToT(2023-5, Tree of Thoughts)도 전부 이 타임라인 위에 있다. 이렇게 따로따로 나온 연구들을 하나의 틀로 정리하는 게 이 논문의 목표다.
 
 ## **2. LLM-based Autonomous Agent Construction**
 
@@ -59,19 +51,13 @@ Toolformer(2023-2), Generative Agents(2023-4), Voyager(2023-5), ToT(2023-5, Tree
 
 ![에이전트 구조의 통합 프레임워크 (논문 Figure 2)](https://momozzing.github.io/assets/images/wang-survey/fig2-framework.png)
 
-Profile이 Memory와 Planning에 영향을 주고, 셋이 모여서 Action을 정한다.
-
-CoALA에는 Profile에 해당하는 모듈이 없다.
+Profile이 Memory와 Planning에 영향을 주고, 셋이 모여서 Action을 정한다. CoALA에는 Profile에 해당하는 모듈이 없다.
 
 -> 과제를 푸는 에이전트라면 역할 설정은 부차적인데, 사람 행동을 시뮬레이션하는 쪽(Generative Agents 등)에서는 에이전트가 누구인지가 출발점이다. 서베이가 시뮬레이션 쪽까지 담으려다 보니 모듈이 하나 더 필요했던 것 같다.
 
 #### **2.1.1 Profiling Module**
 
-에이전트의 역할을 정하는 모듈이다.
-
-나이, 직업 같은 인구통계 정보, 성격, 다른 에이전트와의 관계가 들어가고, 보통 프롬프트에 써서 LLM의 행동을 바꾼다.
-
-만드는 방법은 셋이다.
+에이전트의 역할을 정하는 모듈이다. 나이, 직업 같은 인구통계 정보, 성격, 다른 에이전트와의 관계가 들어가고, 보통 프롬프트에 써서 LLM의 행동을 바꾼다. 만드는 방법은 셋이다.
 
 1. 수작업 (Generative Agents의 스몰빌처럼 사람이 자연어로 직접 씀)
 2. LLM 생성 (시드 몇 개로 대량 생성)
@@ -89,21 +75,15 @@ CoALA에는 Profile에 해당하는 모듈이 없다.
 
 $$m^* = \arg\max_{m \in M} \left( \alpha \cdot s^{rec}(q,m) + \beta \cdot s^{rel}(q,m) + \gamma \cdot s^{imp}(m) \right)$$
 
-recency(최근성), relevance(관련성), importance(중요도)의 가중합이다.
+recency(최근성), relevance(관련성), importance(중요도)의 가중합이다. Generative Agents 리뷰에서 본 3점수 회상을 일반형으로 쓴 모양이다.
 
-Generative Agents 리뷰에서 본 3점수 회상을 일반형으로 쓴 모양이다.
-
-쓰기에서는 같은 기억이 중복 저장되는 문제와 저장 한도를 넘는 문제를 다룬다.
-
-반성의 예로는 Generative Agents(최근 기억에서 질문 3개를 뽑고 인사이트 5개를 만듦), GITM(마인크래프트 에이전트), ExpeL(성공·실패 궤적에서 교훈을 뽑는 방법)을 든다.
+쓰기에서는 같은 기억이 중복 저장되는 문제와 저장 한도를 넘는 문제를 다룬다. 반성의 예로는 Generative Agents(최근 기억에서 질문 3개를 뽑고 인사이트 5개를 만듦), GITM(마인크래프트 에이전트), ExpeL(성공·실패 궤적에서 교훈을 뽑는 방법)을 든다.
 
 -> Reflexion은 2.1.2 본문의 반성 예시엔 없지만, Table 1은 반성 연산(②)으로도 표시한다. 본문에서는 2.1.3의 모델 피드백 계획에 나온다.
 
 #### **2.1.3 Planning Module**
 
-계획을 피드백이 있는지 없는지로 나눈다.
-
-피드백 없는 계획은 이렇다.
+계획을 피드백이 있는지 없는지로 나눈다. 피드백 없는 계획은 이렇다.
 
 - 단일 경로 추론 : CoT(Chain-of-Thought), 한 줄로 쭉
 - 다중 경로 추론 : CoT-SC(여러 번 뽑아 다수결), ToT, 트리로 탐색
@@ -138,9 +118,7 @@ CoALA에서는 ToT를 의사결정 방식으로 설명했는데, 여기서는 "�
 2. LLM 시대 : 파라미터 학습 + 프롬프트 엔지니어링
 3. 에이전트 시대 : 여기에 mechanism engineering이 더해짐
 
-mechanism engineering은 모듈과 동작 규칙을 설계해서 능력을 올리는 방법을 통틀어 부르는 말이다.
-
-논문은 네 가지 예를 든다.
+mechanism engineering은 모듈과 동작 규칙을 설계해서 능력을 올리는 방법을 통틀어 부르는 말이다. 논문은 네 가지 예를 든다.
 
 1. 시행착오 : 행동하고 비평을 받아 고침 (DEPS 등)
 2. 크라우드소싱 : 여러 에이전트가 토론해서 답을 맞춤
@@ -172,9 +150,7 @@ mechanism engineering은 모듈과 동작 규칙을 설계해서 능력을 올�
 
 ## **5. Related Surveys**
 
-LLM 전반, 응용, alignment, reasoning, 도구를 쓰는 Augmented Language Models, 평가를 다룬 기존 서베이들을 소개한다.
-
-다만 LLM 기반 에이전트만 따로 다룬 서베이는 이 논문 전에는 없었다고 한다.
+LLM 전반, 응용, alignment, reasoning, 도구를 쓰는 Augmented Language Models, 평가를 다룬 기존 서베이들을 소개한다. 다만 LLM 기반 에이전트만 따로 다룬 서베이는 이 논문 전에는 없었다고 한다.
 
 ## **6. Challenges**
 
@@ -191,30 +167,20 @@ LLM 전반, 응용, alignment, reasoning, 도구를 쓰는 Augmented Language Mo
 
 ## **7. Conclusion**
 
-2021년부터 2023년까지의 LLM 에이전트 연구를 Profile, Memory, Planning, Action 4모듈로 정리하고, 응용과 평가까지 묶은 서베이다.
-
-새 기법을 만든 논문은 아니고, 흩어져 있던 기법들을 한 틀로 모아 이름을 붙인 논문이다.
+2021년부터 2023년까지의 LLM 에이전트 연구를 Profile, Memory, Planning, Action 4모듈로 정리하고, 응용과 평가까지 묶은 서베이다. 새 기법을 만든 논문은 아니고, 흩어져 있던 기법들을 한 틀로 모아 이름을 붙인 논문이다.
 
 능력 획득을 파라미터 학습, 프롬프트 엔지니어링, mechanism engineering으로 나눈 구분도 기억해둘 만하다.
 
 ## **8. 지금 관점: CoALA와 비교**
 
-이 서베이(2023-8)와 CoALA(2023-9)는 한 달 차이로 나온 같은 분야의 정리다.
+이 서베이(2023-8)와 CoALA(2023-9)는 한 달 차이로 나온 같은 분야의 정리다. 서베이는 나온 논문들을 읽고 공통점을 묶었고, CoALA는 인지 아키텍처라는 오래된 이론에서 틀을 가져와 적용했다.
 
-서베이는 나온 논문들을 읽고 공통점을 묶었고, CoALA는 인지 아키텍처라는 오래된 이론에서 틀을 가져와 적용했다.
+나누는 방식도 다르다. 서베이는 Profile, Memory, Planning, Action 4개, CoALA는 기억, 행동 공간, 의사결정 3개다. 흔히 보는 Planning, Memory, Tool Use 3분류는 둘 다와 또 다르다. Lilian Weng의 2023년 블로그 글 "LLM Powered Autonomous Agents"에서 나온 정리다.
 
-나누는 방식도 다르다. 서베이는 Profile, Memory, Planning, Action 4개, CoALA는 기억, 행동 공간, 의사결정 3개다.
-
-흔히 보는 Planning, Memory, Tool Use 3분류는 둘 다와 또 다르다. Lilian Weng의 2023년 블로그 글 "LLM Powered Autonomous Agents"에서 나온 정리다.
-
-제일 크게 갈리는 건 역할과 학습이다.
-
-서베이는 역할(Profile)을 첫 모듈로 두고 학습은 2.2에 따로 떼어놨다. CoALA는 역할이 없고 학습을 행동의 한 종류로 넣었다.
+제일 크게 갈리는 건 역할과 학습이다. 서베이는 역할(Profile)을 첫 모듈로 두고 학습은 2.2에 따로 떼어놨다. CoALA는 역할이 없고 학습을 행동의 한 종류로 넣었다.
 
 -> 사람을 시뮬레이션하는 쪽과 과제를 푸는 쪽의 관점 차이가 그대로 나온 것 같다.
 
-Profile, Memory, Planning, Action이라는 용어는 이후 에이전트 설명에서 자주 보인다.
-
-뭐가 있었는지 찾아볼 때는 이 서베이, 구조를 어떻게 짤지 생각할 때는 CoALA를 보면 될 것 같다.
+Profile, Memory, Planning, Action이라는 용어는 이후 에이전트 설명에서 자주 보인다. 뭐가 있었는지 찾아볼 때는 이 서베이, 구조를 어떻게 짤지 생각할 때는 CoALA를 보면 될 것 같다.
 
 다음은 메모리 쪽으로 넘어가서 [MemGPT](https://momozzing.github.io/paper%20review/MemGPT-Paper-review/)다. 컨텍스트 창을 RAM, 외부 저장소를 디스크로 보고 LLM이 스스로 기억을 옮기게 한 논문이다.

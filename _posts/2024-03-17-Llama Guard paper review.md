@@ -81,17 +81,13 @@ LLM이 발전함에 따라 대화형 에이전트 AI가 크게 발전을 하고 
 
 ### Model & Training Details
 
-Model은 Llama2-7B를 사용.
-
-장비는 8xA100 80GB GPU
+Model은 Llama2-7B를 사용. 장비는 8xA100 80GB GPU
 
 batch_size = 2, seq_len = 4096, model_parallelism=1, lr=2e-6, train_step=500
 
 ## Experiments
 
-In-domain performance, Adaptability에 대해 실험을 진행.
-
-평가 메트릭은 precision-recall curve (AUPRC) 사용
+In-domain performance, Adaptability에 대해 실험을 진행. 평가 메트릭은 precision-recall curve (AUPRC) 사용
 
 ### In-domain performance
 

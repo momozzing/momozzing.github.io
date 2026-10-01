@@ -18,22 +18,14 @@ toc_sticky: true
 field: llm
 ---
 
-SOLAR는 업스테이지에서 만든 오픈소스 LLM이다.
-
-허깅페이스의 Open LLM Leaderboard 영어, 한국어에서 가장 뛰어난 성능을 가지는 모델이다.
+SOLAR는 업스테이지에서 만든 오픈소스 LLM이다. 허깅페이스의 Open LLM Leaderboard 영어, 한국어에서 가장 뛰어난 성능을 가지는 모델이다.
 
 이 모델이 어떻게 구성이 되어있는지 알아보자.
 
 # **Introduction**
-본 논문은 10.7B의 크기를 가진 Large language model(LLM)인 SOLAR 10.7B를 소개한다.
+본 논문은 10.7B의 크기를 가진 Large language model(LLM)인 SOLAR 10.7B를 소개한다. SOLAR는 depthwise scaling, continued pretraining 방법을 적용한 depth up-scaling(DUS)이라는 방법을 제시한다.
 
-SOLAR는 depthwise scaling, continued pretraining 방법을 적용한 depth up-scaling(DUS)이라는 방법을 제시한다.
-
-다른 최신 LLM 들은 Mixture-of-Experts(MOE) 방법을 사용하는데 
-
-DUS를 사용하면 간단하면서 효과적이라는 것을 실험적으로 보여준다. 
-
-DUS를 적용한 SOLAR에 추가적으로 instruct tuning을 하니 Mixtral-8x7B-Instruct보다 좋은 성능을 낸다.
+다른 최신 LLM 들은 Mixture-of-Experts(MOE) 방법을 사용하는데 DUS를 사용하면 간단하면서 효과적이라는 것을 실험적으로 보여준다. DUS를 적용한 SOLAR에 추가적으로 instruct tuning을 하니 Mixtral-8x7B-Instruct보다 좋은 성능을 낸다.
 
 # **Depth Up-Scaling**
 ![image](https://github.com/momozzing/KLUE-TOD/assets/60643542/91f851a5-9bbd-4ad3-8493-b287d68be12e)
@@ -49,18 +41,12 @@ LLAMA2와 호환이 되는 Mistral 7B를 baseline 모델로 선정.
 3. 합친 모델을 continual learning 한다. 
 
 ## **Continued pretraining**
-맨 처음에 그냥 합친 모델은 성능이 기존 7B보다 떨어진다.
-
-따라서 Continued pretraining을 진행했다. 
+맨 처음에 그냥 합친 모델은 성능이 기존 7B보다 떨어진다. 따라서 Continued pretraining을 진행했다.
 
 -> 그래서 어떤 데이터를 썼다는건지?? mistral학습했던 데이터 그대로 추가학습을 했다는건가?
 
 ## **Comparison to other up-scaling methods**
-다른 up-scaling method들과 비교했을때, 
-
-gating networks or dynamic expert selection같은 모듈들은 필요가 없고,
-
-기본적인 허깅페이스와 같은 프레임워크에 쉽게 통합해서 만들 수 있다. 
+다른 up-scaling method들과 비교했을때, gating networks or dynamic expert selection같은 모듈들은 필요가 없고, 기본적인 허깅페이스와 같은 프레임워크에 쉽게 통합해서 만들 수 있다.
 
 # **Training Details**
 ## **instruction tuning**
@@ -114,7 +100,7 @@ SFT v3, SFT v4 = OpenOrca 유무에 관계없이 최고의 성능을 발휘하�
 
 DPO v3은 SFT 기본 모델로 SFT v3+v4를 사용
 
-SFT 모델의 성능 격차는 DPO모델에서 똑같이 나오지는 않음. 
+SFT 모델의 성능 격차는 DPO모델에서 똑같이 나오지는 않음.
 
 **Ablation on different merge methods.**
 ![image](https://github.com/momozzing/KLUE-TOD/assets/60643542/51126040-9000-4da2-9dec-18c32f5a9108)

@@ -41,9 +41,7 @@ field: dialog
 
 # **T5: Text-to-Text Transfer Transformer**
 
-T5는 Transformer 기본 architecture를 사용해서 모든 언어 문제를 text-to-text task로 변환.
-
-기존 Transformer와 다른 점은 Positional encoding말고 relative position encoding을 사용. 총 750G data로 학습한 11B 모델이다. 
+T5는 Transformer 기본 architecture를 사용해서 모든 언어 문제를 text-to-text task로 변환. 기존 Transformer와 다른 점은 Positional encoding말고 relative position encoding을 사용. 총 750G data로 학습한 11B 모델이다. 
 
 ## **relative position encoding**
 
@@ -72,20 +70,12 @@ $d = (z_t, x, y)$
 
 $t \in \{NLU, DST, POL, NLG\}$
 
-$t$는 샘플 $d$가 속한 TOD 작업. 
-
-$z_t$ 는 작업별 프롬프트 ex) transfer dialog to {t = system response} 
-
-X는 현재 발화 이전의 input dialog context 
-
-Y 는 out dialog context 
+$t$는 샘플 $d$가 속한 TOD 작업. $z_t$ 는 작업별 프롬프트 ex) transfer dialog to {t = system response} X는 현재 발화 이전의 input dialog context Y 는 out dialog context 
 
 
 ![image](https://user-images.githubusercontent.com/60643542/148397449-766cc1a1-449f-4654-a8d8-f4015928c1ae.png)
 
-디코더의 Auto regressive 형태로 인해 
-
-이전 토큰이 입력으로 들어가게 됨으로 현재 토큰과 이전 토큰이 같을 확률로 Loss를 최소화. 
+디코더의 Auto regressive 형태로 인해 이전 토큰이 입력으로 들어가게 됨으로 현재 토큰과 이전 토큰이 같을 확률로 Loss를 최소화. 
 
 # **Experiments**
 1. End-to-end evaluation
@@ -118,9 +108,7 @@ Few-shot 성능도 전의 모델보다 성능이 높다.
 ![image](https://user-images.githubusercontent.com/60643542/148398596-b67650be-4aad-42a1-a4a1-85170aaff5b6.png)
 
 기존의 계단식 방법으로 학습 진행 시 본 논문에서 제안한 병렬식 방법으로 진행한 것 보다  성능이 낮다.   
-병렬식 방법으로 하니 inference시에 latency도 낮아지며 속도도 빨라진다. 
-
-T5 cascaded는 일부러 계단식으로 만든 다음에 실험한것. 
+병렬식 방법으로 하니 inference시에 latency도 낮아지며 속도도 빨라진다. T5 cascaded는 일부러 계단식으로 만든 다음에 실험한것. 
 
 6. Performance of models pre-trained on data with different annotations
 
@@ -140,10 +128,4 @@ human evaluation에 강인하다는 SOLOIST보다 성능이 높다.
 유창성: 시스템의 응답이 문법적으로 유창하고 이해하기 쉬운지 여부.   
 
 # **Conclusion**
-본 논문은 T5 기반으로 TOD 데이터를 pre-training하고 TOD의 downstream task들을 multi-task learning을 할 수 있게 하는 Pre-train language model
-
-현재까지 나와있는 다른 모델들에 비해 성능이 향상되고 속도도 빨라졌다.  
-
-적은데이터에 보다 강인하며 human evaluation에서도 강인하다. 
-
-역시 데이터가 많으면 많을수록 좋다. 
+본 논문은 T5 기반으로 TOD 데이터를 pre-training하고 TOD의 downstream task들을 multi-task learning을 할 수 있게 하는 Pre-train language model 현재까지 나와있는 다른 모델들에 비해 성능이 향상되고 속도도 빨라졌다. 적은데이터에 보다 강인하며 human evaluation에서도 강인하다. 역시 데이터가 많으면 많을수록 좋다. 
