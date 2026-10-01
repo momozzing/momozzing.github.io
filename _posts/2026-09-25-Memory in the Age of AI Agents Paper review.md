@@ -89,10 +89,8 @@ MemoryBank나 MemGPT는 스스로를 "LLM memory"라고 불렀는데, 실제로 
 
 그래서 논문은 차라리 어떤 태스크로 평가하느냐로 나누자고 한다. 아래는 논문이 양쪽 대표로 든 벤치마크다.
 
-| | 대표 벤치마크 |
-|---|---|
-| RAG | HotpotQA, 2WikiMQA, MuSiQue |
-| Agent memory | LoCoMo, LongMemEval, GAIA, XBench, BrowseComp, SWE-bench Verified, StreamBench |
+- RAG : HotpotQA, 2WikiMQA, MuSiQue
+- Agent memory : LoCoMo, LongMemEval, GAIA, XBench, BrowseComp, SWE-bench Verified, StreamBench
 
 근데 이것도 agent memory라고 하면서 HotpotQA로 평가하는 논문이 많아서 완벽하진 않다.
 Graph RAG랑 그래프 기반 메모리의 차이도 정리한다. 그래프를 계속 변하는 경험으로 다루면 메모리, 고정된 지식으로 쓰면 RAG다.
@@ -357,23 +355,9 @@ CoALA(2023년 9월)에서는 "기억을 지우거나 고치는 학습은 아직 
 
 ### **6.2 Open-Source Frameworks**
 
-논문 Table 9는 오픈소스 메모리 프레임워크 25종이 어떤 기억을 지원하고 어떤 벤치마크로 평가했는지 정리한 표다. 그중 일부만 옮겼다. `Fac.`는 factual, `Exp.`는 experiential, `MM.`은 multimodal 지원 여부고, 마지막 열은 공개된 평가 벤치마크다.
+논문 Table 9는 오픈소스 메모리 프레임워크 25종이 어떤 기억을 지원하고 어떤 벤치마크로 평가했는지 정리한 표다. `Fac.`는 factual, `Exp.`는 experiential, `MM.`은 multimodal 지원 여부고, 마지막 Evaluation 열은 공개된 평가 벤치마크다. Exp. 열과 Evaluation 열을 보면 된다.
 
-| Framework | Fac. | Exp. | MM. | 내부 구조 | 보고된 평가 |
-|---|:---:|:---:|:---:|---|---|
-| MemGPT | ✔ | ✔ | ✘ | hierarchical (S/LTM) | LoCoMo |
-| Mem0 | ✔ | ✔ | ✘ | graph + vector | LoCoMo |
-| Memobase | ✔ | ✔ | ✘ | structured profiles | LoCoMo |
-| MIRIX | ✔ | ✔ | ✔ | structured memory | LoCoMo, MemoryAgentBench |
-| MemoryOS | ✔ | ✔ | ✘ | hierarchical (S/M/LTM) | LoCoMo, MemoryBank |
-| MemOS | ✔ | ✔ | ✘ | tree memory + memcube | LoCoMo, PrefEval, LongMemEval, PersonaMem |
-| Zep | ✔ | ✔ | ✘ | temporal knowledge graph | LongMemEval |
-| LangMem | ✔ | ✔ | ✘ | core API + manager | — |
-| Cognee | ✔ | ✔ | ✔ | knowledge graph | — |
-| Memary | ✔ | ✔ | ✘ | stream + entity store | — |
-| MemEngine | ✔ | ✔ | ✔ | modular space | — |
-| ReMe (AgentScope) | ✔ | ✔ | ✘ | agentscope | BFCL, AppWorld |
-| Pinecone / Chroma / Weaviate | ✔ | ✘ | 일부 ✔ | vector(+graph) DB | — |
+![오픈소스 메모리 프레임워크 비교 (논문 Table 9)](https://momozzing.github.io/assets/images/agent-memory-survey/table9-open-source-frameworks.png)
 
 표를 보면,
 

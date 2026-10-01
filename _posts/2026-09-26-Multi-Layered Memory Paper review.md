@@ -115,15 +115,9 @@ LOCCO에서 6기간 뒤 보존율과 거짓 기억률을 따로 보고, 보존�
 
 F1을 어떻게 계산했는지는 논문에 안 나온다. LoCoMo에서는 보통 답과 정답이 겹치는 토큰으로 잰다. FMR은 Table IV 제목과 V.B 본문에 LOCCO에서 쟀다고 나온다.
 
-아래가 논문 Table V다. 다섯 번 돌린 평균이라고 한다.
+아래가 논문 Table V다. 다섯 번 돌린 평균이라고 한다. 맨 아래 Full MLMF 행과 위의 네 변형 행을 비교하면 된다.
 
-| 변형 | F1 | 보존율(6기간) | FMR |
-|---|---:|---:|---:|
-| −M(s) semantic 계층 제거 | 0.591 | 50.84% | 6.4% |
-| −M(e) episodic 통합 제거 | 0.602 | 52.13% | 6.1% |
-| −L_ret 보존 손실 제거 | 0.608 | 53.27% | 6.9% |
-| adaptive gating 제거 | 0.604 | 52.98% | 6.5% |
-| 전체 MLMF | 0.618 | 56.90% | 5.1% |
+![구성 요소별 ablation (논문 Table V)](https://momozzing.github.io/assets/images/mlmf/table5-ablation.png)
 
 논문은 같은 결과를 막대그래프로도 보여준다.
 

@@ -120,29 +120,16 @@ LoCoMo(긴 다중 세션 대화 QA 벤치마크)에서 파운데이션 모델 �
 - MemoryBank : 망각 곡선으로 기억 강도를 조절하는 메모리
 - MemGPT : 앞에서 본 [MemGPT](https://momozzing.github.io/paper%20review/MemGPT-Paper-review/)
 
-아래는 LoCoMo F1이다(논문 Table 1 일부만 옮김). 여섯 모델 중 넷, 다섯 범주 중 셋만 옮겼고, GPT-4o와 Qwen 줄에서는 일부 방법을 뺐다. 순위는 다섯 범주(Multi Hop, Temporal, Open Domain, Single Hop, Adversarial) 순위의 평균이다. 논문에 정의가 따로 없어서 표 값으로 계산해 맞춰 봤다. 토큰은 질문 하나에 답할 때 쓴 평균 토큰 수다.
+아래는 LoCoMo 결과다(논문 Table 1). 모델별로 다섯 줄씩이고, 각 묶음의 마지막 회색 줄이 A-MEM이다. 범주별 F1 열과 오른쪽 Average의 Ranking F1, Token Length 열을 보면 된다. 순위는 다섯 범주(Multi Hop, Temporal, Open Domain, Single Hop, Adversarial) 순위의 평균이다. 논문에 정의가 따로 없어서 표 값으로 계산해 맞춰 봤다. 토큰은 질문 하나에 답할 때 쓴 평균 토큰 수다.
 
-| 모델 | 방법 | Multi Hop F1 | Temporal F1 | Single Hop F1 | 순위 | 토큰 |
-|---|---|---:|---:|---:|---:|---:|
-| GPT-4o-mini | LOCOMO | 25.02 | 18.41 | 40.36 | 2.4 | 16,910 |
-| | MEMGPT | 26.65 | 25.52 | 41.04 | 2.4 | 16,977 |
-| | READAGENT | 9.15 | 12.60 | 9.67 | 4.2 | 643 |
-| | MEMORYBANK | 5.00 | 9.68 | 6.61 | 4.8 | 432 |
-| | A-MEM | 27.02 | 45.85 | 44.65 | 1.2 | 2,520 |
-| GPT-4o | LOCOMO | 28.00 | 9.09 | 61.56 | 2.0 | 16,910 |
-| | MEMGPT | 30.36 | 17.29 | 60.16 | 2.4 | 16,987 |
-| | A-MEM | 32.86 | 39.41 | 48.43 | 1.6 | 1,216 |
-| Qwen2.5-1.5b | MEMGPT | 10.44 | 4.21 | 9.56 | 3.4 | 16,953 |
-| | A-MEM | 18.23 | 24.32 | 23.63 | 1.0 | 1,300 |
-| Qwen2.5-3b | MEMGPT | 5.07 | 2.94 | 7.26 | 2.4 | 16,961 |
-| | A-MEM | 12.57 | 27.59 | 17.23 | 1.0 | 1,137 |
+![LoCoMo QA 결과 (논문 Table 1)](https://momozzing.github.io/assets/images/a-mem/table1-locomo.png)
 
 토큰을 훨씬 적게 쓴다. LOCOMO와 MEMGPT는 16,900토큰 정도를 쓰는데 A-MEM은 1,200~2,500토큰이고 순위는 더 높다. 7~14배 차이다.
 
 작은 모델에서 차이가 더 크다. Qwen2.5-3b에서 A-MEM은 순위 1.0, MemGPT는 2.4다. Multi Hop F1이 12.57 vs 5.07로 2.5배다. 논문도 GPT가 아닌 모델에서는 모든 범주에서 기준선을 이겼다고 한다.
 -> 컨텍스트에 다 넣어주는 방식은 약한 모델이 잘 소화를 못 하는 것 같다.
 
-GPT 모델에서는 다르다. GPT-4o의 Single Hop은 LOCOMO가 더 높고(61.56 vs 48.43), 표에는 없지만 Adversarial도 LOCOMO가 높다. 논문도 GPT 모델에서는 LoCoMo와 MemGPT가 일부 범주에서 강하다고 인정한다. 그래서 여섯 모델 모두 평균 순위로는 A-MEM이 1위지만, 범주마다 다 이긴 건 아니다.
+GPT 모델에서는 다르다. GPT-4o의 Single Hop은 LOCOMO가 더 높고(61.56 vs 48.43), Adversarial도 LOCOMO가 높다(52.61 vs 36.35). 논문도 GPT 모델에서는 LoCoMo와 MemGPT가 일부 범주에서 강하다고 인정한다. 그래서 여섯 모델 모두 평균 순위로는 A-MEM이 1위지만, 범주마다 다 이긴 건 아니다.
 
 뒤에서 볼 Mem0 논문도 A-MEM을 LoCoMo에서 다시 돌리는데, 그 재현 결과에서는 순위가 다르게 나온다.
 
@@ -152,13 +139,7 @@ Link Generation(LG)과 Memory Evolution(ME)을 하나씩 빼본다.
 
 ![LG·ME ablation (논문 Table 3)](https://momozzing.github.io/assets/images/a-mem/table3-ablation.png)
 
-GPT-4o-mini를 기반 모델로 잰 LoCoMo F1이다. 위 그림(논문 Table 3)에서 F1만 옮기면 이렇다.
-
-| 방법 | Multi Hop | Temporal | Open Domain | Single Hop | Adversarial |
-|---|---:|---:|---:|---:|---:|
-| w/o LG & ME | 9.65 | 24.55 | 7.77 | 13.28 | 15.32 |
-| w/o ME | 21.35 | 31.24 | 10.13 | 39.17 | 44.16 |
-| A-MEM | 27.02 | 45.85 | 12.14 | 44.65 | 50.03 |
+GPT-4o-mini를 기반 모델로 잰 LoCoMo 결과다. 위 Table 3에서 범주별 F1 열을 세 줄끼리 비교하면 된다.
 
 둘 다 빼면 모든 범주에서 크게 떨어진다. Multi Hop은 27.02 → 9.65다. 링크만 두면(w/o ME) 중간이고, 진화까지 켜면 Temporal이 31.24 → 45.85로 제일 많이 오른다.
 링크 생성이 메모리 조직의 토대고, 진화는 거기에 정제를 더하는 거라고 한다.

@@ -103,14 +103,7 @@ LLM이 출력에 `request_heartbeat=true`라는 인자를 넣으면 바로 다�
 
 아래는 MemGPT를 백본별로 돌린 결과다(논문 Table 2). 모델 이름만 있는 줄이 MemGPT 없이 그 모델만 쓴 베이스라인이다.
 
-| 모델 | 정확도 | ROUGE-L |
-|---|---:|---:|
-| GPT-3.5 Turbo | 38.7% | 0.394 |
-| + MemGPT | 66.9% | 0.629 |
-| GPT-4 | 32.1% | 0.296 |
-| + MemGPT | 92.5% | 0.814 |
-| GPT-4 Turbo | 35.3% | 0.359 |
-| + MemGPT | 93.4% | 0.827 |
+![DMR 성능 (논문 Table 2)](https://momozzing.github.io/assets/images/memgpt/table2-dmr.png)
 
 베이스라인은 지난 다섯 세션을 손실 있게 요약한 것만 본다. 논문은 이걸 재귀 요약(recursive summarization)을 흉내 낸 설정이라고 한다. MemGPT는 대화 이력 전체를 recall storage에 두고 검색해서 꺼내 쓴다.
 GPT-4에서 32.1% → 92.5%다.
@@ -122,12 +115,7 @@ GPT-4에서 32.1% → 92.5%다.
 
 아래도 MemGPT를 백본별로 돌린 결과다(논문 Table 3). Human 줄만 사람이 쓴 오프너다.
 
-| 방법 | SIM-1 | SIM-3 | SIM-H |
-|---|---:|---:|---:|
-| Human | 0.800 | 0.800 | 1.000 |
-| GPT-3.5 Turbo | 0.830 | 0.812 | 0.817 |
-| GPT-4 | 0.868 | 0.843 | 0.773 |
-| GPT-4 Turbo | 0.857 | 0.828 | 0.767 |
+![대화 오프너 성능 (논문 Table 3)](https://momozzing.github.io/assets/images/memgpt/table3-conversation-opener.png)
 
 사람이 쓴 오프너보다 높게 나온다(SIM-1 0.868 vs 0.800). working context에 정보를 저장해두는 게 좋은 오프너를 만드는 데 중요하다고 한다.
 

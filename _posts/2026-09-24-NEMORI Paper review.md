@@ -111,12 +111,9 @@ Predictive Coding Theory(Rao & Ballard 1999, Friston 2010, Clark 2013)에서 기
 
 ### **4.2 Main Results (RQ1)**
 
-LoCoMo(대화 10개, 평균 24K 토큰, 질문 1,540개)에서 잰 LLM-judge 점수(gpt-4o-mini가 0~100으로 채점) 평균이다. 논문 Table 2에서 평균만 옮김. 개선은 가장 센 베이스라인 대비 상대 개선율이다.
+아래는 LoCoMo(대화 10개, 평균 24K 토큰, 질문 1,540개) 결과인 논문 Table 2다. 맨 오른쪽 Average 묶음의 LLM 열(gpt-4o-mini가 0~100으로 채점한 LLM-judge 점수)을 보면 된다. Improv. 행은 밑줄 친 가장 센 베이스라인 대비 상대 개선율이다. gpt-4o-mini에서는 73.0으로 Mem0(61.3)보다 19.1%, gpt-4.1-mini에서는 80.8로 LangMem(73.4)보다 10.1% 높다.
 
-| 모델 | NEMORI | 최강 베이스라인 | 개선(상대) |
-|---|---:|---|---:|
-| gpt-4o-mini | 73.0 | Mem0 61.3 | +19.1% |
-| gpt-4.1-mini | 80.8 | LangMem 73.4 | +10.1% |
+![LoCoMo 주요 결과 (논문 Table 2)](https://momozzing.github.io/assets/images/nemori/table2-locomo-main.png)
 
 LangMem은 세션을 넘어 지식을 자동으로 추출하는 메모리 라이브러리다.
 
@@ -132,29 +129,15 @@ Temporal Reasoning이 특히 높다. gpt-4.1-mini에서 77.3(A-MEM 대비 +15.9%
 
 ### **4.3 Efficiency Analysis (RQ2)**
 
-먼저 메모리 구축 비용이다. LoCoMo, gpt-4o-mini 기준이고 베이스라인 수치는 Fang et al.(2025)에서 가져왔다. 입력·출력 토큰 열은 빼고 옮김. 개선 행은 가장 나은 베이스라인 대비 상대 변화다.
+먼저 메모리 구축 비용(논문 Table 3)이다. LoCoMo, gpt-4o-mini 기준이고 베이스라인 수치는 Fang et al.(2025)에서 가져왔다. Calls 열과 Total 열을 보면 되고, Improv. 행은 가장 나은 베이스라인 대비 상대 변화다.
 
-| 방법 | LLM 점수 | 호출 수 | 총 토큰(k) |
-|---|---:|---:|---:|
-| LangMem | 51.3 | 920.6 | 1,010.2 |
-| Mem0 | 61.3 | 1,602.2 | 1,693.4 |
-| A-MEM | 52.5 | 1,175.5 | 1,149.4 |
-| MemoryOS | 54.5 | 1,016.1 | 526.5 |
-| NEMORI | 73.0 | 373.2 | 322.9 |
-| 개선 | +19.1% | −59.5% | −38.7% |
+![메모리 구축 비용 (논문 Table 3)](https://momozzing.github.io/assets/images/nemori/table3-construction-cost.png)
 
 LLM 호출이 59.5% 줄었다. 프롬프트를 여러 개 쓰는 복잡한 파이프라인인데도 그렇다. 논문은 메시지 단위 대신 에피소드 단위로 처리해서라고 설명한다.
 
-다음은 응답 생성 비용이다. 같은 LoCoMo, gpt-4o-mini에서 질문을 받고 답을 낼 때까지를 쟀다. 논문 Table 4에서 RAG-4096, Zep 행은 빼고 옮김.
+다음은 응답 생성 비용(논문 Table 4)이다. 같은 LoCoMo, gpt-4o-mini에서 질문을 받고 답을 낼 때까지를 쟀다. FullContext 행과 NEMORI 행의 Tokens, Total 열을 비교하면 된다.
 
-| 방법 | LLM 점수 | 토큰 | 검색(ms) | 총 지연(ms) |
-|---|---:|---:|---:|---:|
-| FullContext | 72.3 | 23,653 | – | 5,806 |
-| LangMem | 51.3 | 125 | 19,829 | 22,082 |
-| Mem0 | 61.3 | 1,027 | 784 | 3,539 |
-| A-MEM | 52.5 | 2,614 | 947 | 2,867 |
-| MemoryOS | 54.5 | 1,560 | 9,910 | 15,220 |
-| NEMORI | 73.0 | 2,745 | 787 | 3,053 |
+![응답 생성 비용 (논문 Table 4)](https://momozzing.github.io/assets/images/nemori/table4-response-cost.png)
 
 Full Context 대비 토큰은 88%, 지연은 47% 줄었고 정확도는 더 높다.
 
@@ -162,17 +145,14 @@ LangMem은 토큰이 125개인데 검색에 19.8초를 쓴다. 앞에서 본 [Me
 
 ### **4.4 Ablation Study (RQ3)**
 
-예측 오차로 증류하는 것과, 들어온 에피소드에서 바로 지식을 뽑는 직접 증류를 비교한다. LoCoMo LLM 점수이고 논문 Table 5에서 두 설정만 옮김.
+예측 오차로 증류하는 것과, 들어온 에피소드에서 바로 지식을 뽑는 직접 증류를 비교한다. 아래 논문 Table 5(LoCoMo)에서 볼 행은 두 개다.
 
 - NEMORI-s : 예측 없이 원래 에피소드에서 바로 지식을 뽑는 직접 증류
 - w/o e : NEMORI의 예측 오차 증류는 그대로 두고, 답변할 때 에피소드 DB만 뺀 설정
 
-둘 다 답변할 때 의미 DB만 쓰니 다른 건 증류 방식뿐이다. 아래 수치는 둘 다 native 관리 모듈을 끄고 단순 RAG로 관리한 경우다.
+둘 다 답변할 때 의미 DB만 쓰니 다른 건 증류 방식뿐이다. 표에서 Nemori-s와 w/o e의 Mgmt가 ✗인 행(native 관리 모듈을 끄고 단순 RAG로 관리한 경우)의 LLM 열을 비교하면 된다. gpt-4o-mini는 52.0 vs 65.0, gpt-4.1-mini는 65.5 vs 74.9다.
 
-| 모델 | 직접 증류 (NEMORI-s) | 예측 오차 증류 (w/o e) | 개선(상대) |
-|---|---:|---:|---:|
-| gpt-4o-mini | 52.0 | 65.0 | +25.0% |
-| gpt-4.1-mini | 65.5 | 74.9 | +14.4% |
+![LoCoMo ablation (논문 Table 5)](https://momozzing.github.io/assets/images/nemori/table5-ablation.png)
 
 gpt-4o-mini에서 예측 오차 쪽이 13점, 상대로 25% 높다.
 
@@ -199,17 +179,9 @@ NEMORI를 다른 메모리 시스템 앞단의 증류 모듈로 붙여본다.
 
 ### **4.7 Scalability Analysis (RQ6)**
 
-LongMemEvalS(대화 500개, 평균 105K 토큰)에서 질문 유형별 LLM-judge 점수다. 논문 Table 8에서 gpt-4.1-mini 부분만 옮김.
+LongMemEvalS(대화 500개, 평균 105K 토큰)에서 질문 유형별 LLM-judge 점수다(논문 Table 8). 아래쪽 gpt-4.1-mini 부분을 기준으로 본다.
 
-| 질문 유형 | Full-context (101K tok) | NEMORI (3.7–4.8K tok) |
-|---|---:|---:|
-| Single-session Preference | 16.7 | 86.7 |
-| Single-session Assistant | 98.2 | 92.9 |
-| Temporal Reasoning | 60.2 | 72.2 |
-| Multi-session | 51.1 | 55.6 |
-| Knowledge Update | 76.9 | 79.5 |
-| Single-session User | 85.7 | 90.0 |
-| 평균 | 65.6 | 74.6 |
+![LongMemEvalS 질문 유형별 결과 (논문 Table 8)](https://momozzing.github.io/assets/images/nemori/table8-longmemeval.png)
 
 Full Context와 평균 차이가 +9.0점이다. LoCoMo에서 +0.2점이던 게 커졌다. gpt-4o-mini에서도 55.0 → 64.2로 비슷하게 오른다.
 

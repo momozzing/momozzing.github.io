@@ -95,40 +95,22 @@ PPR이 그래프 경로를 탐색하고 관련 부분그래프를 찾아주니�
 
 ## **4. Results**
 
-단일 단계 검색부터 보자. 세 데이터셋 dev 1,000문항에서 잰 recall@5(상위 5개 안에 근거 구절이 든 비율)다. 논문 Table 2에서 R@5만 옮겼다.
+단일 단계 검색부터 보자. 세 데이터셋 dev 1,000문항에서 잰 recall@5(상위 5개 안에 근거 구절이 든 비율)다. 논문 Table 2에서 R@5 열을 보면 된다. 위쪽 여덟 줄이 베이스라인, 아래 두 줄이 HippoRAG다.
 
-| 방법 | MuSiQue R@5 | 2Wiki R@5 | HotpotQA R@5 | 평균 R@5 |
-|---|---:|---:|---:|---:|
-| BM25 | 41.2 | 61.9 | 72.2 | 58.4 |
-| Contriever | 46.6 | 57.5 | 75.5 | 59.9 |
-| GTR | 49.1 | 67.9 | 73.3 | 63.4 |
-| ColBERTv2 | 49.2 | 68.2 | 79.3 | 65.6 |
-| RAPTOR (ColBERTv2) | 46.5 | 64.7 | 75.6 | 62.3 |
-| Proposition (ColBERTv2) | 50.1 | 64.9 | 78.1 | 64.4 |
-| HippoRAG (ColBERTv2) | 51.9 | 89.1 | 77.7 | 72.9 |
+![단일 단계 검색 성능 (논문 Table 2)](https://momozzing.github.io/assets/images/hipporag/table2-single-step-retrieval.png)
 
 2Wiki에서 68.2 → 89.1로 20.9점 올랐다. abstract의 "최대 20%"가 여기서 나온 거다.
 HotpotQA에서는 진다(77.7 vs 79.3). 논문은 HotpotQA가 지식 통합이 별로 필요 없는 데이터셋이고, 개념과 맥락 사이의 절충 문제도 있다고 한다.
 
-반복 검색과 결합하면 더 오른다. 아래는 IRCoT(추론 한 단계마다 검색을 다시 하는 반복 검색 방법)의 검색기를 바꿔 가며 잰 세 데이터셋 평균 R@5다. 논문 Table 3에서 평균만 옮겼다.
+반복 검색과 결합하면 더 오른다. 아래는 IRCoT(추론 한 단계마다 검색을 다시 하는 반복 검색 방법)의 검색기를 바꿔 가며 잰 결과다(논문 Table 3). 맨 오른쪽 Average R@5 열을 보면 IRCoT + BM25가 66.4, IRCoT + ColBERTv2가 70.0, IRCoT + HippoRAG (ColBERTv2)가 78.2다.
 
-| 방법 | 평균 R@5 |
-|---|---:|
-| IRCoT + BM25 | 66.4 |
-| IRCoT + ColBERTv2 | 70.0 |
-| IRCoT + HippoRAG (ColBERTv2) | 78.2 |
+![다단계 검색 성능 (논문 Table 3)](https://momozzing.github.io/assets/images/hipporag/table3-multi-step-retrieval.png)
 
-반복 검색과 같이 쓸 수 있다. 논문 본문에 따르면 IRCoT 안에서 검색기로 HippoRAG를 쓰면 R@5가 MuSiQue에서 4%, 2Wiki에서 18% 정도 더 오른다(데이터셋별 값은 위 표에 없음).
+반복 검색과 같이 쓸 수 있다. 논문 본문에 따르면 IRCoT 안에서 검색기로 HippoRAG를 쓰면 R@5가 MuSiQue에서 4%, 2Wiki에서 18% 정도 더 오른다.
 
-QA 성능은 이렇다. 검색 결과를 읽기 모델에 넣고 답한 EM과 F1의 세 데이터셋 평균이다(논문 Table 4 일부만 옮김).
+QA 성능은 이렇다. 검색 결과를 읽기 모델에 넣고 답한 EM과 F1이다(논문 Table 4). 맨 오른쪽 Average 열이 세 데이터셋 평균이다.
 
-| 검색기 | 평균 EM | 평균 F1 |
-|---|---:|---:|
-| None | 24.6 | 35.5 |
-| ColBERTv2 | 30.8 | 42.5 |
-| HippoRAG (ColBERTv2) | 35.9 | 48.1 |
-| IRCoT (ColBERTv2) | 33.3 | 44.7 |
-| IRCoT + HippoRAG | 38.4 | 51.7 |
+![QA 성능 (논문 Table 4)](https://momozzing.github.io/assets/images/hipporag/table4-qa.png)
 
 단일 단계 HippoRAG가 IRCoT보다 높다(48.1 vs 44.7).
 그러면서 온라인 검색이 IRCoT보다 10~30배 싸고 6~13배 빠르다고 한다(초록에는 10~20배로 적혀 있다). 반복 검색만큼의 정확도를 한 번의 검색으로 낸다.
@@ -137,50 +119,32 @@ QA 성능은 이렇다. 검색 결과를 읽기 모델에 넣고 답한 EM과 F1
 
 ### **5.1 What Makes HippoRAG Work?**
 
-먼저 OpenIE 모델을 바꿔 봤다. 세 데이터셋 평균 R@5다(논문 Table 5 일부).
+5.1절의 실험은 전부 논문 Table 5 하나에 들어 있다. 맨 위 HippoRAG 줄이 기본 설정(OpenIE는 GPT-3.5, PPR 사용)이고, 아래로 OpenIE 대체, PPR 대체, 구성요소 제거 순이다.
 
-| OpenIE | 평균 R@5 |
-|---|---:|
-| REBEL (전용 모델) | 58.4 |
-| Llama-3.1-8B-Instruct | 67.8 |
-| Llama-3.1-70B-Instruct | 72.5 |
-| GPT-3.5 (기본) | 72.9 |
+![HippoRAG 구성요소 분석 (논문 Table 5)](https://momozzing.github.io/assets/images/hipporag/table5-dissecting.png)
+
+먼저 OpenIE 모델을 바꿔 봤다. OpenIE Alternatives 세 줄의 맨 오른쪽 평균 R@5를 기본 설정(72.9)과 비교하면 된다.
 
 전용 OpenIE 모델(REBEL)을 쓰면 크게 떨어진다.
 GPT-3.5는 REBEL보다 트리플을 두 배 많이 만든다. REBEL은 일반 개념이 들어간 트리플을 잘 안 만들어서 쓸모 있는 연결을 많이 놓친다.
 
 Llama-3.1-70B는 GPT-3.5랑 거의 비슷하고, 8B도 2Wiki만 빼면 괜찮다. 큰 코퍼스를 색인할 때 더 싼 대안이 될 수 있다고 한다.
 
-PPR이 실제로 기여하는지도 봤다. 같은 Table 5에서 PPR 자리를 단순한 방식으로 바꾼 줄이다. R@2와 R@5 둘 다 세 데이터셋 평균이다.
-
-| 방식 | 평균 R@2 | 평균 R@5 |
-|---|---:|---:|
-| `R_q` 노드만 | 50.7 | 56.2 |
-| `R_q` 노드 + 이웃 | 42.2 | 59.2 |
-| PPR (기본) | 57.4 | 72.9 |
+PPR이 실제로 기여하는지도 봤다. 위 Table 5의 PPR Alternatives 두 줄이 PPR 자리를 단순한 방식으로 바꾼 결과다. 맨 오른쪽 Average의 R@2·R@5를 맨 위 HippoRAG 줄(57.4, 72.9)과 비교하면 된다.
 
 PPR을 빼면 R@5가 16점 넘게 떨어진다.
 논문은 PPR 없이 `R_q` 노드에 이웃을 더하면 질의 노드만 쓸 때보다 나빠진다고 한다. 그런데 표를 보면 R@2 평균은 50.7 → 42.2로 떨어지지만 R@5 평균은 56.2 → 59.2로 오른다. R@5가 오른 건 2Wiki(61.4 → 74.7) 때문이고, MuSiQue와 HotpotQA의 R@5는 떨어진다.
 -> 이웃을 막 넓히면 상위 2개 같은 좁은 순위에서는 잡음이 먼저 올라오고, 후보를 5개까지 보면 2Wiki처럼 엔티티 중심 데이터에서는 이웃이 도움이 되는 것 같다. 어느 쪽이든 얼마나 퍼질지 조절하는 PPR이 둘보다 훨씬 높다.
 
-나머지 구성요소도 하나씩 뺐다(평균 R@5).
-
-| 제거 | 평균 R@5 |
-|---|---:|
-| w/o Node Specificity | 70.9 |
-| w/o Synonymy Edges | 70.5 |
-| 전체 | 72.9 |
+나머지 구성요소도 하나씩 뺐다. 위 Table 5의 Ablations 두 줄이고, 평균 R@5는 Node Specificity를 빼면 70.9, Synonymy Edges를 빼면 70.5다(전체 72.9).
 
 둘 다 2점 정도다. PPR에 비하면 작다.
 
 ### **5.2 HippoRAG's Advantage: Single-Step Multi-Hop Retrieval**
 
-All-Recall로 본다. 근거 구절을 전부 찾은 질문의 비율이다(논문 Table 6에서 AR@5만 옮김).
+All-Recall로 본다. 근거 구절을 전부 찾은 질문의 비율이다(논문 Table 6). AR@5 열을 보면 된다.
 
-| 방법 | MuSiQue AR@5 | 2Wiki AR@5 | HotpotQA AR@5 | 평균 AR@5 |
-|---|---:|---:|---:|---:|
-| ColBERTv2 | 16.1 | 37.1 | 59.0 | 37.4 |
-| HippoRAG | 22.4 | 75.7 | 57.9 | 52.0 |
+![All-Recall (논문 Table 6)](https://momozzing.github.io/assets/images/hipporag/table6-all-recall.png)
 
 2Wiki에서 37.1 → 75.7로 두 배다. HotpotQA는 여기서도 조금 진다.
 논문은 이 개선이 부분 검색을 한 질문이 늘어서가 아니라, 근거 문서를 전부 찾은 질문이 늘어서 생긴 거라고 한다.

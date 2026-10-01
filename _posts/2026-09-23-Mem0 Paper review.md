@@ -99,17 +99,10 @@ LOCOMO 벤치마크에서 여섯 종류의 베이스라인이랑 비교한다. �
 
 ### **4.1 Performance Comparison Across Memory-Enabled Systems**
 
-LOCOMO 질문 유형별 J 점수다. 논문 Table 1에서 J가 있는 방법만 옮겼다(일부만 옮김).
+LOCOMO 질문 유형별 결과다(논문 Table 1). 유형마다 F1·B1·J 세 열이 있고, 아래 이야기는 J 열 기준이다. J는 A-Mem* 줄부터 아래에만 있다.
 A-Mem*의 별표는 Mem0 팀이 A-Mem을 temperature 0으로 다시 돌려서 J 점수를 낸 결과라는 뜻이다. 앞에서 본 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/) 논문은 LLM-as-a-Judge(J) 점수를 보고하지 않아서 J가 없었다.
 
-| 방법 | Single Hop (J) | Multi-Hop (J) | Open Domain (J) | Temporal (J) |
-|---|---:|---:|---:|---:|
-| A-Mem* | 39.79 | 18.85 | 54.05 | 49.91 |
-| LangMem | 62.23 | 47.92 | 71.12 | 23.43 |
-| Zep | 61.70 | 41.35 | 76.60 | 49.31 |
-| OpenAI | 63.79 | 42.92 | 62.29 | 21.71 |
-| Mem0 | 67.13 | 51.15 | 72.93 | 55.51 |
-| Mem0g | 65.71 | 47.19 | 75.71 | 58.13 |
+![LOCOMO 질문 유형별 성능 (논문 Table 1)](https://momozzing.github.io/assets/images/mem0/table1-locomo.png)
 
 Mem0는 Single Hop(67.13)과 Multi-Hop(51.15)에서 제일 높다. 여러 세션에 흩어진 사실을 엮는 Multi-Hop에서도 Mem0가 앞선다.
 그래프 버전이 항상 좋은 건 아니다. Mem0g는 temporal(58.13)에서 제일 높고 open-domain(75.71)에서 Mem0보다 높은데, multi-hop에서는 Mem0보다 낮다(47.19 vs 51.15). 논문은 그래프 표현의 비효율이나 중복 때문일 수 있다고 한다.
@@ -119,7 +112,7 @@ temporal에서 OpenAI가 크게 낮다. 프롬프트로 시키는데도 만들�
 
 open-domain은 Zep이 76.60으로 Mem0g(75.71)보다 조금 높다. 논문도 Zep이 작지만 의미 있는 차이로 앞선다고 인정한다.
 
-A-MEM 논문에서는 A-MEM이 full-context 기준선(LoCoMo 논문 방식)보다 높았는데, 여기 재현에서는 A-Mem*가 Single Hop·Multi-Hop과 아래 Table 2의 전체 J(48.38)에서 옮긴 방법 중 제일 낮다. 같은 벤치마크라도 누가 어떻게 돌렸느냐에 따라 순위가 바뀐다.
+A-MEM 논문에서는 A-MEM이 full-context 기준선(LoCoMo 논문 방식)보다 높았는데, 여기 재현에서는 A-Mem*가 Single Hop·Multi-Hop과 아래 Table 2의 전체 J(48.38)에서 J가 있는 방법 중 제일 낮다. 같은 벤치마크라도 누가 어떻게 돌렸느냐에 따라 순위가 바뀐다.
 
 ### **4.2 Cross-Category Analysis**
 
@@ -131,17 +124,9 @@ A-MEM 논문에서는 A-MEM이 full-context 기준선(LoCoMo 논문 방식)보�
 
 ### **4.4 Latency Analysis**
 
-지연과 비용이다. LOCOMO 전체에서 잰 값이고, 논문 Table 2에서 RAG 설정 줄은 뺐다(일부만 옮김). 메모리 토큰은 검색해서 가져온 메모리의 토큰 수다. 검색은 메모리를 꺼내는 시간, 전체는 답변 생성까지의 시간(초)이다. p50은 중앙값, p95는 느린 쪽 5% 경계다.
+지연과 비용이다. LOCOMO 전체에서 잰 값이다(논문 Table 2). 위쪽 RAG 열네 줄은 4.3절의 청크 크기·k 실험이고, 여기서는 Full-context 줄부터 아래를 보면 된다. memory tokens 열은 검색해서 가져온 메모리의 토큰 수다. Search는 메모리를 꺼내는 시간, Total은 답변 생성까지의 시간(초)이다. p50은 중앙값, p95는 느린 쪽 5% 경계다.
 
-| 방법 | 메모리 토큰 | 검색 p50 | 검색 p95 | 전체 p50 | 전체 p95 | 전체 J |
-|---|---:|---:|---:|---:|---:|---:|
-| Full-context | 26,031 | — | — | 9.870 | 17.117 | 72.90 |
-| A-Mem | 2,520 | 0.668 | 1.485 | 1.410 | 4.374 | 48.38 |
-| LangMem | 127 | 17.99 | 59.82 | 18.53 | 60.40 | 58.10 |
-| Zep | 3,911 | 0.513 | 0.778 | 1.292 | 2.926 | 65.99 |
-| OpenAI | 4,437 | — | — | 0.466 | 0.889 | 52.90 |
-| Mem0 | 1,764 | 0.148 | 0.200 | 0.708 | 1.440 | 66.88 |
-| Mem0g | 3,616 | 0.476 | 0.657 | 1.091 | 2.590 | 68.44 |
+![지연과 메모리 토큰 비교 (논문 Table 2)](https://momozzing.github.io/assets/images/mem0/table2-latency.png)
 
 이 논문이 제일 내세우는 부분이다.
 J 점수는 Full-context가 72.90으로 제일 높다. 대화를 전부 넣으면 제일 잘 맞힌다. 대신 p95가 17.1초고 토큰이 26,031개다.

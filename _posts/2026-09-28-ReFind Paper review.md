@@ -43,16 +43,9 @@ ReFind는 중국과기대(USTC)와 MetaStone Technology에서 만든 채팅 기�
 
 ## **2. Related Work**
 
-related work 부분을 보면 기존 시스템을 다섯 가지 기준으로 비교한 표가 있다. 체크는 그 기능을 갖췄다는 뜻이다.
+related work 부분을 보면 기존 시스템을 다섯 가지 기준으로 비교한 표(논문 Table 1)가 있다. 체크는 그 기능을 갖췄다는 뜻이고, 맨 아래 ReFind 행만 다섯 칸이 다 차 있다.
 
-| 시스템 | No prep. | Agentic | Sess. | Time | Dedup |
-|---|:---:|:---:|:---:|:---:|:---:|
-| Sparse / Dense RAG | ✓ | | | | |
-| RAPTOR, GraphRAG, HippoRAG 2, A-Mem, Mem0, STITCH | | | | | |
-| Zep | | | | ✓ | |
-| SeCom | | | ✓ | | |
-| MemGPT, GAM | ✓ | ✓ | | | |
-| ReFind | ✓ | ✓ | ✓ | ✓ | ✓ |
+![대화 메모리 시스템의 설계 축 비교 (논문 Table 1)](https://momozzing.github.io/assets/images/refind/table1-design-axes.png)
 
 - No prep. : 질문이 오기 전에 LLM으로 인덱스를 만들지 않음
 - Agentic : 모델이 스스로 여러 번 검색함
@@ -134,21 +127,9 @@ MemoryAgentBench(Hu et al., 2025)의 벤치마크 여섯 개를 GPT-4o-mini로 �
 
 ### **Main Results: Precise Retrieval and Fact Tracking**
 
-여섯 벤치마크 정확도(%)다. 논문 Table 2에서 일부만 옮겼다(Contriever, text-embed-3-small, Qwen3-Embed-4B, MemoRAG, Self-RAG 행은 뺐다).
+여섯 벤치마크 정확도(%)다. 논문 Table 2다. Avg 열과 Structured Memory 블록, 맨 아래 ReFind 행을 보면 된다. 굵은 글씨가 1등, 밑줄이 2등이다.
 
-| 분류 | 방법 | SH-QA | MH-QA | LME | EventQA | FC-SH | FC-MH | Avg |
-|---|---|---:|---:|---:|---:|---:|---:|---:|
-| Long-Context | GPT-4o-mini | 64.0 | 43.0 | 30.7 | 59.0 | 45.0 | 5.0 | 41.1 |
-| Sparse/Dense RAG | BM25-RAG | 66.0 | 56.0 | 45.3 | 74.6 | 48.0 | 3.0 | 48.8 |
-| | text-embed-3-large | 54.0 | 44.0 | 50.3 | 70.0 | 28.0 | 4.0 | 41.7 |
-| 구조화 메모리 | RAPTOR | 29.0 | 38.0 | 34.3 | 45.8 | 14.0 | 1.0 | 27.0 |
-| | GraphRAG | 47.0 | 47.0 | 35.0 | 34.4 | 14.0 | 2.0 | 29.9 |
-| | HippoRAG 2 | 76.0 | 66.0 | 50.7 | 67.6 | 54.0 | 5.0 | 53.2 |
-| | Mem0 | 25.0 | 32.0 | 36.0 | 37.5 | 18.0 | 2.0 | 25.1 |
-| | Zep | 44.0 | 25.0 | 38.3 | 42.5 | 7.0 | 3.0 | 26.6 |
-| Agentic 메모리 | MemGPT | 41.0 | 38.0 | 32.0 | 26.2 | 28.0 | 3.0 | 28.0 |
-| | MIRIX | 62.0 | 61.0 | 37.3 | 29.8 | 14.0 | 2.0 | 34.4 |
-| | ReFind | 83.0 | 69.0 | 51.3 | 74.1 | 62.7 | 8.8 | 58.2 |
+![여섯 벤치마크 정확도 비교 (논문 Table 2)](https://momozzing.github.io/assets/images/refind/table2-main-results.png)
 
 표를 보면,
 
@@ -165,35 +146,18 @@ FC-MH는 모든 시스템이 10점 아래다. 덮어쓰인 사실 중 최신 값
 ### **Backbone Scaling**
 
 백본을 키우면 격차가 벌어진다.
-LongMemEval-S(50문항, 문항당 ~115k 토큰)와 M(15문항, ~500k 토큰, 원 벤치마크 M과 다른 부분집합)에서 GPT-5-mini로 다시 쟀다. ReFind는 5회 반복 평균이다. 베이스라인은 STITCH 논문 수치를 가져왔고(GAM만 직접 돌림), 표는 논문 Table 3에서 RAPTOR 행만 뺐다.
+LongMemEval-S(50문항, 문항당 ~115k 토큰)와 M(15문항, ~500k 토큰, 원 벤치마크 M과 다른 부분집합)에서 GPT-5-mini로 다시 쟀다. ReFind는 5회 반복 평균이다. 베이스라인은 STITCH 논문 수치를 가져왔고(GAM만 직접 돌림), 결과는 논문 Table 3이다. HippoRAG 2 행과 맨 아래 ReFind 행을 비교하면 된다.
 
-| 방법 | S | M |
-|---|---:|---:|
-| GPT-5-mini (long-context) | 82.0 | 53.3 |
-| text-embed-3-large (RAG) | 80.0 | 26.7 |
-| GraphRAG | 84.0 | 66.7 |
-| HippoRAG 2 | 80.0 | 66.7 |
-| A-Mem | 74.0 | 66.7 |
-| STITCH | 86.0 | 80.0 |
-| GAM | 70.0 | 60.0 |
-| ReFind (5회) | 93.2 ± 3.3 | 89.3 ± 6.0 |
+![GPT-5-mini 백본에서 LongMemEval-S/M 정확도 (논문 Table 3)](https://momozzing.github.io/assets/images/refind/table3-backbone-scaling.png)
 
 HippoRAG 2랑 차이가 GPT-4o-mini 때는 LME 열 기준 0.6점(51.3 대 50.7)이었는데 여기서는 13.2(S), 22.6(M)으로 벌어진다.
 -> 모델이 좋아질수록 검색을 직접 하는 쪽이 유리해지는 것 같다. 구조화 시스템은 인덱스를 미리 만들어뒀으니 모델이 좋아져도 얻는 게 적을 것 같다. 논문이 이렇게 말하지는 않았고, 두 설정은 벤치마크 부분집합과 베이스라인 출처가 달라서 격차를 그대로 비교하기는 어렵다.
 
 ### **Ablation Study**
 
-무엇이 효과를 냈는지 본다. 같은 LongMemEval-S/M, GPT-5-mini 설정에서 기능을 하나씩 뺀 정확도다.
+무엇이 효과를 냈는지 본다. 같은 LongMemEval-S/M, GPT-5-mini 설정에서 기능을 하나씩 뺀 정확도로, 논문 Table 4의 위쪽 블록이다. ∆S, ∆M 열이 전체 방법 대비 떨어진 폭이다. 아래쪽 Backend 블록은 검색 백엔드를 바꾼 결과다.
 
-| 변형 | S | M | ∆S | ∆M |
-|---|---:|---:|---:|---:|
-| 전체 (5회) | 93.2 ± 3.3 | 89.3 ± 6.0 | — | — |
-| 일반 agentic BM25 | 78.7 ± 4.6 | 82.2 ± 3.8 | −14.5 | −7.1 |
-| 컨텍스트 창 제거 | 84.0 ± 0.0 | 84.4 ± 3.8 | −9.2 | −4.9 |
-| 세션 dedup 제거 | 92.0 ± 4.0 | 80.0 ± 6.7 | −1.2 | −9.3 |
-| RRF 재랭킹 제거 | 89.3 ± 1.2 | 84.4 ± 7.7 | −3.9 | −4.9 |
-| 시간 필터 제거 | 91.3 ± 4.2 | 84.4 ± 3.8 | −1.9 | −4.9 |
-| 검색 1회만 (3회) | 84.7 ± 3.1 | 68.9 ± 3.8 | −8.5 | −20.4 |
+![LongMemEval ablation 결과 (논문 Table 4)](https://momozzing.github.io/assets/images/refind/table4-ablations.png)
 
 검색을 한 번만 하면 M에서 −20.4로 제일 많이 떨어진다. 기록이 길수록 한 번에 못 찾는다.
 채팅용 기능을 다 빼고 그냥 agentic BM25로 돌리면 S에서 −14.5다. 에이전트가 여러 번 검색하는 것만으로는 안 되고, 세션·시간·맥락·중복을 다루는 기능도 꽤 역할을 한다.
@@ -202,14 +166,9 @@ HippoRAG 2랑 차이가 GPT-4o-mini 때는 LME 열 기준 0.6점(51.3 대 50.7)�
 
 ### **Discussion**
 
-비용은 부록(Resource Use)에 따로 정리돼 있다. 문항당 평균 검색 횟수, LLM 호출 수, 토큰, 시간이다.
+비용은 부록 Table 11에 따로 정리돼 있다. 문항당 평균 검색 횟수(Searches), LLM 호출 수(Calls), 토큰, 시간이다. Full의 S 행과 One search의 S 행을 비교하면 된다.
 
-| 방법 | 검색 횟수 | LLM 호출 | 토큰/문항 | 시간/문항 |
-|---|---:|---:|---:|---:|
-| 전체 (S) | 2.61 | 4.99 | 69.8K–76.4K | 119.3s / 41.0s |
-| 전체 (M) | 2.43 | 4.99 | 83.1K–99.2K | 143.5s / 42.3s |
-| 일반 agentic (S) | 2.03 | 4.99 | 17.4K | 31.3s |
-| 검색 1회 (S) | 1.00 | 2.00 | 9.6K | 14.5s |
+![방법별 평균 자원 사용량 (논문 Table 11)](https://momozzing.github.io/assets/images/refind/table11-resource-use.png)
 
 시간은 LLM API 호출 시간과 검색 시간을 더한 값이다. 전체 방법은 두 개가 적혀 있는데, 앞은 처음 잰 실행, 뒤는 나중에 세 번 다시 잰 평균이다. 논문은 이 차이가 방법이 아니라 API 서버 상태 때문이라고 한다.
 

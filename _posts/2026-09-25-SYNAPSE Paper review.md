@@ -141,26 +141,15 @@ LoCoMo의 다섯 범주(Single-Hop, Temporal, Open-Domain, Multi-Hop, Adversaria
 
 ### **4.2 Main Results**
 
-아래 표는 논문 Table 1에서 가중 평균 F1만 네 시스템 옮긴 것이다(일부만 옮김). 적대적 범주를 뺀 네 범주 평균이다.
+논문 Table 1이다. 적대적 범주를 뺀 네 범주 평균은 오른쪽 Average 묶음의 Performance F1 열에 있다.
 
-| 시스템 | 가중 평균 F1 |
-|---|---:|
-| A-Mem | 33.3 |
-| AriGraph | 33.7 |
-| Zep | 39.7 |
-| SYNAPSE | 40.5 |
+![LoCoMo 범주별 결과 (논문 Table 1)](https://momozzing.github.io/assets/images/synapse/table1-locomo-main-results.png)
 
+Performance F1 열에서 A-Mem 33.3, AriGraph 33.7, Zep 39.7, SYNAPSE 40.5다.
 A-Mem보다 +7.2점이다. AriGraph는 지식 그래프를 쓰는 에이전트 메모리다.
 태스크 순위(Task Rank)는 1.0이다. 다섯 범주 각각의 순위를 평균 낸 값이라, 모든 범주에서 1등이라는 뜻이다.
 
-범주별로는 이렇다. 같은 Table 1에서 A-Mem과 SYNAPSE의 세 범주 F1만 옮겼다.
-
-| 범주 | A-Mem | SYNAPSE |
-|---|---:|---:|
-| Temporal Reasoning | 45.9 | 50.1 |
-| Multi-Hop | 27.0 | 35.7 |
-| Open Domain | 12.1 | 25.9 |
-| Adversarial | 50.0 | 96.6 |
+범주별로는 위 Table 1에서 A-Mem 행과 맨 아래 SYNAPSE 행의 F1 열을 비교하면 된다.
 
 1. Adversarial을 빼면 Open Domain이 +13.8점으로 가장 크게 오르고, Multi-Hop도 +8.7점 오른다. 활성 확산이 중간 노드를 거쳐 관련성을 퍼뜨려서, 벡터 검색만으로는 못 잇는 사실들을 잇는다고 한다.
 2. Temporal에서 +4.2점. 의미는 비슷하지만 오래된 기억보다 최근 정보를 먼저 쓴다. 뒤의 ablation에서 논문은 이 시간 인식을 노드 감쇠 `δ`가 전부 맡는다고 한다.
@@ -197,15 +186,9 @@ Adversarial 열을 보면, 게이트를 끄면(`τ_gate = 0`, 억제는 켜둠) 
 
 ### **4.4 Efficiency Analysis**
 
-논문 Table 4에서 일부 시스템만 옮겼다. 질의당 토큰, 평균 지연(A100 한 장, 질의 100개 평균), 1,000질의 API 비용, 가중 평균 F1, 비용 효율(F1/$)이다. LoCoMo 열은 앞의 full-context 베이스라인이다.
+논문 Table 4다. 질의당 토큰, 평균 지연(A100 한 장, 질의 100개 평균), 1,000질의 API 비용, 적대적 범주를 뺀 F1, 비용 효율(F1/$)이다. LoCoMo 행은 앞의 full-context 베이스라인이다.
 
-| | SYNAPSE | LoCoMo | MemGPT | MemoryOS | LangMem |
-|---|---:|---:|---:|---:|---:|
-| 질의당 토큰 | ~814 | ~16,910 | ~16,977 | ~1,198 | ~717 |
-| 평균 지연 | 1.9s | 8.2s | 8.5s | 1.5s | 0.6s |
-| 1,000질의 비용 | $0.24 | $2.67 | $2.67 | $0.30 | $0.23 |
-| F1 | 40.5 | 25.6 | 28.0 | 38.0 | 34.3 |
-| 비용 효율(F1/$) | 167.3 | 9.6 | 10.5 | 126.8 | 150.7 |
+![효율 비교 (논문 Table 4)](https://momozzing.github.io/assets/images/synapse/table4-efficiency-profile.png)
 
 MemoryOS는 계층형 메모리 OS, LangMem은 LangChain의 메모리 라이브러리다.
 토큰은 full-context 대비 95% 줄었다. 전체 이력을 넣지 않고 관련된 부분그래프만 꺼내기 때문이다. 논문은 full-context보다 11배 싸면서 성능은 거의 2배라고 쓴다.

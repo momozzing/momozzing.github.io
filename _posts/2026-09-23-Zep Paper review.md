@@ -142,18 +142,9 @@ RRF(Reciprocal Rank Fusion, 여러 검색 결과의 순위를 합치는 방법)�
 
 Deep Memory Retrieval은 앞에서 본 [MemGPT](https://momozzing.github.io/paper%20review/MemGPT-Paper-review/) 팀이 자기들 주 평가 지표로 쓴 벤치마크다. 500개 다중 세션 대화, 대화당 5세션, 세션당 최대 12메시지다.
 
-아래는 DMR 정확도다(논문 Table 1). Recursive Summarization과 MemGPT 줄은 MemGPT 논문에서 가져온 값이다. Recursive Summarization은 MemGPT 논문의 베이스라인으로, 지난 다섯 세션의 요약만 본다. Conversation Summaries(세션 요약)와 Full-conversation(대화 전체를 넣음)은 Zep 팀이 새로 돌린 베이스라인이다.
+아래는 DMR 정확도다(논문 Table 1). † 표시가 붙은 Recursive Summarization과 MemGPT 줄은 MemGPT 논문에서 가져온 값이다. Recursive Summarization은 MemGPT 논문의 베이스라인으로, 지난 다섯 세션의 요약만 본다. Conversation Summaries(세션 요약)와 Full-conversation(대화 전체를 넣음)은 Zep 팀이 새로 돌린 베이스라인이다.
 
-| 방법 | 모델 | 점수 |
-|---|---|---:|
-| Recursive Summarization | gpt-4-turbo | 35.3% |
-| Conversation Summaries | gpt-4-turbo | 78.6% |
-| MemGPT | gpt-4-turbo | 93.4% |
-| Full-conversation | gpt-4-turbo | 94.4% |
-| Zep | gpt-4-turbo | 94.8% |
-| Conversation Summaries | gpt-4o-mini | 88.0% |
-| Full-conversation | gpt-4o-mini | 98.0% |
-| Zep | gpt-4o-mini | 98.2% |
+![DMR 정확도 (논문 Table 1)](https://momozzing.github.io/assets/images/zep/table1-dmr.png)
 
 Zep이 MemGPT보다 높긴 한데, 대화를 통째로 넣은 full-conversation도 94.4%로 이미 MemGPT(93.4%)보다 높다. MemGPT 논문의 35.3%는 요약만 본 베이스라인이라 대화 전체와 비교한 숫자가 아니었다.
 -> 대화를 다 넣어도 풀리는 벤치마크라서 메모리 시스템끼리 비교하기엔 좀 쉬운 것 같다. 대화 하나가 60메시지라 요즘 컨텍스트 창에 다 들어간다.
@@ -164,12 +155,7 @@ Zep이 MemGPT보다 높긴 한데, 대화를 통째로 넣은 full-conversation�
 
 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서 문항당 약 115k 토큰인 LongMemEval-S로 잰 결과다(논문 Table 2). 지연은 응답까지 걸린 전체 시간이고, IQR은 지연 분포의 가운데 50% 폭이다.
 
-| 방법 | 모델 | 정확도 | 지연 | 지연 IQR | 평균 컨텍스트 토큰 |
-|---|---|---:|---:|---:|---:|
-| Full-context | gpt-4o-mini | 55.4% | 31.3 s | 8.76 s | 115k |
-| Zep | gpt-4o-mini | 63.8% | 3.20 s | 1.31 s | 1.6k |
-| Full-context | gpt-4o | 60.2% | 28.9 s | 6.01 s | 115k |
-| Zep | gpt-4o | 71.2% | 2.58 s | 0.684 s | 1.6k |
+![LongMemEval 결과 (논문 Table 2)](https://momozzing.github.io/assets/images/zep/table2-longmemeval.png)
 
 여기서는 정확도도 오르고 지연도 줄었다. gpt-4o 기준으로 18.5% 상대 개선에 지연은 약 90% 줄었고, 컨텍스트 토큰은 115k → 1.6k다.
 Zep 쪽 지연에는 네트워크 시간도 들어 있다. 보스턴의 노트북에서 AWS us-west-2에 있는 Zep 서비스로 붙어서 쟀고, 베이스라인에는 이 지연이 없었다.
@@ -177,16 +163,9 @@ Zep 쪽 지연에는 네트워크 시간도 들어 있다. 보스턴의 노트�
 
 MemGPT도 LongMemEval로 돌려 보려 했는데, 기존 대화 이력을 바로 넣는 기능이 없어서 archival에 넣는 식으로 우회했고 답을 제대로 받지 못했다고 한다.
 
-질문 유형별로 보면 이렇다. gpt-4o 기준 정확도이고, Δ는 full-context 대비 상대 변화율이다(논문 Table 3 일부).
+질문 유형별로 보면 이렇다(논문 Table 3). 위 여섯 줄이 gpt-4o-mini, 아래 여섯 줄이 gpt-4o이고, 여기서는 gpt-4o 줄을 본다. Delta는 full-context 대비 상대 변화율이다.
 
-| 질문 유형 | Full-context | Zep | Δ |
-|---|---:|---:|---:|
-| single-session-preference | 20.0% | 56.7% | +184% |
-| temporal-reasoning | 45.1% | 62.4% | +38.4% |
-| multi-session | 44.3% | 57.9% | +30.7% |
-| single-session-user | 81.4% | 92.9% | +14.1% |
-| knowledge-update | 78.2% | 83.3% | +6.52% |
-| single-session-assistant | 94.6% | 80.4% | −17.7% |
+![LongMemEval 질문 유형별 정확도 (논문 Table 3)](https://momozzing.github.io/assets/images/zep/table3-question-type.png)
 
 gpt-4o에서는 single-session-assistant만 떨어진다(−17.7%). gpt-4o-mini에서는 single-session-assistant(−9.06%)와 knowledge-update(−3.36%)가 떨어진다. 논문도 single-session-assistant는 예외라고 적고 추가 연구가 필요하다고 한다.
 원인은 논문에 안 나와 있다.

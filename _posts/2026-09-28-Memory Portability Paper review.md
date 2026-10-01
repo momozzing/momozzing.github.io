@@ -98,14 +98,9 @@ Figure 2는 고정된 합성 이력을 네 형식으로 바꾼 다음, 모델·�
 ### **4.2 A fixed schema transfers better than free-form notes**
 
 쓰는 모델을 바꾸고 읽는 모델은 고정한 채로 쟀다.
-아래 표는 48개 이력의 정답률이다. 자기 저장소는 리더가 직접 쓴 메모리, 물려받은 저장소는 다른 모델이 쓴 메모리다. Swap ∆는 물려받은 쪽에서 자기 쪽을 뺀 값이다.
+아래는 논문 Table 3, 48개 이력의 정답률이다. 위쪽 네 행을 보면 된다. Own-store는 리더가 직접 쓴 메모리, Inherited-store는 다른 모델이 쓴 메모리다. Swap ∆는 물려받은 쪽에서 자기 쪽을 뺀 값(pp)이다.
 
-| 형식 | 리더 | 자기 저장소 정확도 | 물려받은 저장소 정확도 | Swap ∆ |
-|---|---|---:|---:|---:|
-| NOTES | Llama | 0.3762 | 0.4753 | +9.91pp |
-| NOTES | Qwen | 0.4719 | 0.3391 | −13.28pp |
-| KG-fixed | Llama | 0.8456 | 0.8445 | −0.11pp |
-| KG-fixed | Qwen | 0.9878 | 0.9880 | +0.02pp |
+![자기 저장소와 물려받은 저장소의 정확도 비교 (논문 Table 3)](https://momozzing.github.io/assets/images/memory-portability/table3-swap-accuracy.png)
 
 KG-fixed는 거의 변하지 않는다.
 abstract에는 KG-fixed 변화가 `+0.0004 ± 0.0020`로 적혀 있다. pp가 아니라 정확도(0~1) 단위라서 0.04pp이고, ±는 이력 간 95% 신뢰구간 반폭이다.
@@ -122,12 +117,8 @@ NOTES는 방향에 따라 부호가 바뀐다. Llama가 Qwen 노트를 읽으면
 ### **4.3 Retrieval can fail before the new model sees anything**
 
 모델을 바꾸기 전부터 RAG 파이프라인 자체가 병목이었다.
-두 리더 기준 정확도 범위다.
-
-| 방식 | 정확도 범위 |
-|---|---|
-| LC-RAW (원본 그대로) | 0.712 ~ 0.911 |
-| RAG | 0.535 ~ 0.565 |
+위 Table 3 아래쪽의 Writer-free controls 행을 보면 된다. 쓰는 모델이 끼지 않는 두 방식을 리더별로 잰 값이다.
+원본을 그대로 넣는 LC-RAW는 두 리더에서 0.712~0.911인데, RAG는 0.535~0.565에 머문다.
 
 리더 모델과 상관없이 검색이 필요한 증거를 실제로 가져오는 건 약 60%뿐이다. 40%는 못 찾는다.
 다만 논문은 이게 RAG 전체의 한계라고 하지는 않는다. 일부러 단순하게 만들었기 때문이다. 단일 단계 dense 검색기, 이벤트 기반 청크, 코사인 top-k=8을 썼고 리랭커나 어휘 검색은 없다.
@@ -142,12 +133,9 @@ NOTES는 방향에 따라 부호가 바뀐다. Llama가 Qwen 노트를 읽으면
 3. 50/50 혼합
 4. 어느 인덱스에 답이 있는지 아는 이상적 라우터 (상한선)
 
-옛 인덱스 대비 정확도가 얼마나 올랐는지다. 48개 이력, 리더 두 개 기준이고 논문 Table 4에서 두 행만 옮겼다.
+결과는 논문 Table 4다. 48개 이력, 리더 두 개 기준이다. Gain vs. old 열에서 50/50 mixed index(+4.96pp)와 Full re-embed(+11.90pp)를 비교하면 된다.
 
-| 방식 | 정확도 개선 |
-|---|---:|
-| 50/50 혼합 인덱스 | +4.96pp |
-| 완전 재임베딩 | +11.90pp |
+![임베딩 모델 업그레이드 방식별 정확도 (논문 Table 4)](https://momozzing.github.io/assets/images/memory-portability/table4-embedding-upgrade.png)
 
 혼합 인덱스는 전체 이득의 절반도 못 가져온다.
 H2는 완전 재임베딩과 혼합 인덱스의 정확도 차이다. 이력·리더별 차이를 평균한 추정치가 `+6.95pp`로 5pp 임계를 넘어서 지지됐다(Holm 보정 p = 1.3 × 10⁻⁶). 표에서 11.90 − 4.96 = 6.94pp와 같은 값이다.
@@ -161,15 +149,9 @@ H2는 완전 재임베딩과 혼합 인덱스의 정확도 차이다. 이력·�
 모델이 쓴 노트는 원본을 압축한 사본이다. 쓰는 모델이 사실을 빠뜨렸으면 노트를 다시 써도 되살릴 수 없다.
 그래서 원본 이력을 남겨두면 복구가 되는지 시험했다. 목표는 새 리더가 자기 저장소에서 내는 성능의 90%까지 회복하는 것이다.
 
-복구 방식별로 90% 목표를 넘긴 건수와 비용이다.
+복구 방식별로 목표를 넘긴 건수와 비용은 논문 Table 7에 있다. 위 블록은 Llama가 쓰고 Qwen이 복구한 경우, 아래 블록은 Qwen이 쓰고 Llama가 복구한 경우다. 90% target 열을 보면 NOTES store-only는 양쪽 다 0/48, NOTES raw-retained는 Qwen이 복구할 때만 34/48(중앙값 $0.76)이다. RAG re-embed와 KG-fixed schema rebuild는 양쪽 다 48/48이고, KG-fixed는 99% 목표에서 45/48, 46/48로 합쳐 91건이다.
 
-| 복구 방식 | 결과 | 비용(중앙값) |
-|---|---|---|
-| store-only NOTES 재작성 | 48건 중 0건, 모든 예산에서 90% 미달 | — |
-| raw-history 복구 (Qwen) | 48건 중 34건 | 약 $0.76 |
-| raw-history 복구 (Llama) | 0건, 매번 출력 토큰 한도 초과 | — |
-| RAG 재임베딩 | 96건 전부 | 약 $0.013 |
-| KG-fixed 재구축 | 96건 전부 (99% 목표에서는 91건) | 거의 0 |
+![복구 방식별 성공 건수와 비용 (논문 Table 7)](https://momozzing.github.io/assets/images/memory-portability/table7-repair-success.png)
 
 96건은 48개 이력에 교체 방향 두 개(Llama→Qwen, Qwen→Llama)를 곱한 수다. Figure 3의 ③에 방향별로 48건씩 나뉘어 있다. NOTES 복구는 방향마다 복구 모델이 달라서 48건씩 따로 적었다.
 
@@ -182,14 +164,9 @@ RAG는 재임베딩이 건당 $0.013으로 싸고, KG-fixed는 고정 스키마�
 ### **4.5 Most memory loss happens upstream of the reader**
 
 정확도 손실이 쓰기·검색·읽기 중 어느 단계에서 생기는지 나눠서 봤다.
-48개 이력을 합친 평균 손실에서 단계별로 얼마를 차지하는지다.
+논문 Table 6이 48개 이력을 합친 평균 손실을 단계별로 나눈 것이다. NOTES 행은 Store construction(0.467, 80%)이, RAG 행은 Retrieval(0.364, 81%)이 강조돼 있다. 노트 안에서 검색하다 잃는 건 6%이고, RAG의 저장된 청크 자체는 1%로 거의 0이다.
 
-| 형식 | 원인 | 기여 | 비중 |
-|---|---|---:|---:|
-| NOTES | 저장 단계(쓰기) | 0.467 ± 0.014 | 80% |
-| NOTES | 노트 내 검색 | 0.036 ± 0.009 | 6% |
-| RAG | 검색 단계 | 0.364 ± 0.012 | 81% |
-| RAG | 저장된 청크 자체 | 거의 0 | — |
+![단계별 정확도 손실 분해 (논문 Table 6)](https://momozzing.github.io/assets/images/memory-portability/table6-loss-decomposition.png)
 
 둘이 정반대다.
 NOTES는 쓸 때 이미 잃는다. 노트를 새 리더 문체에 맞게 다시 써봤는데 회복이 안 됐다.

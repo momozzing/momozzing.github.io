@@ -32,16 +32,9 @@ V2는 메모리 시스템이 에이전트를 맞춤 환경을 잘 다루는 숙�
 
 기존 에이전트 메모리 벤치마크는 대부분 사용자 이력, 짧은 궤적, 다운스트림 태스크 성공률을 봤고, 메모리 시스템이 환경마다 다른 경험을 제대로 익히는지를 직접 재는 방법은 없었다고 한다.
 
-논문 Table 1에서 V1과 V2 행만 옮기면 이렇다. 능력 칸은 V2가 정의한 다섯 능력(3.1절) 중 몇 개를 다루는지를 논문이 표시한 것이다.
+논문 Table 1은 기존 벤치마크와 V2를 비교한 표다. 맨 아래 LongMemEval-V2 행과 중간의 LongMemEval-V1 행을 같이 보면 된다. 오른쪽 Memory Ability 칸은 V2가 정의한 다섯 능력(3.1절) 중 어떤 걸 다루는지를 논문이 체크한 것이다.
 
-| | LongMemEval-V1 | LongMemEval-V2 |
-|---|---|---|
-| 도메인 | 사용자-어시스턴트 대화 | 웹 에이전트 |
-| 세션 수 | 48–475 | 100–498 |
-| 토큰 | 115k–1.5M | 25M–115M |
-| 문항 | 500 | 451 |
-| 멀티모달 | ✗ | ✓ |
-| V2 다섯 능력 중 | Static·Dynamic·Premise | 다섯 개 전부 |
+![기존 메모리·장문맥 벤치마크와 LongMemEval-V2 비교 (논문 Table 1)](https://momozzing.github.io/assets/images/longmemeval-v2/table1-benchmark-comparison.png)
 
 최대 토큰이 약 77배 늘었다. V1은 1.5M, V2는 115M이다.
 V1은 원래 자기 능력 분류가 따로 있었다. IE(정보 추출), MR(다중 세션 추론), KU(지식 갱신), TR(시간 추론), ABS(답이 없으면 모른다고 하기) 다섯 개다. 논문은 이걸 V2 기준으로 다시 매겨서 V1이 세 개를 다룬다고 표시했다.
@@ -163,16 +156,9 @@ C는 코딩 에이전트를 뜻한다. 이쪽은 방식이 다르다.
 
 ### **5.1 Main Results**
 
-아래는 논문 Table 2에서 방법별 전체 정확도와 Small 기준 질의 지연만 옮긴 것이다. ablation 행과 질문 유형별 점수는 뺐다. RAG 쪽 컨트롤러는 Qwen3.5-9B, 코딩 에이전트 쪽은 GPT-5.4-mini다.
+아래는 논문 Table 2다. 각 방법의 Overall 열(Small, Medium)과 Small의 Latency 열을 보면 된다. "–"로 시작하는 행은 ablation이다. RAG 쪽 컨트롤러는 Qwen3.5-9B, 코딩 에이전트 쪽은 GPT-5.4-mini다.
 
-| 방법 | Small 전체 | Medium 전체 | 지연(Small) |
-|---|---:|---:|---:|
-| No retrieval | 0.013 | 0.013 | 0s |
-| RAG: query→slice | 0.428 | 0.381 | 0.1s |
-| RAG: query→slice + notes | 0.510 | 0.459 | 0.2s |
-| AgentRunbook-R | 0.586 | 0.570 | 26.9s |
-| Vanilla Codex | 0.699 | 0.687 | 177.2s |
-| AgentRunbook-C | 0.749 | 0.701 | 108.3s |
+![방법별 정확도와 질의 지연 (논문 Table 2)](https://momozzing.github.io/assets/images/longmemeval-v2/table2-main-results.png)
 
 표를 보면,
 

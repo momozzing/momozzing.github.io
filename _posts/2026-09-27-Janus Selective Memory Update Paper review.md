@@ -113,26 +113,9 @@ Janus는 DC-RS와 ExpeL 위에 붙인다.
 
 ### **3.2 Main Results**
 
-Qwen3-8B에서 여섯 데이터셋 정확도다.
+논문 Table 1이다. 위쪽 묶음이 Qwen3-8B, 아래쪽 묶음이 DeepSeek-V4-Flash에서 여섯 데이터셋 정확도이고, 맨 오른쪽 Avg. 열이 평균이다. 회색 행이 Janus를 붙인 결과다.
 
-| 방법 | MATH500 | GPQA | MMLU-Eng | MMLU-Phy | APIBench | HumanEval | 평균 |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Memory-free | 78.2 | 57.4 | 61.2 | 84.0 | 65.2 | 90.3 | 72.7 |
-| ExpRAG | 82.0 | 69.2 | 66.2 | 87.2 | 72.0 | 91.2 | 78.0 |
-| DC-RS | 81.4 | 73.4 | 64.4 | 84.0 | 80.8 | 93.2 | 79.5 |
-| DC-RS + Janus | 83.6 | 81.5 | 68.0 | 89.2 | 82.8 | 93.9 | 83.2 |
-| ExpeL | 80.0 | 72.9 | 68.8 | 90.4 | 66.4 | 91.2 | 78.3 |
-| ExpeL + Janus | 81.6 | 78.5 | 71.6 | 92.8 | 70.4 | 93.9 | 81.5 |
-
-DeepSeek-V4-Flash는 평균만 옮겼다.
-
-| 방법 | 평균 |
-|---|---:|
-| Memory-free | 74.3 |
-| DC-RS | 76.7 |
-| DC-RS + Janus | 81.3 |
-| ExpeL | 79.6 |
-| ExpeL + Janus | 82.3 |
+![여섯 데이터셋 주요 결과 (논문 Table 1)](https://momozzing.github.io/assets/images/janus/table1-main-results.png)
 
 갱신기 두 개, 백본 두 개에서 모두 +2.7 ~ +4.6점 올랐다. 갱신기는 그대로 두고 감싸기만 해서 얻은 거다.
 제일 많이 오른 건 GPQA에서 DC-RS 73.4 → 81.5로 8.1점이다.

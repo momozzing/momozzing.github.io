@@ -181,25 +181,17 @@ LLM은 STM 요약, 프로필 추출, agent 모드 추론 세 군데에만 쓰고
 
 ### **8.1 LoCoMo Benchmark Results**
 
-LoCoMo 점수는 judge LLM(gpt-4o-mini)이 답을 정답과 비교해 0/1로 매긴 점수의 평균이다. 논문 Table 10에서 답변 모델과 모드별 전체 점수와 Temporal 점수만 옮겼다.
+LoCoMo 점수는 judge LLM(gpt-4o-mini)이 답을 정답과 비교해 0/1로 매긴 점수의 평균이다. 논문 Table 10이다. 왼쪽 두 열이 답변 모델(Eval-LLM)과 모드이고, Overall 열이 전체 점수다.
 
-| 답변 모델 | 모드 | 전체 | Temporal |
-|---|---|---:|---:|
-| gpt-4.1-mini | agent | 0.9169 | 0.9159 |
-| gpt-4.1-mini | memory | 0.9123 | 0.8910 |
-| gpt-4o-mini | agent | 0.8812 | 0.8069 |
-| gpt-4o-mini | memory | 0.8747 | 0.7352 |
+![답변 모델·모드별 LoCoMo 점수 (논문 Table 10)](https://momozzing.github.io/assets/images/memmachine/table10-locomo-by-mode.png)
 
 abstract에 나온 0.9169는 제일 좋은 조합(gpt-4.1-mini, agent 모드) 점수다.
 
 ### **8.2 Comparative Analysis**
 
-다른 시스템과는 gpt-4o-mini, memory 모드로 비교한다. 발표된 베이스라인들이 gpt-4o-mini 기준이라서다. 논문 Table 11에서 MemMachine과 차순위 Memobase만 옮겼다.
+다른 시스템과는 gpt-4o-mini, memory 모드로 비교한다. 발표된 베이스라인들이 gpt-4o-mini 기준이라서다. 논문 Table 11이다. 맨 위 MemMachine 행과 바로 아래 차순위 Memobase 행을 보면 된다.
 
-| 시스템 | Single-hop | Multi-hop | Temporal | Open-domain | 전체 |
-|---|---:|---:|---:|---:|---:|
-| MemMachine | 0.9465 | 0.8759 | 0.7352 | 0.7083 | 0.8747 |
-| Memobase | 0.7092 | 0.4688 | 0.8505 | 0.7717 | 0.7578 |
+![LoCoMo 시스템 비교 (논문 Table 11)](https://momozzing.github.io/assets/images/memmachine/table11-locomo-comparison.png)
 
 논문은 차순위 시스템(Memobase)보다 전체 점수가 +9.7점(0~1 점수를 100점으로 환산) 높다고 쓴다.
 -> 표대로 빼면 0.8747 − 0.7578 = 0.1169라서 11.7점이다. 9.7은 어디서 나온 건지??
@@ -221,16 +213,9 @@ Temporal과 Open-domain에서 진다. Temporal은 Memobase가 0.8505, Open-domai
 
 LongMemEval_S는 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서 질문마다 약 115k 토큰짜리 대화 이력을 붙인 버전이다. 500문항 전체에서 설정을 하나씩 바꿔가며 쟀고, 최고 점수는 93.0%다.
 
-아래는 논문 Table 13이다. 한 가지만 다른 설정 두 개를 비교한 점수 차이(%p)이고, 단계 구분은 논문 분류를 따랐다.
+아래는 논문 Table 13이다. 한 가지만 다른 설정 두 개를 비교한 점수 차이(%p)이고, 단계 구분(Retrieval-stage, Ingestion-stage, Model selection)은 논문 분류를 따랐다.
 
-| 최적화 | 단계 | 기여 |
-|---|---|---:|
-| 검색 깊이 `k` (20→30) | 검색 | +4.2%p |
-| 컨텍스트 포맷팅 | 검색 | +2.0%p |
-| 검색 프롬프트 설계 | 검색 | +1.8%p |
-| CoT 제거 | 검색 | +1.6%p |
-| 사용자 질의 편향 보정 | 검색 | +1.4%p |
-| 문장 청킹 | 저장 | +0.8%p |
+![LongMemEval_S 최적화별 기여 (논문 Table 13)](https://momozzing.github.io/assets/images/memmachine/table13-longmemeval-ablation.png)
 
 검색 쪽 항목 하나하나가 저장 쪽(문장 청킹 +0.8%p)보다 크다.
 -> 다만 CoT 제거는 답변 LLM에 주는 프롬프트를 바꾼 거라 검색보다는 답변 생성 단계에 가까워 보인다. 검색 프롬프트(논문이 차례로 다듬은 세 버전)도 논문 설명을 보면 CoT 없이 간결하게 지시하는 프롬프트라서 답변 쪽과 섞여 있는 것 같다. 이 둘을 빼도 검색 깊이와 포맷팅이 청킹보다 크긴 하다.
@@ -275,18 +260,12 @@ LongMemEval_S는 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%2
 
 ### **9.8 Architectural Design Tensions**
 
-논문 Table 16은 여러 메모리 시스템을 설계 속성별로 비교한다. 아래는 그중 일부 행과 열만 옮겼다.
+논문 Table 16은 여러 메모리 시스템을 설계 속성별로 비교한다. Ground truth preserved 행과 LLM calls per message 행을 보면 된다.
 
-| 속성 | MemMachine | Mem0 | Zep | MemOS | Full Context |
-|---|---|---|---|---|---|
-| 메모리 방식 | 검색 | 검색 | 검색 | 하이브리드 | in-context |
-| 원문 보존 | ✓ | 부분 | 부분 | 부분 | ✓ |
-| 프롬프트 캐시 | 부분 | ✗ | ✗ | ✗ | ✓ |
-| 창 너머 확장 | ✓ | ✓ | ✓ | ✓ | ✗ |
-| 메시지당 LLM 호출 | 낮음 | 높음 | 보통 | 높음 | 없음 |
+![메모리 시스템 설계 속성 비교 (논문 Table 16)](https://momozzing.github.io/assets/images/memmachine/table16-design-space.png)
 
-원문 보존의 Mem0 "부분"은 논문 Table 16의 평가다. 위에서 Mem0이 원문을 버린다고 한 것과는 기준이 다르다.
-메시지당 LLM 호출이 낮다는 게 다른 검색형 시스템과 다른 점이다.
+Ground truth preserved 행에서 Mem0이 Partial인 건 논문 Table 16의 평가다. 위에서 Mem0이 원문을 버린다고 한 것과는 기준이 다르다.
+메시지당 LLM 호출이 Low라는 게 다른 검색형 시스템과 다른 점이다.
 
 앞에서 본 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서는 A-Mem 구축에 15시간, Nemori 형식 오류 30%가 나왔는데, 둘 다 쓰기 단계 LLM 호출에서 생긴 문제였다. 호출이 적으면 이런 위험도 줄어든다.
 

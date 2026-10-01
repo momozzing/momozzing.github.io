@@ -78,14 +78,7 @@ Strict는 사람이 매번 보는 대신 출력을 정답과 비교해서 흉내
 전부 넣으면 나빠진다.
 아래는 논문 Table 1이다. 네 에이전트에서 추가 전략별 성능과 최종 메모리 크기(레코드 수)를 쟀다. SR은 성공률(RegAgent는 오차 1 이내면 성공), ACC는 정확도다.
 
-| 전략 | RegAgent SR | 메모리 | EHRAgent ACC | 메모리 | AgentDriver SR | 메모리 | CIC-IoT ACC | 메모리 |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Fixed | 67.53 | 100 | 16.75 | 100 | 40.11 | 180 | 71.50 | 50 |
-| Add all | 55.48 | 4,100 | 13.05 | 2,411 | 32.32 | 2,125 | 59.90 | 1,050 |
-| Coarse C1 | 63.18 | 3,511 | 26.19 | 1,447 | 36.92 | 1,161 | 74.00 | 1,030 |
-| Coarse C2 | 65.78 | 3,347 | 32.21 | 1,467 | 40.01 | 1,119 | 68.80 | 936 |
-| Coarse C3 | 67.35 | 3,139 | 34.66 | 1,094 | 47.37 | 1,285 | 79.50 | 952 |
-| Strict | 70.95 | 2,938 | 38.50 | 1,012 | 51.00 | 1,178 | 85.40 | 904 |
+![추가 전략별 성능과 메모리 크기 (논문 Table 1)](https://momozzing.github.io/assets/images/experience-following/table1-addition-strategies.png)
 
 표를 보면,
 
@@ -140,14 +133,9 @@ History-based의 효용은 추가할 때 쓴 평가기를 그대로 쓸 수 있�
 
 ### **4.2 Strategic Memory Deletion Improves the Agent Performance**
 
-아래는 논문 Table 2 중 strict 평가기로 추가한 경우만 옮김(C1 평가기 부분은 뺐다). 삭제 전략별 성능과 최종 메모리 크기다.
+아래는 논문 Table 2다. 삭제 전략별 성능과 최종 메모리 크기인데, 위쪽은 C1 평가기로 추가한 경우, 아래쪽은 strict 평가기로 추가한 경우다. 아래 설명은 아래쪽 Strict evaluator 부분을 기준으로 한다.
 
-| 전략 | RegAgent SR | 메모리 | EHRAgent ACC | 메모리 | AgentDriver SR | 메모리 | CIC-IoT ACC | 메모리 |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| No del | 70.95 | 2,938 | 38.67 | 1,012 | 51.00 | 1,178 | 85.40 | 904 |
-| Period | 67.65 | 949 | 38.59 | 302 | 50.94 | 467 | 80.80 | 310 |
-| History | 69.80 | 2,286 | 42.06 | 784 | 51.81 | 846 | 89.60 | 788 |
-| Combined | 66.58 | 890 | 42.34 | 248 | 49.97 | 323 | 85.50 | 188 |
+![삭제 전략별 성능과 메모리 크기 (논문 Table 2)](https://momozzing.github.io/assets/images/experience-following/table2-deletion-strategies.png)
 
 -> No del은 Table 1의 Strict와 같은 설정일 텐데 EHRAgent만 Table 1은 38.50, 여기는 38.67이다. C1 쪽도 26.19와 25.91로 다르다. 논문에 이유는 안 나와 있다??
 

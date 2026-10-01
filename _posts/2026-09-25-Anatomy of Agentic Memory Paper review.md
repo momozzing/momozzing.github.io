@@ -121,17 +121,10 @@ Zep은 ∆가 +11이다. LongMemEval-S는 대화가 10만 토큰이 넘는다(�
 F1과 의미가 어긋난다는 부분이다.
 F1, BLEU 같은 어휘 지표는 토큰이 얼마나 겹치는지를 본다. 에이전트 메모리처럼 정확히 찾아서 일관되게 종합해야 하는 과제에는 부족하다(insufficient).
 
-LoCoMo에서 여섯 아키텍처를 F1 순위와 LLM 판정(gpt-4o-mini) 순위로 각각 매겨 비교한다. 판정 프롬프트는 MAGMA, Nemori, SimpleMem 논문에서 하나씩 가져온 세 가지다.
+LoCoMo에서 여섯 아키텍처를 F1 순위와 LLM 판정(gpt-4o-mini) 순위로 각각 매겨 비교한다. 판정 프롬프트는 MAGMA, Nemori, SimpleMem 논문에서 하나씩 가져온 세 가지다. 아래 논문 Table 3에서 왼쪽 Lexical Metric의 Rank 열과 오른쪽 세 프롬프트 열의 괄호 속 순위를 비교하면 된다.
 MAGMA는 메모리를 의미·시간·인과·개체 그래프로 나눠 두는 그래프 계열이고, SimpleMem은 턴 단위로 가볍게 저장하는 방식이다. MemoryOS는 3단 계층을 둔 OS 계열, MemSkill은 메모리 스킬을 학습해 고쳐 가는 정책 최적화 계열이다.
 
-| 시스템 | F1 | F1 순위 | 판정 점수 (MAGMA 프롬프트) | 판정 순위 (세 프롬프트) |
-|---|---:|---:|---:|---|
-| A-Mem | 0.116 | 5 | 0.480 | 4, 4, 4 |
-| MemoryOS | 0.413 | 3 | 0.553 | 3, 3, 3 |
-| Nemori | 0.502 | 1 | 0.602 | 2, 1, 2 |
-| MAGMA | 0.467 | 2 | 0.670 | 1, 2, 1 |
-| SimpleMem | 0.268 | 4 | 0.294 | 5, 5, 5 |
-| MemSkill | 0.082 | 6 | 0.221 | 6, 6, 6 |
+![F1 순위와 LLM 판정 순위 비교 (논문 Table 3)](https://momozzing.github.io/assets/images/anatomy/table3-f1-vs-judge.png)
 
 A-Mem은 F1은 0.116으로 5위인데 판정 순위는 세 프롬프트 모두 4위다. 논문은 A-Mem이 원문 단어를 그대로 쓰지 않아서 F1에서 손해를 본다고 설명한다.
 반대로 SimpleMem은 판정 점수가 0.30 미만(5위)인데 F1은 0.268로 4위다.
@@ -139,19 +132,14 @@ A-Mem은 F1은 0.116으로 5위인데 판정 순위는 세 프롬프트 모두 4
 
 앞에서 본 [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)에서 A-Mem의 J 점수가 낮았다(48.38). 여기서도 판정 순위가 6개 중 4위라 A-Mem이 잘했다고 하기는 어렵다.
 
-LLM-as-a-judge가 프롬프트에 과적합되는 게 아니냐는 걱정도 있는데, 위 표처럼 프롬프트 세 개에서 상대 순서가 거의 유지됐다. 그래도 프롬프트 설계는 조심해야 한다고 덧붙인다.
+LLM-as-a-judge가 프롬프트에 과적합되는 게 아니냐는 걱정도 있는데, 위 Table 3처럼 프롬프트 세 개에서 상대 순서가 거의 유지됐다. 그래도 프롬프트 설계는 조심해야 한다고 덧붙인다.
 
 ### **4.4 Backbone Sensitivity and Format Stability**
 
 에이전트 메모리에서는 백본 모델이 질문에 답하는 것과 메모리 연산(갱신·통합)을 둘 다 해야 한다. 그래서 오래 쓰려면 출력 형식을 정확히 지켜야 한다.
-API 모델(gpt-4o-mini)과 오픈웨이트(Qwen-2.5-3B)에서 답변 점수와 메모리 연산 중 형식 오류율(JSON 깨짐, 없는 키 생성 등)을 잰다.
+API 모델(gpt-4o-mini)과 오픈웨이트(Qwen-2.5-3B)에서 답변 점수와 메모리 연산 중 형식 오류율(JSON 깨짐, 없는 키 생성 등)을 잰 것이 논문 Table 4다. Format Error 열을 보면 된다.
 
-| 백본 | 방법 | 답변 점수 | 형식 오류율 |
-|---|---|---:|---:|
-| gpt-4o-mini | SimpleMem | 0.289 | 1.20% |
-| gpt-4o-mini | Nemori | 0.781 | 17.91% |
-| Qwen-2.5-3B | SimpleMem | 0.102 | 4.82% |
-| Qwen-2.5-3B | Nemori | 0.447 | 30.38% |
+![백본별 답변 점수와 형식 오류율 (논문 Table 4)](https://momozzing.github.io/assets/images/anatomy/table4-format-error.png)
 
 논문은 이걸 silent failure라고 부른다. 당장은 대화를 잘하는데, 쓰기 연산이 실패해서 장기 메모리가 망가진다. 겉으로는 멀쩡해 보인다.
 
@@ -170,18 +158,9 @@ gpt-4o-mini에서도 Nemori 형식 오류가 17.91%다. API 모델이라고 안�
 논문이 agency tax라고 부르는 부분이다.
 정확도 말고 지연과 비용도 봐야 한다. 읽기만 하는 RAG랑 다르게 에이전트 메모리는 추출·갱신·통합 같은 유지보수 연산이 더 붙는다.
 
-아래 표는 LoCoMo에서 턴당 사용자 지연(검색 `T_read` + 생성 `T_gen`)과 메모리 인덱스를 처음 만드는 오프라인 구축 비용을 잰 것이다.
+아래 논문 Table 5는 LoCoMo에서 턴당 사용자 지연(검색 `T_read` + 생성 `T_gen`)과 메모리 인덱스를 처음 만드는 오프라인 구축 비용을 잰 것이다. LOCOMO 행은 LoCoMo 논문의 베이스라인 방법이다. MemoryOS 행의 Retrieval 열과 AMem 행의 Time 열을 보면 된다.
 
-| 방법 | 검색 `T_read` | 생성 `T_gen` | 합계(초) | 구축 시간(h) | 구축 토큰(k) |
-|---|---:|---:|---:|---:|---:|
-| Full Context | N/A | 1.726 | 1.726 | N/A | N/A |
-| LOCOMO (LoCoMo 논문의 베이스라인 방법) | 0.415 | 0.368 | 0.783 | 0.86 | 1,623 |
-| A-Mem | 0.062 | 1.119 | 1.181 | 15.00 | 1,486 |
-| MemoryOS | 31.247 | 1.125 | 32.372 | 7.83 | 4,043 |
-| Nemori | 0.254 | 0.875 | 1.129 | 3.25 | 7,044 |
-| MAGMA | 0.497 | 0.965 | 1.462 | 7.28 | 2,725 |
-| SimpleMem | 0.009 | 1.048 | 1.057 | 3.45 | 1,308 |
-| MemSkill | 0.005 | 0.301 | 0.306 | 0.60 | 1,796 |
+![지연과 오프라인 구축 비용 (논문 Table 5)](https://momozzing.github.io/assets/images/anatomy/table5-agency-tax.png)
 
 두 가지가 보인다.
 
