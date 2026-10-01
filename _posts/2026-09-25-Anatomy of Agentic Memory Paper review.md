@@ -24,8 +24,6 @@ Anatomy of Agentic Memory는 UT Dallas · UC Davis · Texas A&M에서 쓴 에이
 앞 리뷰들에서 수치를 많이 가져왔다. Mem0의 66.88, Zep의 71.2, A-MEM의 순위 1.0 같은 것들이다.
 이 논문은 그 수치들을 어떻게 읽어야 하는지를 따진다. 읽어보면 생각보다 약한 근거인 게 많다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 introduction 부분을 보면 아키텍처는 빠르게 발전했는데 실험적 근거는 약하다는 문제의식에서 출발한다.

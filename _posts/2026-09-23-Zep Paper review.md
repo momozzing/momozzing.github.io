@@ -24,8 +24,6 @@ Zep은 Zep AI에서 만든 에이전트 메모리 시스템이다. 2025년 1월 
 
 모순된 기억을 지워버리면 그 판단이 틀렸을 때 복구할 방법이 없는데, 여기서는 지우지 않고 푼다. 지우는 쪽은 [뒤에서 볼 Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)에서 나온다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 RAG의 한계에서 시작한다.

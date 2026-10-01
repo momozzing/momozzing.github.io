@@ -25,8 +25,6 @@ HippoRAG는 Ohio State University와 Stanford에서 만든 RAG 방법이다. 202
 
 뒤에서 볼 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)에서는 RAG 쪽이랑 메모리 쪽 양쪽에서 다 인용되는 논문으로 꼽는다. 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)의 비교표에는 후속작인 HippoRAG 2가 들어가 있고, 거기서도 성적이 좋다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 다중홉 질문을 두 가지로 나눈다.

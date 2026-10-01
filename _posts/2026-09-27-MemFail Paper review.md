@@ -27,8 +27,6 @@ MemFail은 UC Berkeley에서 만든 메모리 시스템 진단 벤치마크이�
 
 앞에서 본 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)가 평가가 제대로 된 건지를 따졌다면, 이 논문은 진단 도구를 만든다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 메모리 시스템의 압축·갱신·망각 장치가 오히려 새로운 실패를 만든다고 한다. 요약하다가 중요한 내용을 지우거나, 모순되는 새 사실이 들어와도 옛 사실을 안 지우는 식이다.

@@ -24,8 +24,6 @@ A-MEM은 Rutgers University 등에서 만든 LLM 에이전트용 메모리 시�
 앞에서 본 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)은 에피소드-엔티티-커뮤니티 3계층을 사람이 설계했다. 구조를 사람이 정해두고 기억을 거기에 넣는다.
 A-MEM은 구조를 에이전트가 스스로 만들게 한다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 introduction 부분을 보면 문제 제기가 Zep이랑 좀 다르다.

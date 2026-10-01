@@ -23,8 +23,6 @@ ReAct는 프린스턴 + Google Brain에서 만든 논문이다. (ICLR 2023)
 LLM이 생각(Thought)과 행동(Action)을 번갈아 하면서 문제를 풀게 하는 프롬프팅 방법이다.
 LangChain, LangGraph의 ReAct agent도 이 논문 이름을 그대로 쓴다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 LLM은 reasoning(CoT prompting)과 acting(action plan 생성)이 각각 따로 연구가 되어왔다.

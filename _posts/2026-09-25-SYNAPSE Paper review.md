@@ -27,8 +27,6 @@ SYNAPSE는 University of Georgia 외 3개 기관에서 만든 에이전트 메�
 이 논문은 episodic(개별 대화 턴)이랑 semantic(추상 개념) 계층을 어떻게 잇느냐를 다룬다. 그리고 그 연결을 미리 계산해두지 않고 질의가 올 때 찾는다.
 두 계층을 나눠 두는 구조는 뒤에서 볼 [Multi-Layered Memory](https://momozzing.github.io/paper%20review/Multi-Layered-Memory-Paper-review/)에서 다시 나온다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 문제를 Contextual Tunneling(또는 Contextual Isolation)이라고 부른다. 장기 에이전트 메모리의 기억들이 서로 끊겨 있는 문제다.

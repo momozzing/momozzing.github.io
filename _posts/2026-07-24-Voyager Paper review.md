@@ -25,8 +25,6 @@ Voyager는 NVIDIA, Caltech 등에서 만든 마인크래프트 에이전트다. 
 
 베이스라인으로 앞에서 리뷰한 [ReAct](https://momozzing.github.io/paper%20review/ReAct-Paper-review/)랑 [Reflexion](https://momozzing.github.io/paper%20review/Reflexion-Paper-review/)이 나온다. 결과부터 말하면 둘 다 나무 도구도 못 만들었다.
 
-좀 더 자세히 알아보자.
-
 ![탐험 성능 비교 (논문 Figure 1)](https://momozzing.github.io/assets/images/voyager/fig1-exploration.png)
 
 가로축은 프롬프팅 반복 횟수, 세로축은 찾은 고유 아이템 수다. 주황색이 Voyager다.

@@ -25,8 +25,6 @@ LongMemEval은 UCLA, Tencent AI Lab Seattle, UC San Diego에서 만든 챗봇 �
 
 벤치마크만 있는 게 아니라, 메모리 시스템을 세 단계와 네 가지 제어점(CP)으로 나눠서 보는 틀도 같이 내놓았다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 introduction 부분을 보면 기존 장기 대화 벤치마크가 못 보던 게 세 가지라고 한다.

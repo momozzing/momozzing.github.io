@@ -24,8 +24,6 @@ ReFind는 중국과기대(USTC)와 MetaStone Technology에서 만든 채팅 기�
 
 앞에서 본 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)에서는 메모리 형태를 Token-level · Parametric · Latent로 나누고 Flat(1D) → Planar(2D) → Hierarchical(3D)로 올라가는 구조를 정리했는데, 여기서는 그렇게 올라갈 필요가 있냐고 묻는다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 에이전트 메모리 시스템들은 원본 대화를 요약, 임베딩, 트리, 지식그래프로 바꿔두고 검색한다.

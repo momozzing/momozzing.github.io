@@ -22,8 +22,6 @@ Toolformer는 Meta AI에서 만든, 도구 쓰는 법을 스스로 배우는 언
 [ReAct](https://momozzing.github.io/paper%20review/ReAct-Paper-review/)와 [Reflexion](https://momozzing.github.io/paper%20review/Reflexion-Paper-review/)은 프롬프팅으로 도구를 쓰게 했는데, Toolformer는 파인튜닝으로 모델이 도구를 쓰게 만든다.
 그리고 그 학습 데이터를 사람 어노테이션 없이 모델이 스스로 만든다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 LLM은 few-shot으로 새로운 태스크를 풀 만큼 잘하는데, 사칙연산이나 최신 정보 조회 같은 기본적인 건 계산기나 검색엔진보다 못하다.

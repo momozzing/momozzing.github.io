@@ -25,8 +25,6 @@ MemMachine은 MemVerge, Inc.에서 만든 오픈소스 메모리 시스템이다
 
 앞에서 본 [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)는 대화에서 사실만 뽑아 남겼는데, 이 논문은 원문을 남기고 꺼내는 방법을 다듬는다. 원문을 남기는 쪽이 왜 좋은지는 뒤에서 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 다시 나온다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 설계 입장부터 보자.

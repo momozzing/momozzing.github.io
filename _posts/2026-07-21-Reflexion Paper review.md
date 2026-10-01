@@ -22,8 +22,6 @@ Reflexion은 Northeastern, MIT, Princeton에서 만든 언어 에이전트 연�
 
 ReAct의 Thought → Action → Observation 루프에 실패에서 배우는 단계를 붙인다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 LLM 에이전트도 시행착오로 배우게 하고 싶다.

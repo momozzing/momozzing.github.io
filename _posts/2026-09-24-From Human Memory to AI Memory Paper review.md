@@ -24,8 +24,6 @@ From Human Memory to AI Memory는 Huawei Noah's Ark Lab에서 쓴 LLM 메모리 
 
 뒤에서 볼 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)보다 8개월 먼저 나왔고, 같은 대상을 다르게 나눈다. 두 서베이 비교는 글 맨 끝 지금 관점 절에 적었다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 기존 리뷰들이 메모리 메커니즘은 자세히 정리했지만, 대부분 단기/장기라는 시간 기준 하나로만 나눴다고 한다.

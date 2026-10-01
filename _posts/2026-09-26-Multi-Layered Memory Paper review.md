@@ -26,8 +26,6 @@ Multi-Layered Memory는 Fulloop에서 만든 에이전트 메모리 구조다. 2
 
 다만 이 논문은 앞의 논문들보다 근거가 약하다. 확인이 안 되는 부분은 결과 앞에 따로 적어둔다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 introduction 부분을 보면, 연구 문제는 이렇다.

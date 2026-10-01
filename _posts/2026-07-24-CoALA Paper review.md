@@ -27,8 +27,6 @@ CoALA는 Princeton에서 만든 언어 에이전트 프레임워크 논문이다
 
 앞에서 리뷰한 [ReAct](https://momozzing.github.io/paper%20review/ReAct-Paper-review/), Voyager, [Generative Agents](https://momozzing.github.io/paper%20review/Generative-Agents-Paper-review/)가 이 논문의 사례로 나와서, 시리즈 중간 정리로 읽어볼 만하다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 에이전트 연구는 빠르게 쌓였는데 용어가 제각각이다.

@@ -26,8 +26,6 @@ Experience-Following은 Harvard, University of Georgia, Michigan State, Universi
 
 결론부터 말하면 실행 결과를 전부 넣으면 고정 메모리보다 못하다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 memory addition(추가)이랑 memory deletion(삭제) 두 가지 연산만 본다. 많은 에이전트 프레임워크가 쓰는 제일 기본적인 조작이다.

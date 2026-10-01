@@ -25,8 +25,6 @@ NEMORI는 Fudan University, Shanda Group, Beihang University 등에서 만든 �
 
 [앞 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)에서는 무엇을 넣고 지우느냐가 에이전트 행동을 바꾼다는 걸 봤는데, 이 논문은 처음에 무엇을 뽑을지를 다룬다. 뒤에서 볼 [Janus](https://momozzing.github.io/paper%20review/Janus-Selective-Memory-Update-Paper-review/)는 갱신 후보를 만든 뒤, 반영하기 전에 옛 메모리와 비교해 검증하는 쪽이다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 introduction 부분을 보면 문제를 이렇게 적는다.

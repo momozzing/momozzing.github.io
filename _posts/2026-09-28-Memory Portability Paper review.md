@@ -24,8 +24,6 @@ Memory Portability는 LinkedIn에서 쓴, 모델을 바꿨을 때 에이전트 �
 
 앞에서 본 [A-MEM 리뷰](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)에서 구조를 에이전트에게 맡기면 구조가 모델에 묶인다고 적었고, [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서는 작은 오픈 모델(Qwen-2.5-3B)에서 Nemori의 메모리 연산 형식 오류가 30%였다. 여기서는 모델이 바뀔 때 메모리가 어떻게 되는지를 통제 실험으로 잰다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 에이전트는 같은 메모리 저장소를 그대로 두고도 잊을 수 있다고 한다.

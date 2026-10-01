@@ -24,8 +24,6 @@ Mem0는 Mem0 팀에서 만든 장기 메모리 시스템이다. 2025년 4월 arX
 
 원문 대화를 두지 않고 뽑은 사실만 메모리로 두고, 모순이면 기존 사실을 지운다. 이렇게 원본을 버리는 압축이 뭘 잃는지는 [나중에 볼 Rate-Distortion 논문](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 다시 나온다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 LLM은 컨텍스트 창 크기가 정해져 있어서, 세션이 끊기거나 창이 넘치면 정보를 이어갈 방법이 없다.

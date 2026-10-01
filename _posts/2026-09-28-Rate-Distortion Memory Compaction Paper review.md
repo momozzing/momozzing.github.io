@@ -25,8 +25,6 @@ What to Keep, What to Forget은 UC Irvine에서 쓴 메모리 압축 서베이 �
 
 rate-distortion은 원래 정보이론 용어다. rate는 남기는 양(메모리 예산), distortion은 그만큼 줄여서 생기는 오류다. 예산을 줄일수록 오류가 늘어나는 관계를 곡선으로 그려서, 같은 예산에서 오류가 적은 방법을 고른다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 introduction 부분을 보면 출발점이 구체적이다.

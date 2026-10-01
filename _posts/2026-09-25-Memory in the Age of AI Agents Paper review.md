@@ -24,7 +24,7 @@ Memory in the Age of AI Agents는 에이전트 메모리 연구를 전부 모아
 
 예전에 리뷰한 [CoALA](https://momozzing.github.io/paper%20review/CoALA-Paper-review/)가 에이전트 전체 구조를 정리했다면, 이 논문은 그중 메모리만 떼어서 다시 정리했다. 이 논문은 장기/단기 같은 기존 분류로는 요즘 시스템들을 다 담을 수 없고, episodic·semantic 같은 용어가 늘어나면서 개념이 더 흐려졌다고 한다. CoALA의 working·episodic·semantic·procedural 같은 분류 용어도 그 연장선에 있다고 보고 읽었다.
 
-앞에서 메모리 논문을 아홉 편 봤는데, 여기서 전체를 한 번 정리하고 가려고 이 논문을 읽었다. 좀 더 자세히 알아보자.
+앞에서 메모리 논문을 아홉 편 봤는데, 여기서 전체를 한 번 정리하고 가려고 이 논문을 읽었다.
 
 ![분류 체계 전체 조감도 (논문 Figure 1)](https://momozzing.github.io/assets/images/agent-memory-survey/fig1-taxonomy-overview.png)
 

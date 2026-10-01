@@ -30,8 +30,6 @@ Janus는 University of Virginia, Princeton, UCF에서 만든 메모리 갱신 �
 
 앞에서 본 [Experience-Following 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)에서는 전부 넣으면 고정 메모리보다 못하다는 걸 봤고, 거기서는 평가기로 걸러서 넣으라고 했다. 여기서는 넣기 전에 옛 메모리랑 비교해 본다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 기존 시스템은 메모리 갱신이 앞으로의 행동을 좋게 만드는지 확인하지 않고 그냥 반영한다.

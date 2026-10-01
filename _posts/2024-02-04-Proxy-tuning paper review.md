@@ -20,8 +20,6 @@ field: llm
 Proxy tuning은 Allen AI에서 발표한 논문이며, 계속 커져나가는 Large Language model에서 모델 튜닝을
 효율적으로 하는 방법을 새롭게 제시한 논문이다. 
 
-좀 더 자세히 알아보자. 
-
 
 # **Introduction**
 

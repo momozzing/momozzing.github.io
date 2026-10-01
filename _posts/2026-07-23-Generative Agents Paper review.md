@@ -23,8 +23,6 @@ Generative Agents는 Stanford + Google에서 만든, 가상 마을에서 사람�
 지금까지 본 ReAct, Reflexion, Toolformer는 에이전트 하나가 과제를 푸는 논문이었다.
 이 논문은 에이전트 25명을 가상 마을에 풀어놓고 살게 한다. 흔히 스몰빌(Smallville) 논문이라고 부른다.
 
-좀 더 자세히 알아보자.
-
 ## **1. Introduction**
 
 목표는 과제 해결보다 believability(믿을 만함)다.
