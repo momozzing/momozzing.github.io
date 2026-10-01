@@ -47,7 +47,6 @@ LLAMA2와 호환이 되는 Mistral 7B를 baseline 모델로 선정.
 ## **Continued pretraining**
 맨 처음에 그냥 합친 모델은 성능이 기존 7B보다 떨어진다.
 따라서 Continued pretraining을 진행했다.
-
 -> 그래서 어떤 데이터를 썼다는건지?? mistral학습했던 데이터 그대로 추가학습을 했다는건가?
 
 ## **Comparison to other up-scaling methods**

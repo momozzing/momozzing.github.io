@@ -57,7 +57,6 @@ Toolformer(2023-2), Generative Agents(2023-4), Voyager(2023-5), ToT(2023-5, Tree
 
 Profile이 Memory와 Planning에 영향을 주고, 셋이 모여서 Action을 정한다.
 CoALA에는 Profile에 해당하는 모듈이 없다.
-
 -> 과제를 푸는 에이전트라면 역할 설정은 부차적인데, 사람 행동을 시뮬레이션하는 쪽(Generative Agents 등)에서는 에이전트가 누구인지가 출발점이다. 서베이가 시뮬레이션 쪽까지 담으려다 보니 모듈이 하나 더 필요했던 것 같다.
 
 #### **2.1.1 Profiling Module**
@@ -87,7 +86,6 @@ Generative Agents 리뷰에서 본 3점수 회상을 일반형으로 쓴 모양�
 
 쓰기에서는 같은 기억이 중복 저장되는 문제와 저장 한도를 넘는 문제를 다룬다.
 반성의 예로는 Generative Agents(최근 기억에서 질문 3개를 뽑고 인사이트 5개를 만듦), GITM(마인크래프트 에이전트), ExpeL(성공·실패 궤적에서 교훈을 뽑는 방법)을 든다.
-
 -> Reflexion은 2.1.2 본문의 반성 예시엔 없지만, Table 1은 반성 연산(②)으로도 표시한다. 본문에서는 2.1.3의 모델 피드백 계획에 나온다.
 
 #### **2.1.3 Planning Module**
@@ -194,7 +192,6 @@ LLM 전반, 응용, alignment, reasoning, 도구를 쓰는 Augmented Language Mo
 
 제일 크게 갈리는 건 역할과 학습이다.
 서베이는 역할(Profile)을 첫 모듈로 두고 학습은 2.2에 따로 떼어놨다. CoALA는 역할이 없고 학습을 행동의 한 종류로 넣었다.
-
 -> 사람을 시뮬레이션하는 쪽과 과제를 푸는 쪽의 관점 차이가 그대로 나온 것 같다.
 
 Profile, Memory, Planning, Action이라는 용어는 이후 에이전트 설명에서 자주 보인다.

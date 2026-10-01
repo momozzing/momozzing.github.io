@@ -89,7 +89,6 @@ MemMachine은 일화 메모리와 의미 메모리(프로필 메모리)만 구�
 ![메모리 recall 흐름 (논문 Figure 2)](https://momozzing.github.io/assets/images/memmachine/fig2-recall-workflow.png)
 
 전체 recall 흐름으로 보면 STM 검색, LTM 벡터 검색 다음에 contextualization이 들어가고, 중복 제거, 재랭킹, 시간순 정렬을 거쳐 결과를 돌려준다.
-
 -> 앞 1개, 뒤 2개로 비대칭인 건 대화에서 답이 질문 뒤에 오니까 뒤쪽을 더 보는 것 같다. 이웃 턴을 같이 꺼내는 장치는 뒤에서 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서도 다시 나온다.
 
 ### **4.7 Profile Memory (Semantic Memory)**
@@ -156,7 +155,6 @@ ChainOfQuery는 검색, 충분한지 판단하고 질의 다시 쓰기, 증거 �
 HotpotQA hard 500문항(답변 모델 gpt-5-mini)에서 Retrieval Agent는 93.2%다. 기본 MemMachine 검색은 91.2%, 전체 텍스트 베이스라인은 93.0%였다.
 
 WikiMultiHop에서 질문들의 문맥을 한 저장소에 무작위로 섞어 넣은 조건에서는 Retrieval Agent가 92.6%, 기본 MemMachine이 87.4%다. 전체 텍스트 베이스라인은 96.7%로 더 높다.
-
 -> 에이전트가 기본 검색보다는 확실히 낫지만, 문맥이 창에 다 들어가는 이 벤치마크들에서는 전체 텍스트를 넣는 쪽이 비슷하거나 더 높다.
 
 ### **5.7 Token Cost Analysis**
@@ -206,7 +204,6 @@ abstract에 나온 0.9169는 제일 좋은 조합(gpt-4.1-mini, agent 모드) �
 | Memobase | 0.7092 | 0.4688 | 0.8505 | 0.7717 | 0.7578 |
 
 논문은 차순위 시스템(Memobase)보다 전체 점수가 +9.7점(0~1 점수를 100점으로 환산) 높다고 쓴다.
-
 -> 표대로 빼면 0.8747 − 0.7578 = 0.1169라서 11.7점이다. 9.7은 어디서 나온 건지??
 
 Temporal과 Open-domain에서 진다. Temporal은 Memobase가 0.8505, Open-domain은 Memobase가 0.7717로 더 높다(MemMachine 0.7083).
@@ -238,7 +235,6 @@ LongMemEval_S는 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%2
 | 문장 청킹 | 저장 | +0.8%p |
 
 검색 쪽 항목 하나하나가 저장 쪽(문장 청킹 +0.8%p)보다 크다.
-
 -> 다만 CoT 제거는 답변 LLM에 주는 프롬프트를 바꾼 거라 검색보다는 답변 생성 단계에 가까워 보인다. 검색 프롬프트(논문이 차례로 다듬은 세 버전)도 논문 설명을 보면 CoT 없이 간결하게 지시하는 프롬프트라서 답변 쪽과 섞여 있는 것 같다. 이 둘을 빼도 검색 깊이와 포맷팅이 청킹보다 크긴 하다.
 
 그래서 논문은 메모리 시스템에서는 어떻게 저장하느냐보다 어떻게 꺼내느냐가 더 중요하다고 한다. 단, 저장할 때 원문을 보존한다는 전제에서다.
@@ -331,7 +327,6 @@ LongMemEval_S ablation에서는 검색 단계 최적화가 저장 단계 변경�
 
 이웃 턴을 같이 꺼내는 것도 대화 데이터에서는 해볼 만하다. 대화는 턴 하나만으로는 말이 안 되는 경우가 많다.
 모델을 바꿀 때 프롬프트도 다시 봐야 한다. CoT 제거 +1.6%p, GPT-5-mini가 GPT-5보다 +2.6%p였다.
-
 -> 추출·그래프를 쓰는 무거운 메모리 시스템을 들이기 전에 이런 것부터 해보는 게 순서일 것 같다.
 
 그런데 5.6절에서 본 Retrieval Agent 실험(논문 Table 3)을 보면 LoCoMo에서도 gpt-5-mini 기준으로 전체 텍스트 91.7%, MemMachine 90.5%다. abstract의 0.9169(gpt-4.1-mini, agent 모드)와는 답변 모델과 설정이 다른 실험이다. 메모리를 쓰는 이유가 정확도보다는 토큰과 지연 쪽일 수 있다.

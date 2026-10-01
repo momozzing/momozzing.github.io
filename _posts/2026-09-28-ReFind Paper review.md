@@ -160,7 +160,6 @@ MemoryAgentBench(Hu et al., 2025)의 벤치마크 여섯 개를 GPT-4o-mini로 �
 
 HippoRAG 2는 시리즈 앞쪽에서 본 [HippoRAG](https://momozzing.github.io/paper%20review/HippoRAG-Paper-review/)의 후속판이다.
 FC-MH는 모든 시스템이 10점 아래다. 덮어쓰인 사실 중 최신 값을 골라서 다시 다른 사실과 이어야 하는 문제라서 그런 것 같은데, 논문은 왜 다 낮은지 따로 설명하지 않는다.
-
 -> Mem0랑 Zep이 키워드 검색보다 한참 낮은 건 좀 의외다. 베이스라인 수치를 다른 논문에서 가져온 거라 세팅이 잘 맞았는지는 모르겠다.
 
 ## **5. Analysis and Discussion**
@@ -182,7 +181,6 @@ LongMemEval-S(50문항, 문항당 ~115k 토큰)와 M(15문항, ~500k 토큰, 원
 | ReFind (5회) | 93.2 ± 3.3 | 89.3 ± 6.0 |
 
 HippoRAG 2랑 차이가 GPT-4o-mini 때는 LME 열 기준 0.6점(51.3 대 50.7)이었는데 여기서는 13.2(S), 22.6(M)으로 벌어진다.
-
 -> 모델이 좋아질수록 검색을 직접 하는 쪽이 유리해지는 것 같다. 구조화 시스템은 인덱스를 미리 만들어뒀으니 모델이 좋아져도 얻는 게 적을 것 같다. 논문이 이렇게 말하지는 않았고, 두 설정은 벤치마크 부분집합과 베이스라인 출처가 달라서 격차를 그대로 비교하기는 어렵다.
 
 ### **Ablation Study**
@@ -239,7 +237,6 @@ HippoRAG 2랑 차이가 GPT-4o-mini 때는 LME 열 기준 0.6점(51.3 대 50.7)�
 그래도 그대로 받아들이기 어려운 부분이 있다. 여섯 벤치마크가 전부 사실을 찾거나(앞의 넷) 갱신된 사실을 따라가는(뒤의 둘) 문제다. abstract를 보면 논문도 범위를 *"for precise, evidence-grounded questions over chat archives"*라고 적었다. 서베이 분류로 치면 factual memory만 본 거고, experiential memory(실패에서 배우기, 스킬 쌓기)는 평가하지 않았다.
 
 또 원본 대화를 다 보관하고 있다는 전제다. 보관 기간 제한이 있거나 개인정보를 지워달라는 요청이 오면 이 방식은 쓰기 어렵다. 질문 하나에 70~100K 토큰, LLM 5회 호출이라 매 턴 메모리를 보는 챗봇에 그대로 넣기도 부담스럽다.
-
 -> 그래도 구조화 메모리를 쓸 거면 BM25 반복 검색보다 나은지는 먼저 확인해봐야 할 것 같다. 네 기능 중 RRF 2단 재랭킹이랑 컨텍스트 창 확장은 구조를 전제하지 않아서, 벡터 DB를 쓰고 있어도 세션 단위 점수를 더해서 재랭킹하는 건 인덱스를 다시 안 만들고 붙일 수 있을 것 같다.
 
 다음은 [Does Your Agent's Memory Survive a Model Upgrade?](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)다. 같은 메모리 저장소를 그대로 두고 모델만 바꿨을 때 에이전트가 잊는지를 잰 논문이다.

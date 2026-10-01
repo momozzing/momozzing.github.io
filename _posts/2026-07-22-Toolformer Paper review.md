@@ -122,7 +122,6 @@ ASDiv, SVAMP, MAWPS(초등 수준 문장형 수학 문제) 전부에서 OPT랑 G
 
 API를 끈 Toolformer(disabled)도 베이스라인보다 오르는데, API 호출을 허용하면 그 두 배 이상이 된다.
 논문은 API 호출과 결과가 담긴 예시를 많이 보고 학습해서 모델 자체의 계산 능력이 오른 걸로 추정한다.
-
 -> 그럼 계산기 결과를 보면서 산수를 따라 배운 건가?? GPT-J + CC는 거의 안 오른 걸 보면 추가 학습 때문은 아닌 것 같다.
 
 #### **4.2.3 Question Answering**
@@ -213,7 +212,6 @@ sample-inefficient는 계산기에서 특히 심하다. 문서 100만 개 이상
 그래서 정답이 없는 일반 텍스트에서도 데이터를 만들 수 있다.
 
 한계였던 연쇄와 상호작용은 ReAct나 Reflexion 같은 프롬프팅 루프 쪽이 채웠다.
-
 -> 지금 agent는 파인튜닝으로 배운 function calling을 프롬프팅 루프가 돌리는 모양이라, 두 계열이 합쳐진 것 같다.
 
 다음은 [Generative Agents](https://momozzing.github.io/paper%20review/Generative-Agents-Paper-review/)다. LLM 에이전트 25명을 가상 마을에 풀어놓고, 기억·회상·반성·계획 구조가 믿을 만한 행동을 만드는지 본 논문이다.

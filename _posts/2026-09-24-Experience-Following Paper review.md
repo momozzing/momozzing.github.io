@@ -125,7 +125,6 @@ RegAgent에서는 메모리가 커지면 입력·출력 유사도 상관이 거�
 
 두 에이전트(RegAgent, AgentDriver) 모두 처음부터 오류 없는 버전보다 성능이 벌어지고, 실행이 계속될수록 add-all이랑 coarse selective addition은 그 차이가 더 커진다.
 예외는 AgentDriver의 strict selective addition 하나다. 처음엔 뒤처지다가 점점 따라잡고, 약 2,000번 실행 뒤에는 오히려 오류 없는 버전을 앞선다.
-
 -> 메모리를 다시 쓰는 루프에서는 손실이 계속 쌓이는 것 같다. 뒤에서 볼 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 비슷한 이야기가 다시 나온다.
 
 ## **4. Deletion of Memory**
@@ -177,7 +176,6 @@ RegAgent에서는 이걸 직접 볼 수 있다. 예측값이랑 정답값 차이
 왼쪽은 C1 평가기, 오른쪽은 strict 평가기로 history-based 삭제를 했을 때다. 5번 넘게 검색된 레코드만 그렸다.
 두 경우 모두 남은 레코드가 삭제된 레코드보다 오차가 낮은 쪽에 몰려 있다.
 그래서 논문은 미래 태스크의 평가 결과가 저장된 메모리의 품질 라벨이 될 수 있다고 한다. 추가 비용 없이.
-
 -> 넣을 때는 좋은 레코드인지 모르지만, 나중에 그 레코드가 검색됐을 때 결과가 어땠는지 기록해두면 라벨이 저절로 쌓인다는 얘기로 읽었다.
 
 ## **5. Memory Management under Challenging Scenarios**
@@ -195,7 +193,6 @@ EHRAgent랑 AgentDriver의 테스트셋 순서를 바꿔서 중간에 분포가 
 
 AgentDriver에서는 엄격한 평가로 추가만 한 버전(strict addition)이 분포 변화가 없는 버전보다도 좋았고, EHRAgent에서는 history-based가 combined보다 못했다.
 그래서 분포가 바뀌는 실제 상황에서는 단순한 주기적 삭제가 성능을 안정시키는 데 도움이 될 수 있다고 한다.
-
 -> 분포가 바뀌면 "예전에 결과가 좋았던 레코드"라는 기준이 흔들리니까 그런 것 같다.
 
 ### **5.2 Memory Management with Resource Constraints**
@@ -214,7 +211,6 @@ conclusion 부분을 보면, 추가와 삭제로 에이전트 메모리 관리�
 2. 실험으로만 보였고 이론적인 증명은 없음
 
 앞에서 본 [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)(UPDATE/DELETE), [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)(무효화), [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)(진화)은 전부 "더 복잡한 방식" 쪽이다.
-
 -> 이 결론이 그쪽에도 그대로 맞는지는 모르겠다. 그래도 experience-following은 백본을 바꿔도 나오니까, 무엇을 남기느냐에 따라 행동이 바뀐다는 건 그쪽에서도 마찬가지일 것 같다.
 
 정리하면 메모리를 키우는 것보다 무엇을 넣고 무엇을 지우는지가 성능을 더 크게 바꾼다는 실험 논문이다.
@@ -223,7 +219,6 @@ conclusion 부분을 보면, 추가와 삭제로 에이전트 메모리 관리�
 
 경험 메모리를 붙일 때 제일 먼저 하는 구현이 "일단 다 넣자"인데, Add all이 Fixed보다 못하다는 게 네 에이전트에서 다 나왔다.
 평가기 차이도 크다. RegAgent에서 Coarse(C1) 63.18, Strict 70.95로 7점 넘게 차이 난다.
-
 -> 무엇을 넣을지 거르는 평가기를 대충 만들면 메모리를 붙인 의미가 없을 것 같다.
 
 4.3의 공짜 품질 라벨은 바로 해볼 만하다. 레코드마다 검색된 횟수랑 그때 결과를 기록해두면 LLM 호출 없이 나쁜 레코드를 골라낼 수 있다.
@@ -231,7 +226,6 @@ conclusion 부분을 보면, 추가와 삭제로 에이전트 메모리 관리�
 
 지우는 쪽은 상황마다 답이 달랐다. 분포가 안정적이면 History-based가 네 에이전트 중 둘(AgentDriver, CIC-IoT)에서 제일 좋았고, 분포가 바뀌면 Periodical이 섞인 Combined가 안정적이었다.
 주기적 삭제는 오래된 것부터 지우는 FIFO가 아니고, 한동안 안 불린 레코드를 지운다. 이걸로 메모리가 크게 줄었는데 성능은 조금만 떨어졌다.
-
 -> 안 쓰이는 중복이 그만큼 많이 쌓인다는 얘기 같다.
 
 이 논문은 같은 에이전트에서 정책만 바꿔가며 잰다. 서로 다른 메모리 시스템끼리 비교할 때 생기는 문제는 뒤에서 볼 [Anatomy 리뷰](https://momozzing.github.io/paper%20review/Anatomy-of-Agentic-Memory-Paper-review/)에서 다룬다.

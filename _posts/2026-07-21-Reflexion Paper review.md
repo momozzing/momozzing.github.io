@@ -112,12 +112,10 @@ CoT (GT)는 정답 문맥을 받고도 39%를 틀리는데, Reflexion을 붙이�
 부록 Table 5에서 모델별로 보면 ReAct + gpt-4는 0.39 → 0.51, CoT (GT) + gpt-4는 0.68 → 0.80이다.
 
 baseline의 재시도는 다르다. ReAct-only, CoT-only에 temperature 0.7로 재시도를 시켜도 첫 trial에 틀린 문제는 하나도 더 못 푼다.
-
 -> 그냥 다시 굴리는 걸로는 안 되고, 뭐가 틀렸는지 말로 알려줘야 나아지는 것 같다.
 
 ablation도 있다.
 반성문 없이 직전 trajectory만 컨텍스트에 넣어주는 episodic memory(EPM)와 비교하면, self-reflection이 8%p를 더 얻는다.
-
 -> 기억을 주는 것과 교훈을 주는 것은 다르다.
 
 ### **4.3 Programming**
@@ -152,7 +150,6 @@ Table 2는 HumanEval·MBPP에서 base와 Reflexion의 정확도, 그리고 자�
 
 FP 열이 "테스트는 통과했는데 코드는 틀린" 비율이다.
 Python 두 벤치마크 중 FP가 큰 MBPP Python에서만 Reflexion이 Base보다 낮다.
-
 -> 테스트가 틀린 코드를 통과시키면 반성할 기회 자체가 없다.
 
 Table 3은 HumanEval Rust에서 가장 어려운 50문제로 테스트 생성과 반성을 하나씩 뺀 ablation이다. 모델은 GPT-4.
@@ -252,7 +249,6 @@ graph = builder.compile()
 
 다른 점도 있다. 논문은 Evaluator가 따로 있는데 여기서는 비평을 Actor 출력에 합쳤다.
 그리고 누적되는 메시지 리스트는 한 번의 실행 안에서만 유지되니, 논문으로 치면 trial을 넘어가는 장기 기억보다 단기 기억(trajectory)에 가깝다.
-
 -> Table 3에서 테스트 없이 반성만 시키면 떨어졌는데, 이 구현에서는 검색 결과가 그 테스트 자리를 대신하는 것 같다.
 
 에이전트에 붙는 memory 설계도 비슷하다.
@@ -261,7 +257,6 @@ graph = builder.compile()
 
 판정이 부정확한 상태(멋대로 만든 테스트, 어설픈 LLM-judge)에서 반성을 붙이면 기대만큼 안 오를 수 있다.
 Table 3은 작은 실험이지만 그 방향을 보여준다.
-
 -> 에이전트 루프를 만들 때 반성 프롬프트보다 판정이 얼마나 확실한지를 먼저 봐야 할 것 같다.
 
 다음은 [Toolformer](https://momozzing.github.io/paper%20review/Toolformer-Paper-review/)다. 모델이 API를 언제 부를지 스스로 배우게 한다.

@@ -63,7 +63,6 @@ Adaptive retrieval gating은 계층마다 검색 가중치를 주는 장치다. 
 Retention regularization은 손실항이다. semantic 메모리를 엔티티 임베딩으로 옮긴 뒤, 세션이 바뀔 때 그 임베딩이 크게 바뀌면 벌점을 준다. 전체 목적함수는 생성 손실에 이걸 더한 `L = L_gen + λ·L_ret`이고, 파라미터를 이 손실로 경사하강해서 업데이트한다.
 
 Algorithm 1을 보면 θ는 상태를 합치는 f_θ와 답을 만드는 P_θ에 같이 들어간다. 생성 쪽 파라미터도 같이 학습한다는 뜻이다.
-
 -> 그런데 그 바탕 모델이 뭔지는 논문에 안 나온다??
 
 ![MLMF 전체 구조 (논문 Figure 1)](https://momozzing.github.io/assets/images/mlmf/fig1-mlmf-overview.png)
@@ -86,7 +85,6 @@ Algorithm 1을 보면 θ는 상태를 합치는 f_θ와 답을 만드는 P_θ에
 
 같은 벤치마크를 두 번 센 것 같다.
 abstract에 *"Experiments on LOCOMO, LOCCO, and LoCoMo"* 라고 쓰고, 표에서도 `LOCOMO`와 `LoCoMo`를 다른 행으로 둔다. 실험 설정을 보면 `LOCOMO`에는 [15] Maharana et al.(평균 588.2턴, 27.2세션짜리 대화 메모리 벤치마크)을 붙이고, `LoCoMo`에는 [18] EvolveMem을 붙인다. EvolveMem은 데이터셋이 아니라 메모리 시스템 논문이다.
-
 -> 이름만 보면 둘 다 Maharana et al.의 LoCoMo인데, 한쪽은 원래 벤치마크고 한쪽은 EvolveMem이 LoCoMo에서 낸 수치와 비교한 것 같다. 그러면 데이터셋은 세 개가 아니라 두 개다. 본문 설명만으로는 확실하게 모르겠다.
 
 베이스라인이 참조 번호로만 나온다.
@@ -162,7 +160,6 @@ ablation에서 보존율이 떨어진 폭으로 줄 세우면 semantic(−6.06%p
 보존 손실은 보존율로는 꼴찌지만 FMR로는 제일 크다.
 
 semantic 계층이 1순위라는 건 앞에서 본 Zep, [Mem0](https://momozzing.github.io/paper%20review/Mem0-Paper-review/)와 맞는다. 둘 다 엔티티를 중심에 둔다. Zep은 semantic entity subgraph를, Mem0g는 엔티티 노드를 둔다.
-
 -> 계층을 몇 개 둘지 고민한다면 세션 요약보다 엔티티 정리를 먼저 두는 게 맞아 보인다.
 
 다만 앞에서 본 [Experience-Following 리뷰](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/)에서는 과거 실행 경험이 행동을 직접 바꿨는데, 여기 ablation에는 experiential 계층이 아예 없다.

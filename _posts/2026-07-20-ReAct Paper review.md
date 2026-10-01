@@ -52,7 +52,6 @@ Thought → Action → Observation 루프를 반복한다.
 
 그런데 정해진 행동은 몇 개 안 되지만 할 수 있는 혼잣말은 무한하다.
 이 중에서 지금 도움이 되는 문장을 골라내는 건 처음부터 학습시키기엔 너무 어렵고, 이미 언어를 잘 아는 LLM(강한 언어 prior)을 가져다 쓰니까 가능하다고 한다.
-
 -> LLM 이전에 RL로 이 구조를 만들려 했으면 탐색할 문장이 너무 많아서 안 됐을 것 같다.
 
 논문이 예시로 드는 thought의 역할은 이렇다.
@@ -91,7 +90,6 @@ task 성격에 따라 thought 배치를 다르게 한다.
 셋째는 Performant and robust. in-context 예시 1~6개만으로 새 태스크 인스턴스에 일반화되고, reasoning만 하거나 acting만 하는 베이스라인보다 성능이 좋다.
 
 넷째는 Human aligned and controllable. 추론 과정을 사람이 읽고 검사할 수 있고, 중간에 thought를 고쳐서(thought editing) 에이전트 행동을 바로잡을 수도 있다.
-
 -> 4번은 지금으로 치면 agent 관측가능성(observability)과 human-in-the-loop이다. 에이전트가 왜 그 행동을 했는지 로그로 추적할 수 있는 것도 thought를 언어로 남기기 때문이다.
 
 ## **3. Knowledge-Intensive Reasoning Tasks**
@@ -177,7 +175,6 @@ thought가 goal을 subgoal로 분해하고 진행 상황을 추적해준 덕분�
 ablation으로 Inner Monologue(환경 피드백을 언어로 받아 다음 행동을 정하는 이전 방법) 스타일(ReAct-IM)과도 비교한다.
 IM처럼 "환경 상태 관찰 + 목표 확인" 수준의 생각만 하게 하면 ALFWorld가 71 → 53으로 떨어진다.
 목표를 subgoal로 분해하는 것과 물건이 어디 있을지 상식으로 추론하는 게 빠지기 때문이라고 한다.
-
 -> 생각을 시키는 것 자체보다 어떤 생각을 시키느냐가 중요한 것 같다.
 
 다만 WebShop에서 인간 전문가(점수 82.1 / 성공률 59.6)와는 차이가 크다.
@@ -279,7 +276,6 @@ Obs 1: The Apple Remote is a remote control ...
 
 이 텍스트를 정규식으로 파싱해서 `Search[...]`를 뽑아 실행했다.
 그래서 모델이 형식을 조금만 틀려도 파싱이 깨졌다.
-
 -> finetuning 부분에서 작은 모델이 ReAct 형식을 잘 못 따라했던 것도 이 파싱 문제와 연결되는 건가??
 
 지금은 모델의 native function calling으로 Action이 구조화된 JSON(`tool_calls`)으로 나오니 파싱이 필요없다.
@@ -288,7 +284,6 @@ sparse thought도 그냥 된다.
 모델이 `content` 없이 `tool_calls`만 뱉으면 Act-only 스텝이고, `content`를 채우면 Thought가 있는 스텝이다. 논문에서 "모델이 스스로 언제 생각할지 결정한다"고 했던 부분이다.
 
 create_agent는 ReAct 루프에서 텍스트 파싱을 function calling으로 바꾸고 graph로 감싼 형태다.
-
 -> 프레임워크는 바뀌었지만 안에서 도는 루프는 논문 때와 같다.
 
 다음은 [Reflexion](https://momozzing.github.io/paper%20review/Reflexion-Paper-review/)이다. ReAct 루프가 실패하면 그 실패를 언어로 반성해 두고 다음 시도에 넣는다.

@@ -91,7 +91,6 @@ personal과 system은 이렇게 나눈다.
 Personal memory는 사용자와 주고받는 입력·응답처럼 모델이 바깥에서 받은 데이터다. system memory는 추론·계획 과정이나 검색 결과처럼 과제를 하면서 시스템 안에서 생긴 중간 결과다.
 
 뒤에서 볼 서베이에는 이 구분이 없다. 거기는 Forms(어디에 담는가)와 Functions(무엇을 위해)로 나누고, 누구의 것인지는 따로 두지 않는다.
-
 -> 이 구분은 쓸모 있을 것 같다. 사용자 정보와 에이전트 자기 작업 기록은 수명도 삭제 정책도 다르다.
 
 이 시리즈 논문과 논문 Table 2·3 예시를 8분면에 넣어보면 이렇다. 자리는 Table 2, 3을 따르되 I의 MemGPT는 내 배치다.
@@ -142,7 +141,6 @@ VI는 그 기록을 모아 다음 과제에 다시 쓰는 쪽이다. Buffer of T
 
 VII는 KV 캐시 관리와 재사용이다. vLLM(PagedAttention으로 KV 캐시 낭비를 줄인 서빙 시스템), ChunkKV 같은 압축, Prompt Cache 같은 재사용이 들어간다. 추론 비용과 지연을 줄이는 게 목적이다.
 VIII는 모델 파라미터 자체를 장기 메모리로 본다. MemoryLLM, WISE처럼 새 지식을 파라미터에 넣거나 편집하는 방법이 예시다.
-
 -> VII는 메모리라기보다 서빙 최적화에 가까워 보이는데, 8분면을 채우려고 넣은 건지 잘 모르겠다??
 
 ### **4.3 Discussion**
@@ -172,7 +170,6 @@ conclusion 부분을 보면, 사람 기억과 LLM 기반 AI 메모리의 관계�
 
 8개월 뒤에 나온 [서베이(Memory in the Age of AI Agents)](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)와 나란히 놓고 보면 제일 큰 차이는 시간 축이다.
 이 논문은 단기/장기를 세 축 중 하나로 세운다. 뒤의 서베이는 이전 서베이들의 long-term/short-term 이분법이 거칠다고 보고, 그 자리에 Functions(factual, experiential, working)를 넣는다.
-
 -> 다만 이 논문은 시간만으로 나누지 않고 대상·형태랑 섞어서 8분면을 만들었다. 그 비판이 이 논문에 그대로 맞지는 않는 것 같다.
 
 personal/system 구분은 뒤의 서베이에 없다. 지금 메모리를 설계할 때도 이 구분은 그대로 쓸 수 있을 것 같다. 사용자에게서 온 정보와 에이전트가 일하면서 만든 기록은 누가 지울 수 있는지, 얼마나 보관할지가 다르다. 이 얘기는 뒤에서 볼 [Memory Portability](https://momozzing.github.io/paper%20review/Memory-Portability-Paper-review/)에서 다시 나온다.

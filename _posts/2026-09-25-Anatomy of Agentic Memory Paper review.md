@@ -56,7 +56,6 @@ Memory-Augmented Generation(MAG, 외부 메모리를 붙여 생성하는 시스�
 
 네 갈래 아래에 세부 유형과 해당 시스템들이 달려 있다. 부록에 있는 그림이다.
 앞에서 본 것들을 넣어보면 Mem0와 A-MEM은 Entity-Centric, NEMORI는 Episodic Reflection, Zep과 SYNAPSE는 Graph-Structured, MemGPT는 OS-Inspired 칸에 들어가 있다.
-
 -> A-MEM은 노트끼리 링크를 거는 구조라 그래프 쪽일 줄 알았는데 엔티티 중심에 들어가 있다. 노트에 속성을 붙이는 쪽을 본 것 같다.
 
 분류는 앞에서 본 [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)랑 크게 다르지 않다. 실제 분석은 뒤에서부터 나온다.
@@ -113,7 +112,6 @@ Memory-Augmented Generation(MAG, 외부 메모리를 붙여 생성하는 시스�
 | Zep (LongMemEval, GPT-4o) | 71.2 | 60.2 | +11.0 |
 
 MemGPT와 Mem0는 ∆가 음수다. 대화를 통째로 넣는 게 더 정확하다.
-
 -> 그러면 이 두 시스템은 정확도보다는 지연이랑 토큰 비용 때문에 쓰는 거라고 봐야 할 것 같다.
 
 Zep은 ∆가 +11이다. LongMemEval-S는 대화가 10만 토큰이 넘는다(이 논문 Table 2 기준 103k, [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/) 논문은 약 115k). 앞의 Table 2에서 포화 위험이 "보통(경계)"인 벤치마크라 full-context가 덜 유리했을 수 있다.
@@ -167,7 +165,6 @@ API 모델(gpt-4o-mini)과 오픈웨이트(Qwen-2.5-3B)에서 답변 점수와 �
 약한 백본에서는 그래프·일화 쪽 구조가 불안정해지거나 메모리 유지가 무너지는 경우가 많다.
 앞에서 본 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)에서는 "조직의 품질이 기반 모델 능력에 좌우될 수 있다"고 걱정만 했는데, 여기서는 30.38%라는 숫자가 나왔다.
 gpt-4o-mini에서도 Nemori 형식 오류가 17.91%다. API 모델이라고 안전한 것도 아니다.
-
 -> 표의 형식 오류는 "복구 가능한" 오류, 즉 fallback 파싱으로 살린 경우를 센 거라고 한다. 그럼 실제로 메모리가 망가진 비율은 이보다 낮을 텐데, 그건 따로 안 나온다.
 
 ### **4.5 System Performance Evaluation**
@@ -194,7 +191,6 @@ gpt-4o-mini에서도 Nemori 형식 오류가 17.91%다. API 모델이라고 안�
 2. A-Mem은 구축이 15시간이다. 검색은 0.062초로 빠른데 오프라인 구축 시간은 제일 길다.
 
 앞에서 본 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)에서는 연산 한 번당 비용(약 1,200토큰, 평균 5.4초)만 나왔는데, 여기서는 전체 오프라인 구축 시간(15시간)이 나온다. 논문은 쌍별 통합 같은 초선형 갱신 때문으로 본다.
-
 -> 노트 구성, 링크 판단, 진화가 전부 LLM 호출이라 그런 것 같다.
 
 토큰 쪽에서는 "intelligence tax"라는 말을 쓴다. 메모리 품질을 올리는 대신 운영 비용을 더 내는 걸 말한다. Nemori는 구축에 토큰을 7.04M 써서 SimpleMem(1.3M)의 5배쯤 된다. 정확도는 높지만 그만큼 비싸다. MAGMA는 2.7M으로 균형이 더 낫다고 한다.
@@ -227,7 +223,6 @@ F1 수치도 그대로 믿기는 어렵다. A-Mem처럼 원문을 바꿔 쓰는 
 제일 신경 쓰이는 건 형식 오류다. 3B 모델에서 Nemori가 30%, gpt-4o-mini에서도 18% 가까이 나왔다.
 그래프·일화 계열처럼 쓰기 연산이 복잡할수록 백본을 바꿨을 때 더 흔들린다.
 MemoryOS의 31초 같은 검색 지연도 정확도 표만 봐서는 모른다.
-
 -> 앞으로 메모리 논문을 볼 때 full-context 점수와 형식 오류율이 있는지부터 보게 될 것 같다.
 
 다음은 [AMV-L](https://momozzing.github.io/paper%20review/AMV-L-Paper-review/)이다. 메모리가 쌓이면 검색이 느려지는데, 검색 후보군 크기를 직접 묶어서 느린 요청(꼬리 지연)을 줄이는 논문이다.

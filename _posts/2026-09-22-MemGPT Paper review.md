@@ -93,7 +93,6 @@ LLM 출력을 함수 호출로 해석한다. 함수 실행기가 main context와
 여기서 재밌는 게 하나 있다.
 LLM이 출력에 `request_heartbeat=true`라는 인자를 넣으면 바로 다음 추론을 요청할 수 있다고 한다. 이렇게 함수를 연쇄해서 여러 단계 검색을 한다.
 이 플래그가 없으면(yield) 다음 외부 이벤트(사용자 메시지나 예약된 인터럽트)가 올 때까지 LLM을 돌리지 않는다.
-
 -> 앞에서 본 [ReAct](https://momozzing.github.io/paper%20review/ReAct-Paper-review/) 루프랑 거의 같은 구조다. 2023년에 이미 에이전트가 검색을 여러 번 이어서 하고 있었다.
 
 ## **3. Experiments**
@@ -117,7 +116,6 @@ LLM이 출력에 `request_heartbeat=true`라는 인자를 넣으면 바로 다�
 
 베이스라인은 지난 다섯 세션을 손실 있게 요약한 것만 본다. 논문은 이걸 재귀 요약(recursive summarization)을 흉내 낸 설정이라고 한다. MemGPT는 대화 이력 전체를 recall storage에 두고 검색해서 꺼내 쓴다.
 GPT-4에서 32.1% → 92.5%다.
-
 -> 베이스라인이 요약만 보는 설정이라, 대화를 통째로 넣은 것과 비교한 건 아니다. 그 비교는 뒤에서 볼 Zep이 한다.
 
 #### **3.1.2 Conversation opener task (engagement)**
@@ -168,7 +166,6 @@ main context와 external context를 나누는 구도는 뒤에 나오는 시스�
 MemGPT 안에는 원본이 남는 부분과 안 남는 부분이 섞여 있다. recall storage와 archival storage에는 원본이 남는다. FIFO 큐에서 밀려난 메시지의 재귀 요약과 working context의 `replace`는 원본을 덮는다. 요약이 또 요약되면서 오차가 쌓이는 문제는 나중에 볼 [Rate-Distortion](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 따로 다룬다.
 
 그래도 recall storage에 원본을 남기니까 요약에서 빠진 걸 검색으로 다시 찾을 수는 있다.
-
 -> 설계는 되어 있는데, 에이전트가 검색을 안 하면 소용없는 거 아닌가??
 
 지금 써볼 만한 건 프롬프트를 세 구역으로 나눈 것이다. 시스템 지시(정적), 에이전트가 관리하는 사실(함수로 씀), 최근 메시지(자동으로 씀)로 쓰는 주체를 나누면 프롬프트 관리가 편해진다.

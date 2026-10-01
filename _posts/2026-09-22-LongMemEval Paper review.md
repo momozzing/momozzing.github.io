@@ -60,7 +60,6 @@ introduction 부분을 보면 기존 장기 대화 벤치마크가 못 보던 �
 - ABS (Abstention) : 이력에 없는 걸 물으면 "모른다"고 답하기
 
 ABS가 따로 있는 게 좋았다. Table 1을 보면 기존 벤치마크 중 ABS를 재는 건 PerLTQA, LoCoMo, DialSim 셋뿐이다.
-
 -> 실제로 챗봇을 만들어보면 없는 기억을 지어내는 게 더 문제다.
 
 다섯 능력을 재려고 질문 유형을 일곱 개 만들었다.
@@ -197,7 +196,6 @@ Chain-of-Note(답하기 전에 필요한 내용을 먼저 뽑음)랑 구조화�
 ![oracle 검색에서 읽기 방식별 QA 성능 (논문 Figure 6)](https://momozzing.github.io/assets/images/longmemeval/fig6-reading.png)
 
 근거 세션만 넣어주는 oracle 설정에서 잰 결과다. JSON 형식에 CoN을 붙인 조합이 나머지 셋보다 크게 높다.
-
 -> oracle 설정이라 검색이 완벽할 때 얘기다. 검색까지 붙인 실제 설정에서도 10점이 그대로 나오는지는 이 그림만으로는 모르겠다.
 
 ## **6. Conclusion**
@@ -215,7 +213,6 @@ Chain-of-Note(답하기 전에 필요한 내용을 먼저 뽑음)랑 구조화�
 키 확장은 검색을 한 번만 하는 설정에서 잰 결과다. 검색을 여러 번 하는 에이전트라면 키 확장이 하던 일을 반복 검색이 대신할 수도 있을 것 같다. 이건 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서 다시 나온다.
 
 바로 가져다 쓸 수 있는 건 CP 4다. 검색을 어떻게 짜든 읽는 단계에 Chain-of-Note랑 구조화 포맷은 붙일 수 있다.
-
 -> 평가할 때는 다섯 능력 중 KU랑 ABS를 먼저 보면 될 것 같다. 바뀐 사용자 정보를 못 따라가거나 없는 걸 지어내는 게 챗봇에서는 더 큰 문제다.
 
 다음은 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)이다. 사실을 지우지 않고 무효화하는 방식이고, 네 개의 타임스탬프로 무엇이 언제 참이었는지와 언제 그렇게 알았는지를 함께 남기는 지식그래프다.

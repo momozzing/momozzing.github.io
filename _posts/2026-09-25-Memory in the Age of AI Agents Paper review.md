@@ -30,7 +30,6 @@ Memory in the Age of AI Agents는 에이전트 메모리 연구를 전부 모아
 
 Figure 1은 논문 전체를 한 장으로 요약한 그림이다. 바닥 격자의 가로축이 저장 형태(Forms), 대각선 축이 기능(Functions)이고, 그 위에 실제 시스템들을 배치했다.
 요즘 많이 보이는 Mem0랑 Zep이 Token-level 장기기억 칸에 같이 있고, SnapKV, H2O 같은 KV 캐시 압축 기법들이 Working memory로 들어가 있다.
-
 -> KV 캐시 압축을 메모리로 분류하는 건 좀 의외였다. 뒤에 2.3.1에서 이유가 나온다.
 
 ## **1. Introduction**
@@ -199,7 +198,6 @@ KV 캐시를 골라내거나 압축해서 쓴다.
 - Latent : 사람이 못 읽지만 토큰 효율이 좋음. 멀티모달, 온디바이스
 
 Token-level은 모델을 안 건드리고 붙이는 방식이라 최신 모델로 바꿔도 그대로 쓸 수 있다.
-
 -> 실무에서 Token-level부터 쓰게 되는 이유가 이거인 것 같다. 고칠 수 있고, 볼 수 있고, 모델 바꿔도 남는다.
 
 ## **4. Functions: Why Agents Need Memory?**
@@ -257,7 +255,6 @@ LLM은 원래 stateless라서 에이전트로 쓰려면 기억이 필요하고, 
 #### **4.2.4 Hybrid memory**
 
 위의 것들을 섞어서 쓴다. ExpeL(성공·실패 궤적을 그대로 두면서 거기서 규칙도 뽑아 쌓는 방법)이 예다.
-
 -> 로그만 쌓고 있으면 case, 회고해서 규칙을 뽑으면 strategy, 그걸 도구로 만들면 skill로 보면 될 것 같다. 위로 갈수록 재사용은 잘 되는데 만드는 비용이 든다.
 
 ### **4.3 Working Memory**
@@ -329,7 +326,6 @@ CoALA(2023년 9월)에서는 "기억을 지우거나 고치는 학습은 아직 
 #### **5.3.1 Retrieval Timing and Intent**
 
 언제 꺼낼지. MIRIX는 매번 여섯 개 DB를 다 뒤지고, MemGPT는 LLM이 필요할 때 직접 검색 함수를 부른다.
-
 -> 매 턴 무조건 메모리를 넣는 구현이 많은데, 그것도 선택지 중 하나일 뿐이다.
 
 #### **5.3.2 Query Construction**
@@ -390,7 +386,6 @@ CoALA(2023년 9월)에서는 "기억을 지우거나 고치는 학습은 아직 
 ## **7. Positions and Frontiers**
 
 앞으로의 방향을 여덟 가지로 정리한다. 각 절마다 지금까지 어땠고 앞으로 어떻게 될지를 짝으로 적었다.
-
 -> 앞의 세 개(7.1~7.3)는 같은 얘기 같다. 사람이 정하던 걸 에이전트가 스스로 하게 만들자는 것.
 
 ### **7.1 Memory Retrieval vs. Memory Generation**
@@ -427,7 +422,6 @@ CoALA(2023년 9월)에서는 "기억을 지우거나 고치는 학습은 아직 
 #### **7.2.2 Future Perspective**
 
 메모리 조작(add/update/delete/retrieval)을 에이전트의 도구 호출로 만들어서, 에이전트가 자기가 뭘 저장하고 뭘 지우는지 알게 하자고 한다.
-
 -> CoALA에서 retrieval이랑 learning을 행동으로 넣자고 했던 게 2년 남짓 뒤에 이렇게 돌아왔다.
 
 ### **7.3 Reinforcement Learning Meets Agent Memory**
