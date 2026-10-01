@@ -137,15 +137,96 @@ html {
   padding-top: 3.5em;
 }
 
-/* 본문 행간: 토스 블로그 수준(1.7)으로 여유 있게 */
+/* ==========================================================================
+   본문 타이포그래피: 토스 기술블로그(toss.tech) 실측값에 맞춤
+   - 본문 17px / 행간 1.6 / 문단 간격 24px / 글자색 진회색
+   - h2 30px(위 40px), h3 24px, h4 19px
+   - 루트 font-size(19px)는 사이드바·목차 비율 때문에 그대로 두고 본문만 px로 고정
+   ========================================================================== */
 .page__content {
+  font-size: 16px;
+  color: #333d4b;
+  letter-spacing: -0.01em;
+
+  @include breakpoint($medium) {
+    font-size: 17px;
+  }
+
   p, li, dl {
-    line-height: 1.7;
+    line-height: 1.6;
+  }
+  p {
+    margin: 0 0 24px;
+  }
+  /* 목록 간격은 본문 목록에만 (목차 .toc도 .page__content 안에 있어서 직접 자식으로 한정) */
+  > ul, > ol {
+    margin: 0 0 24px;
+  }
+  > ul li, > ol li {
+    margin-bottom: 4px;
+  }
+  .toc {
+    letter-spacing: normal;
+  }
+
+  h2 {
+    font-size: 30px;
+    line-height: 1.4;
+    margin: 56px 0 16px;
+    padding-bottom: 0;
+    border-bottom: 0;
+    color: #191f28;
+  }
+  h3 {
+    font-size: 24px;
+    line-height: 1.45;
+    margin: 40px 0 12px;
+    color: #191f28;
+  }
+  h4 {
+    font-size: 19px;
+    line-height: 1.5;
+    margin: 32px 0 8px;
+    color: #191f28;
+  }
+  @include breakpoint(max-width $medium) {
+    h2 { font-size: 24px; margin-top: 44px; }
+    h3 { font-size: 20px; }
+    h4 { font-size: 17px; }
+  }
+
+  table {
+    font-size: 15px;
   }
 
   /* 본문 이미지: 라운딩으로 부드럽게 */
   img {
     border-radius: 8px;
+  }
+}
+
+
+/* ==========================================================================
+   본문 폭: 토스처럼 본문 칼럼을 약 700px로
+   좌측 프로필·우측 목차 폭을 화면 크기에 맞춰 늘리고 줄여서 본문만 일정 폭 유지
+   ========================================================================== */
+@include breakpoint($x-large) {
+  :root {
+    --side: max(260px, calc((min(100vw, #{$max-width}) - 740px) / 2));
+  }
+  .page, .archive {
+    width: calc(100% - var(--side));
+    padding-right: var(--side);
+  }
+  .sidebar {
+    width: calc(var(--side) - 1em);
+  }
+  .sidebar__right {
+    width: var(--side);
+    margin-right: calc(-1 * var(--side));
+  }
+  .sidebar__right .toc {
+    margin-left: 2.5em;
   }
 }
 
@@ -278,6 +359,10 @@ div.highlighter-rouge, figure.highlight, .highlight {
   a { color: #9ac1ff; }
   a:visited { color: #b7a4ff; }
   a:hover { color: #c4d9ff; }
+
+  /* 라이트용 본문 글자색(.page__content #333d4b, 제목 #191f28) 재정의 */
+  .page__content { color: #e4e7ee; }
+  .page__content h2, .page__content h3, .page__content h4 { color: #f4f6fa; }
 
   /* 라이트용 본문 링크 규칙(.page__content a:not(.btn))보다 명시도를 맞춰 재정의 */
   .page__content a:not(.btn) {
