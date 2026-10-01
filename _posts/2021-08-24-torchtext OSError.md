@@ -21,7 +21,8 @@ mathjax: true
 OSError: /home/nlplab/anaconda3/envs/momo/lib/python3.7/site-packages/torchtext/_torchtext.so: undefined symbol: _ZNK3c104Type14isSubtypeOfExtESt10shared_ptrIS0_EPSo 
 ```
 
-알아보니 torch와 torchtext의 버전이 맞지 않아서 였다. [파이토치 홈페이지](https://pytorch.org/get-started/locally/)에 가서 맞는 버전 다운받으면 된다. 
+알아보니 torch와 torchtext의 버전이 맞지 않아서 였다.
+[파이토치 홈페이지](https://pytorch.org/get-started/locally/)에 가서 맞는 버전 다운받으면 된다.
 
 
 
@@ -30,7 +31,8 @@ OSError: /home/nlplab/anaconda3/envs/momo/lib/python3.7/site-packages/torchtext/
 conda install pytorch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2 cudatoolkit=10.1 -c pytorch
 ```
 
-나한테 맞는 버전으로 다시 설치하니 돌아갔다. 위에꺼 코드 그냥 돌리면 전에 있던 버전 삭제후 새로 설치 해주는 것이다.
+나한테 맞는 버전으로 다시 설치하니 돌아갔다.
+위에꺼 코드 그냥 돌리면 전에 있던 버전 삭제후 새로 설치 해주는 것이다.
 
  
 

@@ -19,7 +19,8 @@ LongMemEval-V2: Evaluating Long-Term Agent Memory Toward Experienced Colleagues
 
 [https://arxiv.org/abs/2605.12493](https://arxiv.org/abs/2605.12493)
 
-LongMemEval-V2는 UCLA에서 만든 에이전트 메모리 벤치마크다. 2026년 5월 arXiv에 올라왔고, [V1](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)과 1저자(Di Wu)가 같다. 웹 에이전트가 같은 환경에서 반복해서 일한 경험을 메모리로 잘 쌓아서, 숙련된 동료처럼 되는지를 잰다.
+LongMemEval-V2는 UCLA에서 만든 에이전트 메모리 벤치마크다. 2026년 5월 arXiv에 올라왔고, [V1](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)과 1저자(Di Wu)가 같다.
+웹 에이전트가 같은 환경에서 반복해서 일한 경험을 메모리로 잘 쌓아서, 숙련된 동료처럼 되는지를 잰다.
 
 이름만 보면 V1 대신 쓰면 되는 후속판 같은데, 읽어보니 V1과는 다른 문제를 잰다. 둘 중 무엇을 쓸지는 무엇을 재려는지에 따라 다르다.
 
@@ -27,7 +28,9 @@ LongMemEval-V2는 UCLA에서 만든 에이전트 메모리 벤치마크다. 2026
 
 ## **1. Introduction**
 
-V1에서 무엇이 달라졌는지부터 보자. V1은 사용자-어시스턴트 대화에서 사용자에 대한 사실을 기억하는지 물었다. V2는 메모리 시스템이 에이전트를 맞춤 환경을 잘 다루는 숙련자로 만들어주는지를 묻는다.
+V1에서 무엇이 달라졌는지부터 보자.
+V1은 사용자-어시스턴트 대화에서 사용자에 대한 사실을 기억하는지 물었다.
+V2는 메모리 시스템이 에이전트를 맞춤 환경을 잘 다루는 숙련자로 만들어주는지를 묻는다.
 
 기존 에이전트 메모리 벤치마크는 대부분 사용자 이력, 짧은 궤적, 다운스트림 태스크 성공률을 봤고, 메모리 시스템이 환경마다 다른 경험을 제대로 익히는지를 직접 재는 방법은 없었다고 한다.
 
@@ -42,19 +45,22 @@ V1에서 무엇이 달라졌는지부터 보자. V1은 사용자-어시스턴트
 | 멀티모달 | ✗ | ✓ |
 | V2 다섯 능력 중 | Static·Dynamic·Premise | 다섯 개 전부 |
 
-최대 토큰이 약 77배 늘었다. V1은 1.5M, V2는 115M이다. V1은 원래 자기 능력 분류가 따로 있었다. IE(정보 추출), MR(다중 세션 추론), KU(지식 갱신), TR(시간 추론), ABS(답이 없으면 모른다고 하기) 다섯 개다. 논문은 이걸 V2 기준으로 다시 매겨서 V1이 세 개를 다룬다고 표시했다.
+최대 토큰이 약 77배 늘었다. V1은 1.5M, V2는 115M이다.
+V1은 원래 자기 능력 분류가 따로 있었다. IE(정보 추출), MR(다중 세션 추론), KU(지식 갱신), TR(시간 추론), ABS(답이 없으면 모른다고 하기) 다섯 개다. 논문은 이걸 V2 기준으로 다시 매겨서 V1이 세 개를 다룬다고 표시했다.
 
 Table 1에 있는 벤치마크 열네 개(V2 포함) 중에 V2 기준 다섯 능력에 다 체크된 건 V2 하나다.
 
 ## **2. Related Work**
 
-긴 문맥·개인화 메모리 벤치마크(LoCoMo, LongMemEval 등), 에이전트 궤적을 쓰는 메모리 벤치마크(MemoryArena, AMA-Bench 등), LLM이 메모리 읽기·쓰기를 직접 하는 시스템(MemGPT, A-MEM, Mem0 등)을 정리한다. 가장 가까운 AMA-Bench는 궤적 하나를 이해하는지 보고, V2는 여러 궤적에 걸쳐 쌓인 환경 지식을 본다고 한다.
+긴 문맥·개인화 메모리 벤치마크(LoCoMo, LongMemEval 등), 에이전트 궤적을 쓰는 메모리 벤치마크(MemoryArena, AMA-Bench 등), LLM이 메모리 읽기·쓰기를 직접 하는 시스템(MemGPT, A-MEM, Mem0 등)을 정리한다.
+가장 가까운 AMA-Bench는 궤적 하나를 이해하는지 보고, V2는 여러 궤적에 걸쳐 쌓인 환경 지식을 본다고 한다.
 
 ## **3. LongMemEval-V2**
 
 ### **3.1 Core Memory Ability Definition**
 
-한 환경에서 반복해서 일하고 나면 숙련된 동료는 뭘 익히게 되는가? 라는 질문에서 시작한다. 다섯 가지로 나눈다.
+한 환경에서 반복해서 일하고 나면 숙련된 동료는 뭘 익히게 되는가? 라는 질문에서 시작한다.
+다섯 가지로 나눈다.
 
 1. Static State Recall : 중요한 랜드마크, 페이지 레이아웃, 모듈 기능, 상태 사이의 작은 차이를 기억
 2. Dynamic State Tracking : 상태와 행동이 주어지면 환경이 어떻게 바뀌는지 앎 (환경의 월드 모델)
@@ -87,7 +93,8 @@ WebArena, WorkArena, WorkArena++에서 웹 에이전트 궤적을 모으고, 사
 
 ### **3.3 Evaluation Formulation**
 
-평가를 맥락 수집(context gathering) 과제로 둔다. 메모리 시스템은 API 두 개를 지원해야 한다.
+평가를 맥락 수집(context gathering) 과제로 둔다.
+메모리 시스템은 API 두 개를 지원해야 한다.
 
 ```
 Insert(h)   — 궤적을 순차 삽입
@@ -104,15 +111,19 @@ haystack은 두 크기가 있다. Small은 도메인마다(ServiceNow, WebArena)
 
 ### **3.4 Pilot Studies**
 
-난이도를 두 가지로 검증한다. 첫째, 궤적 없이 풀 수 있나? 질문만 주고 프런티어 LLM에 물어봤다. 제일 좋은 모델이 14.1%다. 공개 지식이나 파라미터 지식만으로는 대부분 못 푼다.
+난이도를 두 가지로 검증한다.
+첫째, 궤적 없이 풀 수 있나?
+질문만 주고 프런티어 LLM에 물어봤다. 제일 좋은 모델이 14.1%다. 공개 지식이나 파라미터 지식만으로는 대부분 못 푼다.
 
-둘째, 정답이 들어 있는 궤적만 주면 풀리나? 정답이 들어 있는 궤적(oracle)만 주면 long-context 프롬프팅 점수가 많이 오르지만, 그래도 한계가 있다고 한다. 궤적이 모델 컨텍스트 창보다 크기 때문이다.
+둘째, 정답이 들어 있는 궤적만 주면 풀리나?
+정답이 들어 있는 궤적(oracle)만 주면 long-context 프롬프팅 점수가 많이 오르지만, 그래도 한계가 있다고 한다. 궤적이 모델 컨텍스트 창보다 크기 때문이다.
 
 oracle은 질문당 평균 궤적 1.39개, 약 310.8K 토큰이다. haystack 전체(25M~115M)를 주는 게 아닌데도 창을 넘는다. 웹 에이전트 궤적은 화면 상태가 계속 들어가서 하나하나가 길다.
 
 ![파일럿 스터디 결과 (논문 Figure 4)](https://momozzing.github.io/assets/images/longmemeval-v2/fig4-pilot-studies.png)
 
-왼쪽이 질문만 준 프런티어 LLM 정확도이고, 오른쪽이 oracle 궤적을 준 direct QA 결과다. oracle 궤적을 통째로 주는 것보다 정답 상태 주변만 자른 slice와 요약 노트로 줄이거나, 코딩 에이전트 하네스를 쓰면 더 오른다고 한다.
+왼쪽이 질문만 준 프런티어 LLM 정확도이고, 오른쪽이 oracle 궤적을 준 direct QA 결과다.
+oracle 궤적을 통째로 주는 것보다 정답 상태 주변만 자른 slice와 요약 노트로 줄이거나, 코딩 에이전트 하네스를 쓰면 더 오른다고 한다.
 
 ## **4. AgentRunbook**
 
@@ -120,21 +131,25 @@ oracle은 질문당 평균 궤적 1.39개, 약 310.8K 토큰이다. haystack 전
 
 ![AgentRunbook 메모리 모듈 구조 (논문 Figure 5)](https://momozzing.github.io/assets/images/longmemeval-v2/fig5-agentrunbook-overview.png)
 
-(a) AgentRunbook-R은 넣을 때 궤적을 raw state, event, note 풀로 나눠 담고, 질의할 때 LLM 컨트롤러가 풀마다 질의를 만든다. (b) AgentRunbook-C는 궤적을 파일로 저장하고, 질의마다 지시문과 manifest를 넣은 샌드박스를 만들어 코딩 에이전트가 증거를 모으게 한다.
+(a) AgentRunbook-R은 넣을 때 궤적을 raw state, event, note 풀로 나눠 담고, 질의할 때 LLM 컨트롤러가 풀마다 질의를 만든다.
+(b) AgentRunbook-C는 궤적을 파일로 저장하고, 질의마다 지시문과 manifest를 넣은 샌드박스를 만들어 코딩 에이전트가 증거를 모으게 한다.
 
 ### **4.1 AgentRunbook-R**
 
-R은 RAG를 뜻한다. 넣을 때 구조화된 메모리 항목을 뽑아두고 질의할 때 검색한다. 단위가 다른 지식 풀 세 개를 둔다.
+R은 RAG를 뜻한다.
+넣을 때 구조화된 메모리 항목을 뽑아두고 질의할 때 검색한다. 단위가 다른 지식 풀 세 개를 둔다.
 
 - raw state slice : 궤적 상태 주변을 자른 창. 세밀한 UI 관측과 주변 행동을 그대로 남김
 - state transition event : 연속된 상태에서 뽑은 이벤트. 행동이 환경을 어떻게 바꾸는지
 - procedure and hint note : 궤적 단위 노트. 재사용할 워크플로, 탐색 패턴, 환경별 함정
 
-질의할 때는 LLM 컨트롤러가 질의와 지금 메모리 스냅샷을 보고 풀마다 검색 질의를 만든다. 원본 조각과 추상 노트를 같이 두는 구조는 뒤에서 볼 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 다시 나온다.
+질의할 때는 LLM 컨트롤러가 질의와 지금 메모리 스냅샷을 보고 풀마다 검색 질의를 만든다.
+원본 조각과 추상 노트를 같이 두는 구조는 뒤에서 볼 [Rate-Distortion 리뷰](https://momozzing.github.io/paper%20review/Rate-Distortion-Memory-Compaction-Paper-review/)에서 다시 나온다.
 
 ### **4.2 AgentRunbook-C**
 
-C는 코딩 에이전트를 뜻한다. 이쪽은 방식이 다르다. 검색을 고정된 벡터 검색 파이프라인으로 하지 않고, 궤적을 파일로 그대로 저장한 다음 코딩 에이전트가 질의할 때 직접 찾아보고 골라내게 한다.
+C는 코딩 에이전트를 뜻한다. 이쪽은 방식이 다르다.
+검색을 고정된 벡터 검색 파이프라인으로 하지 않고, 궤적을 파일로 그대로 저장한 다음 코딩 에이전트가 질의할 때 직접 찾아보고 골라내게 한다.
 
 기성 코딩 에이전트는 메모리 모듈로 쓰라고 만든 게 아니라서 너무 많이 찾거나, 너무 적게 찾거나, 비효율적으로 본다고 한다. 그래서 가벼운 장치 세 개를 붙인다.
 
@@ -176,7 +191,8 @@ ablation을 보면 풀마다 역할이 다르다.
 
 ### **5.2 Accuracy and Latency Trade-off**
 
-메모리 컨트롤러의 reasoning effort가 전체 질의 지연에 크게 영향을 준다고 한다. AgentRunbook-R은 정확도는 중간이고 지연은 26초 정도다. thinking을 끄면 훨씬 낮아진다. AgentRunbook-C는 정확도를 더 올리지만 지연이 100초 넘게 든다. 그래도 vanilla Codex보다는 32% 빠르다고 한다.
+메모리 컨트롤러의 reasoning effort가 전체 질의 지연에 크게 영향을 준다고 한다.
+AgentRunbook-R은 정확도는 중간이고 지연은 26초 정도다. thinking을 끄면 훨씬 낮아진다. AgentRunbook-C는 정확도를 더 올리지만 지연이 100초 넘게 든다. 그래도 vanilla Codex보다는 32% 빠르다고 한다.
 
 ![정확도-지연 트레이드오프 (논문 Figure 6)](https://momozzing.github.io/assets/images/longmemeval-v2/fig6-accuracy-latency.png)
 
@@ -187,7 +203,8 @@ ablation을 보면 풀마다 역할이 다르다.
 
 ## **6. Conclusion**
 
-conclusion 부분을 보면, 메모리 시스템은 에이전트가 특정 환경을 잘 다루는 숙련자가 되도록 도와야 한다고 한다. 다섯 능력을 다 다루고, 멀티모달 웹 에이전트 이력으로 1억 토큰이 넘는 맥락 깊이까지 벤치마크를 키웠다.
+conclusion 부분을 보면, 메모리 시스템은 에이전트가 특정 환경을 잘 다루는 숙련자가 되도록 도와야 한다고 한다.
+다섯 능력을 다 다루고, 멀티모달 웹 에이전트 이력으로 1억 토큰이 넘는 맥락 깊이까지 벤치마크를 키웠다.
 
 논문이 밝힌 한계는 세 가지다.
 
@@ -201,10 +218,13 @@ V1이 사용자 대화를 물었다면 V2는 웹 에이전트 궤적을 묻고, 
 
 ## **7. 지금 관점: V1과 V2 중 어느 쪽으로 잴지**
 
-둘은 갈아타는 관계가 아니다. 재는 대상이 다르다. V1은 사용자에 대한 사실을 기억하는지를 115k–1.5M 토큰 규모에서 잰다. 개인화 챗봇이나 선호 추적에 맞고, 앞 리뷰들에서 Zep, MemMachine이 평가한 곳이다. V2는 환경에 대한 경험을 익히는지를 25M–115M 토큰 규모에서 잰다. 웹·도구 에이전트나 반복 작업 자동화에 맞다.
+둘은 갈아타는 관계가 아니다. 재는 대상이 다르다.
+V1은 사용자에 대한 사실을 기억하는지를 115k–1.5M 토큰 규모에서 잰다. 개인화 챗봇이나 선호 추적에 맞고, 앞 리뷰들에서 Zep, MemMachine이 평가한 곳이다.
+V2는 환경에 대한 경험을 익히는지를 25M–115M 토큰 규모에서 잰다. 웹·도구 에이전트나 반복 작업 자동화에 맞다.
 
 사용자 정보를 기억하고 갱신하는 챗봇이라면 V1이 여전히 맞는 기준 같다. V1의 KU(지식 갱신)와 ABS(모른다고 하기)가 바로 그 일이다. 대신 V2가 보는 쪽은 앞에서 본 논문들에서 거의 비어 있었다. 경험 기억을 제대로 잰 건 [Experience-Following](https://momozzing.github.io/paper%20review/Experience-Following-Paper-review/) 하나였고, 그것도 합성 태스크(RegAgent) 하나에 기존 에이전트 3개(EHRAgent, AgentDriver, CIC-IoT)를 붙인 규모였다. 도구를 반복해서 부르는 에이전트라면 Gotchas와 Premise Awareness가 바로 해당될 것 같다. 예를 들면 어떤 도구가 특정 조건에서 실패하는 패턴을 에이전트가 익히는지 같은 것.
 
-AgentRunbook-R의 3풀 구조는 규모가 작아도 가져와 볼 만하다. 원본 조각, 상태 전이 이벤트, 절차 노트를 따로 저장하고 따로 검색한다. ablation을 보면 풀마다 맡는 질문 유형이 다르다. 26초 지연도 참고할 숫자다. AgentRunbook-R이 빠른 쪽인데도 26초다. thinking을 끄면 내려간다고는 하지만, 이 규모에서 실시간 응답은 어려울 것 같다.
+AgentRunbook-R의 3풀 구조는 규모가 작아도 가져와 볼 만하다. 원본 조각, 상태 전이 이벤트, 절차 노트를 따로 저장하고 따로 검색한다. ablation을 보면 풀마다 맡는 질문 유형이 다르다.
+26초 지연도 참고할 숫자다. AgentRunbook-R이 빠른 쪽인데도 26초다. thinking을 끄면 내려간다고는 하지만, 이 규모에서 실시간 응답은 어려울 것 같다.
 
 다음은 [MemFail](https://momozzing.github.io/paper%20review/MemFail-Paper-review/)이다. 메모리 시스템을 요약·저장·검색 세 연산으로 나눠서, 틀린 답이 어느 단계에서 나왔는지 찾아내는 진단 벤치마크다.

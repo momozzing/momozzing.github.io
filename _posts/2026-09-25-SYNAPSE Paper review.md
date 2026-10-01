@@ -19,19 +19,23 @@ SYNAPSE: Empowering LLM Agents with Episodic-Semantic Memory via Spreading Activ
 
 [https://arxiv.org/abs/2601.02744](https://arxiv.org/abs/2601.02744)
 
-SYNAPSE는 University of Georgia 외 3개 기관에서 만든 에이전트 메모리 구조다. 2026년 1월 arXiv에 올라온 논문이다. 벡터 유사도 대신 활성 확산(spreading activation)으로 기억 사이의 관련성을 찾고, 모르는 질문에는 모른다고 답하게 만든다.
+SYNAPSE는 University of Georgia 외 3개 기관에서 만든 에이전트 메모리 구조다. 2026년 1월 arXiv에 올라온 논문이다.
+벡터 유사도 대신 활성 확산(spreading activation)으로 기억 사이의 관련성을 찾고, 모르는 질문에는 모른다고 답하게 만든다.
 
 이름이 같은 다른 논문이 있다. Synapse: Trajectory-as-Exemplar Prompting([2306.07863](https://arxiv.org/abs/2306.07863))은 다른 논문이라 검색할 때 헷갈리기 쉽다.
 
-이 논문은 episodic(개별 대화 턴)이랑 semantic(추상 개념) 계층을 어떻게 잇느냐를 다룬다. 그리고 그 연결을 미리 계산해두지 않고 질의가 올 때 찾는다. 두 계층을 나눠 두는 구조는 뒤에서 볼 [Multi-Layered Memory](https://momozzing.github.io/paper%20review/Multi-Layered-Memory-Paper-review/)에서 다시 나온다.
+이 논문은 episodic(개별 대화 턴)이랑 semantic(추상 개념) 계층을 어떻게 잇느냐를 다룬다. 그리고 그 연결을 미리 계산해두지 않고 질의가 올 때 찾는다.
+두 계층을 나눠 두는 구조는 뒤에서 볼 [Multi-Layered Memory](https://momozzing.github.io/paper%20review/Multi-Layered-Memory-Paper-review/)에서 다시 나온다.
 
 좀 더 자세히 알아보자.
 
 ## **1. Introduction**
 
-문제를 Contextual Tunneling(또는 Contextual Isolation)이라고 부른다. 장기 에이전트 메모리의 기억들이 서로 끊겨 있는 문제다. RAG(검색 증강 생성)는 이력을 벡터 DB에 넣고 의미 유사도로 꺼낸다. 사실 하나를 찾는 데는 괜찮은데, 서로 떨어진 기억을 엮어야 하는 상황에서는 안 된다는 게 논문의 주장이다.
+문제를 Contextual Tunneling(또는 Contextual Isolation)이라고 부른다. 장기 에이전트 메모리의 기억들이 서로 끊겨 있는 문제다.
+RAG(검색 증강 생성)는 이력을 벡터 DB에 넣고 의미 유사도로 꺼낸다. 사실 하나를 찾는 데는 괜찮은데, 서로 떨어진 기억을 엮어야 하는 상황에서는 안 된다는 게 논문의 주장이다.
 
-그래서 인지과학 쪽에서 방법을 가져온다. 메모리를 동적 그래프로 두고, 관련성은 미리 계산해둔 링크 대신 활성 확산에서 나오게 한다. 앞에서 본 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)은 LLM으로 링크를 미리 걸어뒀는데, SYNAPSE는 질의가 올 때 에너지를 흘려서 그때그때 관련된 부분그래프를 찾는다.
+그래서 인지과학 쪽에서 방법을 가져온다. 메모리를 동적 그래프로 두고, 관련성은 미리 계산해둔 링크 대신 활성 확산에서 나오게 한다.
+앞에서 본 [A-MEM](https://momozzing.github.io/paper%20review/A-MEM-Paper-review/)은 LLM으로 링크를 미리 걸어뒀는데, SYNAPSE는 질의가 올 때 에너지를 흘려서 그때그때 관련된 부분그래프를 찾는다.
 
 ## **2. Related Work**
 
@@ -64,16 +68,19 @@ MemGPT, MemoryOS 같은 메모리 배치 쪽 연구는 기억을 서로 독립�
 
 ![SYNAPSE 전체 구조 (논문 Figure 1)](https://momozzing.github.io/assets/images/synapse/fig1-synapse-overview.png)
 
-왼쪽은 질의가 어휘·의미 두 트리거로 그래프에 에너지를 넣는 부분, 가운데는 활성 확산, 오른쪽은 세 신호로 순위를 다시 매기는 부분이다. 질의에 없는 "Mark" 노드가 다리 역할로 활성화돼서 "스키 여행"과 "연애"를 잇는다.
+왼쪽은 질의가 어휘·의미 두 트리거로 그래프에 에너지를 넣는 부분, 가운데는 활성 확산, 오른쪽은 세 신호로 순위를 다시 매기는 부분이다.
+질의에 없는 "Mark" 노드가 다리 역할로 활성화돼서 "스키 여행"과 "연애"를 잇는다.
 
 ### **3.2 Cognitive Dynamics: Spreading Activation**
 
-Collins와 Loftus(1975)의 사람 의미기억 모델에서 가져왔다. 먼저 초기화(Initialization)다. 질의 `q`가 오면 앵커 노드를 찾는데, 두 경로를 쓴다.
+Collins와 Loftus(1975)의 사람 의미기억 모델에서 가져왔다.
+먼저 초기화(Initialization)다. 질의 `q`가 오면 앵커 노드를 찾는데, 두 경로를 쓴다.
 
 - Lexical Trigger : BM25(단어 일치 기반 희소 검색). "Kendall" 같은 고유명사를 정확히 매칭
 - Semantic Trigger : dense(임베딩) 검색. "스키 여행"처럼 개념이 비슷한 것을 찾음
 
-둘의 Top-k 합집합이 앵커가 되고, 앵커에만 에너지를 넣는다. 앞에서 본 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)에서도 sparse+dense 조합을 썼는데 여기서도 나온다.
+둘의 Top-k 합집합이 앵커가 되고, 앵커에만 에너지를 넣는다.
+앞에서 본 [Zep](https://momozzing.github.io/paper%20review/Zep-Paper-review/)에서도 sparse+dense 조합을 썼는데 여기서도 나온다.
 
 다음은 전파(Propagation with Fan Effect)다. ACT-R(Anderson, 1983의 인지 구조 모델)을 따라 주의가 나뉘는 걸 모델링한다.
 
@@ -110,7 +117,8 @@ S(v_i) = λ₁·sim(h_i,h_q) + λ₂·a^(T)_i + λ₃·PageRank(v_i)
 - `a^(T)` (활성) : 국소 맥락 신호. 질의마다 관련성이 퍼짐
 - PageRank : 전역 구조 사전확률. 질의와 상관없이 중요한 허브(주요 인물 등)를 먼저 올림
 
-이렇게 나누는 이유는, 새로 나왔지만 지금 질의랑 관련 있는 세부 정보가 전역 허브에 묻히지 않게 하려는 것이라고 한다. 효율 쪽으로는 점수를 캐시해두고 통합 시점(N=5턴)에만 갱신한다. 그래서 질의 지연이 이력 길이 `T`와 상관없이 유지된다. 기본 `k = 30`.
+이렇게 나누는 이유는, 새로 나왔지만 지금 질의랑 관련 있는 세부 정보가 전역 허브에 묻히지 않게 하려는 것이라고 한다.
+효율 쪽으로는 점수를 캐시해두고 통합 시점(N=5턴)에만 갱신한다. 그래서 질의 지연이 이력 길이 `T`와 상관없이 유지된다. 기본 `k = 30`.
 
 ### **3.4 Uncertainty-Aware Rejection**
 
@@ -122,7 +130,8 @@ S(v_i) = λ₁·sim(h_i,h_q) + λ₂·a^(T)_i + λ₃·PageRank(v_i)
 
 *"Is this EXPLICITLY mentioned? If not, output 'Not mentioned'."*
 
-생성 모델이 파라미터 지식으로 지어낸 것과 검색에 근거한 것을 구분하게 만든다. 앞에서 본 [LongMemEval](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서는 ABS(회피)를 다섯 능력 중 하나로 뒀는데, 여기서는 그걸 시스템에서 직접 구현했다.
+생성 모델이 파라미터 지식으로 지어낸 것과 검색에 근거한 것을 구분하게 만든다.
+앞에서 본 [LongMemEval](https://momozzing.github.io/paper%20review/LongMemEval-Paper-review/)에서는 ABS(회피)를 다섯 능력 중 하나로 뒀는데, 여기서는 그걸 시스템에서 직접 구현했다.
 
 ## **4. Experiments**
 
@@ -130,7 +139,8 @@ LoCoMo(긴 다회차 대화 기억을 묻는 QA 벤치마크)에서 GPT-4o-mini�
 
 ### **4.1 Experimental Setup**
 
-LoCoMo의 다섯 범주(Single-Hop, Temporal, Open-Domain, Multi-Hop, Adversarial)에서 F1과 BLEU-1을 잰다. 베이스라인은 시스템·그래프·검색·에이전트/압축 네 계열에서 열 개를 골랐다. 재현 가능한 베이스라인은 GPT-4o-mini로 다시 돌렸다. HippoRAG는 정적 코퍼스용이라 온라인으로 읽고 쓰는 LoCoMo에 맞지 않는다며 뺐다고 한다.
+LoCoMo의 다섯 범주(Single-Hop, Temporal, Open-Domain, Multi-Hop, Adversarial)에서 F1과 BLEU-1을 잰다. 베이스라인은 시스템·그래프·검색·에이전트/압축 네 계열에서 열 개를 골랐다.
+재현 가능한 베이스라인은 GPT-4o-mini로 다시 돌렸다. HippoRAG는 정적 코퍼스용이라 온라인으로 읽고 쓰는 LoCoMo에 맞지 않는다며 뺐다고 한다.
 
 ### **4.2 Main Results**
 
@@ -143,7 +153,8 @@ LoCoMo의 다섯 범주(Single-Hop, Temporal, Open-Domain, Multi-Hop, Adversaria
 | Zep | 39.7 |
 | SYNAPSE | 40.5 |
 
-A-Mem보다 +7.2점이다. AriGraph는 지식 그래프를 쓰는 에이전트 메모리다. 태스크 순위(Task Rank)는 1.0이다. 다섯 범주 각각의 순위를 평균 낸 값이라, 모든 범주에서 1등이라는 뜻이다.
+A-Mem보다 +7.2점이다. AriGraph는 지식 그래프를 쓰는 에이전트 메모리다.
+태스크 순위(Task Rank)는 1.0이다. 다섯 범주 각각의 순위를 평균 낸 값이라, 모든 범주에서 1등이라는 뜻이다.
 
 범주별로는 이렇다. 같은 Table 1에서 A-Mem과 SYNAPSE의 세 범주 F1만 옮겼다.
 
@@ -180,7 +191,8 @@ A-Mem보다 +7.2점이다. AriGraph는 지식 그래프를 쓰는 에이전트 �
 
 ![장치별 제거 실험 (논문 Table 3)](https://momozzing.github.io/assets/images/synapse/table3-mechanism-ablation.png)
 
-위쪽 묶음은 장치를 하나씩 끈 결과, 아래쪽 묶음은 활성 확산이나 그래프 구조 자체를 뺀 결과다. Adversarial 열을 보면, 게이트를 끄면(`τ_gate = 0`, 억제는 켜둠) 96.6에서 67.2로 떨어진다. 억제를 끄면(β = 0, 게이트는 켜둠) 71.5다. 둘 다 있어야 96.6이 나온다.
+위쪽 묶음은 장치를 하나씩 끈 결과, 아래쪽 묶음은 활성 확산이나 그래프 구조 자체를 뺀 결과다.
+Adversarial 열을 보면, 게이트를 끄면(`τ_gate = 0`, 억제는 켜둠) 96.6에서 67.2로 떨어진다. 억제를 끄면(β = 0, 게이트는 켜둠) 71.5다. 둘 다 있어야 96.6이 나온다.
 
 논문은 이걸 측면 억제가 게이트 앞에서 전처리 역할을 한다고 설명한다. 억제가 없으면 관련 없는 후보들도 활성이 남아서, 최상위 노드의 활성 에너지를 신뢰도로 쓰기 어려워진다.
 
@@ -200,7 +212,8 @@ A-Mem보다 +7.2점이다. AriGraph는 지식 그래프를 쓰는 에이전트 �
 | F1 | 40.5 | 25.6 | 28.0 | 38.0 | 34.3 |
 | 비용 효율(F1/$) | 167.3 | 9.6 | 10.5 | 126.8 | 150.7 |
 
-MemoryOS는 계층형 메모리 OS, LangMem은 LangChain의 메모리 라이브러리다. 토큰은 full-context 대비 95% 줄었다. 전체 이력을 넣지 않고 관련된 부분그래프만 꺼내기 때문이다. 논문은 full-context보다 11배 싸면서 성능은 거의 2배라고 쓴다.
+MemoryOS는 계층형 메모리 OS, LangMem은 LangChain의 메모리 라이브러리다.
+토큰은 full-context 대비 95% 줄었다. 전체 이력을 넣지 않고 관련된 부분그래프만 꺼내기 때문이다. 논문은 full-context보다 11배 싸면서 성능은 거의 2배라고 쓴다.
 
 -> 표로 계산하면 40.5 / 25.6 ≈ 1.6배, MemGPT(28.0) 대비로는 1.45배다. "거의 2배"는 좀 후하다.
 
@@ -228,7 +241,9 @@ conclusion 부분을 보면, 생물학적 활성 확산을 흉내 내서 기존 
 
 ## **6. 지금 관점: 검색에 따로 떼어 써볼 만한 부분**
 
-장치 중에 따로 떼어 쓸 수 있는 것과 같이 써야 하는 것이 나뉜다. 시간 감쇠는 따로 쓸 수 있을 것 같다. 논문 ablation에서 Temporal을 맡은 건 노드 감쇠 `δ`다. 그래도 엣지 쪽 `e^{−ρ|Δτ|}`처럼 시간 차이만큼 점수를 깎는 건 그래프가 없어도 검색 점수에 곱하면 된다.
+장치 중에 따로 떼어 쓸 수 있는 것과 같이 써야 하는 것이 나뉜다.
+시간 감쇠는 따로 쓸 수 있을 것 같다.
+논문 ablation에서 Temporal을 맡은 건 노드 감쇠 `δ`다. 그래도 엣지 쪽 `e^{−ρ|Δτ|}`처럼 시간 차이만큼 점수를 깎는 건 그래프가 없어도 검색 점수에 곱하면 된다.
 
 "스웨덴에 산다" 같은 오래된 정보 오류를 막는 제일 싼 방법 같다. 앞에서 본 Zep의 양시간 모델링이 더 정확하긴 한데 구현이 크고, 이쪽은 한 줄이다.
 

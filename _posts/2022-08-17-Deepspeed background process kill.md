@@ -22,7 +22,9 @@ toc_sticky: true
 
 Deepspeed를 사용해서 여러 대의 GPU를 병렬로 사용할 때   
  ```dist.init_process_group(backend="nccl")```를 사용하기 때문에   
- Backend에서 프로세스가 실행된다. 이 때문에 터미널에서 Ctrl+C를 눌러 파이썬 실행파일을 종료해도 Backend에서 프로그램이 실행된다. 그러므로 GPU의 메모리는 아직도 사용중이다. -> OOM 발생.
+ Backend에서 프로세스가 실행된다.
+이 때문에 터미널에서 Ctrl+C를 눌러 파이썬 실행파일을 종료해도 Backend에서 프로그램이 실행된다.
+그러므로 GPU의 메모리는 아직도 사용중이다. -> OOM 발생.
 
 이를 해결하는 법은 간단하다. 
 

@@ -66,7 +66,8 @@ field: dialog
 
 ### **Data**
 
-데이터셋은 MultiWOZ 2.1, MultiWOZ 2.0에 대해서 진행한다. 이들은 10000개 이상의 multi-domain 발화로 구성 되어 있으며 35개의 domain-slot쌍과 5개의 도메인(기차, 레스토랑, 호텔, 택시, 명소)로 구성되어 있다. 공개적으로 사용 가능한 가장 큰 3개의 multi-domain TOD dataset이다. 
+데이터셋은 MultiWOZ 2.1, MultiWOZ 2.0에 대해서 진행한다.
+이들은 10000개 이상의 multi-domain 발화로 구성 되어 있으며 35개의 domain-slot쌍과 5개의 도메인(기차, 레스토랑, 호텔, 택시, 명소)로 구성되어 있다. 공개적으로 사용 가능한 가장 큰 3개의 multi-domain TOD dataset이다.
 
 ### **Result**
 

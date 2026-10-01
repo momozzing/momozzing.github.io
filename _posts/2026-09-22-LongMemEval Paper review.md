@@ -79,7 +79,9 @@ abstention은 따로 모으지 않고 기존 질문을 틀린 전제로 바꿔�
 
 왼쪽이 증거 문장이고 오른쪽이 질문과 정답이다. abstention 예시는 10-gallon, 20-gallon 탱크만 말했는데 30-gallon 탱크를 묻는다.
 
-데이터는 이렇게 만든다. 사용자 속성 164개를 다섯 범주(생활양식, 소유물, 생애 사건, 상황 맥락, 인구통계)로 나눠 정리했다. 속성마다 LLM(Llama 3 70B Instruct)으로 사용자 배경 문단을 만들고, 그걸 증거 문장과 대화 세션으로 늘린다. 문항 500개는 직접 골라 다듬었다.
+데이터는 이렇게 만든다.
+사용자 속성 164개를 다섯 범주(생활양식, 소유물, 생애 사건, 상황 맥락, 인구통계)로 나눠 정리했다.
+속성마다 LLM(Llama 3 70B Instruct)으로 사용자 배경 문단을 만들고, 그걸 증거 문장과 대화 세션으로 늘린다. 문항 500개는 직접 골라 다듬었다.
 
 ![LongMemEval 데이터 생성 파이프라인 (논문 Figure 2)](https://momozzing.github.io/assets/images/longmemeval/fig2-data-pipeline.png)
 
@@ -94,7 +96,8 @@ abstention은 따로 모으지 않고 기존 질문을 틀린 전제로 바꿔�
 
 ### **3.3 Evaluation Metric**
 
-답 형태가 자유로워서 exact match 대신 gpt-4o로 채점한다. 사람 전문가와 97% 넘게 일치했다고 한다. 답이 있는 위치를 사람이 표시해뒀기 때문에, 시스템이 검색 결과를 보여주면 Recall@k와 NDCG@k도 잴 수 있다.
+답 형태가 자유로워서 exact match 대신 gpt-4o로 채점한다. 사람 전문가와 97% 넘게 일치했다고 한다.
+답이 있는 위치를 사람이 표시해뒀기 때문에, 시스템이 검색 결과를 보여주면 Recall@k와 NDCG@k도 잴 수 있다.
 
 ### **3.4 LongMemEval represents a significant challenge**
 
@@ -111,7 +114,8 @@ abstract에서는 이걸 한 줄로 요약한다. 대화가 이어지면서 정�
 
 ### **4.1 Long-Term Memory System: Formulation**
 
-장기 메모리를 큰 key-value 저장소로 본다. 키는 종류가 달라도 된다. 문장, 문단, 사실, 엔티티 같은 텍스트일 수도 있고 모델 내부 표현일 수도 있다. 값은 중복돼도 된다.
+장기 메모리를 큰 key-value 저장소로 본다.
+키는 종류가 달라도 된다. 문장, 문단, 사실, 엔티티 같은 텍스트일 수도 있고 모델 내부 표현일 수도 있다. 값은 중복돼도 된다.
 
 ![메모리 증강 어시스턴트의 통합 관점 (논문 Figure 4)](https://momozzing.github.io/assets/images/longmemeval/fig4-unified-view.png)
 
@@ -157,7 +161,9 @@ GPT-4o, Llama 3.1 70B Instruct, Llama 3.1 8B Instruct 세 모델로 돌린다. �
 
 ### **5.2 Value: Decomposition improves RAG performance**
 
-저장 단위는 세션보다 라운드가 낫다고 한다(CP 1). 라운드는 사용자 메시지 하나와 그에 대한 어시스턴트 응답 하나를 묶은 단위다. 라운드에서 사용자 사실까지 더 쪼개면 정보가 빠져서 전체 성능은 떨어지는데, multi-session 추론 정확도는 올라간다. 잘게 쪼갤수록 여러 세션을 엮는 추론은 좋아지고 전체 성능은 나빠지는 trade-off다.
+저장 단위는 세션보다 라운드가 낫다고 한다(CP 1). 라운드는 사용자 메시지 하나와 그에 대한 어시스턴트 응답 하나를 묶은 단위다.
+라운드에서 사용자 사실까지 더 쪼개면 정보가 빠져서 전체 성능은 떨어지는데, multi-session 추론 정확도는 올라간다.
+잘게 쪼갤수록 여러 세션을 엮는 추론은 좋아지고 전체 성능은 나빠지는 trade-off다.
 
 ![value 설계별 QA 성능 (논문 Figure 5)](https://momozzing.github.io/assets/images/longmemeval/fig5-value-designs.png)
 
@@ -165,7 +171,9 @@ Full과 Multi-Session Subset을 나눠서 토큰 수 대비 정확도를 그렸�
 
 ### **5.3 Key: Multi-key indexing improves retrieval and RAG**
 
-키를 사실로 늘리면 검색이랑 QA가 같이 오른다(CP 2). 값을 그대로 키로 쓰는 flat 인덱스도 이미 꽤 강한 베이스라인이다. 여기에 뽑아낸 사용자 사실을 키로 더 붙이면 recall@k가 9.4%, 정확도가 5.4% 오른다. 요약, 키프레이즈, 사용자 사실, 타임스탬프 이벤트를 값에서 뽑아서 검색 경로를 여러 개 만드는 방식이다.
+키를 사실로 늘리면 검색이랑 QA가 같이 오른다(CP 2).
+값을 그대로 키로 쓰는 flat 인덱스도 이미 꽤 강한 베이스라인이다.
+여기에 뽑아낸 사용자 사실을 키로 더 붙이면 recall@k가 9.4%, 정확도가 5.4% 오른다. 요약, 키프레이즈, 사용자 사실, 타임스탬프 이벤트를 값에서 뽑아서 검색 경로를 여러 개 만드는 방식이다.
 
 ![key 설계별 검색·QA 성능 (논문 Table 3)](https://momozzing.github.io/assets/images/longmemeval/table3-key-designs.png)
 
@@ -173,7 +181,8 @@ Full과 Multi-Session Subset을 나눠서 토큰 수 대비 정확도를 그렸�
 
 ### **5.4 Query: Time-aware query expansion improves temporal reasoning**
 
-시간을 고려해야 시간 질문을 푼다(CP 3). 값을 타임스탬프 이벤트로 색인하고 검색을 그 시간 범위로 제한하면, temporal reasoning의 recall이 6.8~11.3% 오른다. 단 질의를 늘릴 때 강한 LLM을 써야 그렇다고 한다.
+시간을 고려해야 시간 질문을 푼다(CP 3).
+값을 타임스탬프 이벤트로 색인하고 검색을 그 시간 범위로 제한하면, temporal reasoning의 recall이 6.8~11.3% 오른다. 단 질의를 늘릴 때 강한 LLM을 써야 그렇다고 한다.
 
 ![temporal reasoning 부분집합 검색 성능 (논문 Table 4)](https://momozzing.github.io/assets/images/longmemeval/table4-time-aware.png)
 
@@ -181,7 +190,9 @@ Full과 Multi-Session Subset을 나눠서 토큰 수 대비 정확도를 그렸�
 
 ### **5.5 Improving reading with chain-of-note and structured format**
 
-잘 꺼내도 잘 읽는 건 따로다(CP 4). 검색이 완벽해도 가져온 걸 제대로 쓰는 건 쉽지 않다고 한다. Chain-of-Note(답하기 전에 필요한 내용을 먼저 뽑음)랑 구조화된 포맷으로 프롬프팅하면 LLM 세 개에서 최대 10점 오른다.
+잘 꺼내도 잘 읽는 건 따로다(CP 4).
+검색이 완벽해도 가져온 걸 제대로 쓰는 건 쉽지 않다고 한다.
+Chain-of-Note(답하기 전에 필요한 내용을 먼저 뽑음)랑 구조화된 포맷으로 프롬프팅하면 LLM 세 개에서 최대 10점 오른다.
 
 ![oracle 검색에서 읽기 방식별 QA 성능 (논문 Figure 6)](https://momozzing.github.io/assets/images/longmemeval/fig6-reading.png)
 
@@ -191,13 +202,15 @@ Full과 Multi-Session Subset을 나눠서 토큰 수 대비 정확도를 그렸�
 
 ## **6. Conclusion**
 
-장기기억을 다섯 능력(정보 추출, 다중 세션 추론, 시간 추론, 지식 갱신, 회피)으로 나눈 벤치마크와, 메모리 설계를 indexing·retrieval·reading 세 단계 네 제어점으로 나눈 틀을 같이 내놓았다. 상용 시스템이랑 long-context LLM 모두 크게 떨어진다는 걸 보여줬고, 세션 분해, 사실 기반 키 확장, 시간을 고려한 질의 확장이 검색과 QA를 같이 올린다고 한다.
+장기기억을 다섯 능력(정보 추출, 다중 세션 추론, 시간 추론, 지식 갱신, 회피)으로 나눈 벤치마크와, 메모리 설계를 indexing·retrieval·reading 세 단계 네 제어점으로 나눈 틀을 같이 내놓았다.
+상용 시스템이랑 long-context LLM 모두 크게 떨어진다는 걸 보여줬고, 세션 분해, 사실 기반 키 확장, 시간을 고려한 질의 확장이 검색과 QA를 같이 올린다고 한다.
 
 뒤에서 볼 [서베이](https://momozzing.github.io/paper%20review/Memory-in-the-Age-of-AI-Agents-Paper-review/)는 메모리를 형태·기능·동역학으로 분류하는데, 이 논문은 구현할 때 정해야 하는 지점으로 나눴다.
 
 ## **7. 지금 관점: 메모리 시스템을 볼 때 확인할 것**
 
-벤치마크 자체보다 네 제어점 틀을 더 오래 쓸 것 같다. 새 메모리 시스템이 나오면 "Value를 뭘로 잡았고, Key를 어떻게 늘렸고, 시간은 어디서 처리하고, 읽을 때 뭘 붙였나"로 물어보면 대부분 한 표에 들어간다. 뒤에 나오는 시스템들도 이 네 칸으로 정리해 보려고 한다.
+벤치마크 자체보다 네 제어점 틀을 더 오래 쓸 것 같다.
+새 메모리 시스템이 나오면 "Value를 뭘로 잡았고, Key를 어떻게 늘렸고, 시간은 어디서 처리하고, 읽을 때 뭘 붙였나"로 물어보면 대부분 한 표에 들어간다. 뒤에 나오는 시스템들도 이 네 칸으로 정리해 보려고 한다.
 
 키 확장은 검색을 한 번만 하는 설정에서 잰 결과다. 검색을 여러 번 하는 에이전트라면 키 확장이 하던 일을 반복 검색이 대신할 수도 있을 것 같다. 이건 나중에 볼 [ReFind](https://momozzing.github.io/paper%20review/ReFind-Paper-review/)에서 다시 나온다.
 

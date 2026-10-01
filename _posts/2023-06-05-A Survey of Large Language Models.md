@@ -90,7 +90,8 @@ Scaling Law는 대표적으로 KM scaling law과 Chinchilla scaling law가 있�
 
 **Chinchilla scaling law (Training Compute-Optimal Large Language Models (Hoffmann et al., 2022))**
 
-한정된 자원 안에서 초거대 언어 모델의 최적의 성능을 낼 수 있는 모델의 크기와 데이터 양의 상관 관계에 대해 다양한 실험 및 분석을 수행 모델의 Floating point operations(FLOPs)이 주어졌을 때, 가장 좋은 성능을 낼 수 있는 Parameters와 Training Tokens를 찾는 방법을 제시
+한정된 자원 안에서 초거대 언어 모델의 최적의 성능을 낼 수 있는 모델의 크기와 데이터 양의 상관 관계에 대해 다양한 실험 및 분석을 수행
+모델의 Floating point operations(FLOPs)이 주어졌을 때, 가장 좋은 성능을 낼 수 있는 Parameters와 Training Tokens를 찾는 방법을 제시
 
 Compute Budget(FLOPs)를 증가시키면 모델 사이즈와 학습 데이터의 양은 비슷한 비율로 증가해야 한다. (Parameters가 x2 증가한다면 Tokens 또한 x2 증가해야 한다.)
 더 큰 Compute budget에서 더 작은 모델이 더 최적이다.
@@ -132,9 +133,11 @@ Tool Manipulation: plug-ins for ChatGPT and GPT-4 give it a much wider range of 
 
 **Publicly Available Model Checkpoints or APIs.**
 
-LLM 10B 범위 기준. For models with tens of billions of parameters, consider mT5,  T0, GPT-NeoX-20B, CodeGen, UL2, Flan-T5, mT0, PanGu-α, and LLaMA.  
+LLM 10B 범위 기준.
+For models with tens of billions of parameters, consider mT5,  T0, GPT-NeoX-20B, CodeGen, UL2, Flan-T5, mT0, PanGu-α, and LLaMA.
 
-For models with	hundreds of billions of parameters, consider OPT, BLOOM, and BLOOMZ. It's important to measure the FLOPS (floating point operations per second) to see how much compute/memory is needed for these models.
+For models with	hundreds of billions of parameters, consider OPT, BLOOM, and BLOOMZ.
+It's important to measure the FLOPS (floating point operations per second) to see how much compute/memory is needed for these models.
 
 **Public API of LLMs.** 
 
