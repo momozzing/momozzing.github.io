@@ -71,7 +71,7 @@ V1의 다섯 가지와 비교하면 사실보다 절차와 함정 쪽으로 옮�
 
 Gotchas는 이 시리즈에서 처음 보는 축이다. 논문 Table 1에서 Gotchas까지 다루는 건 MemoryArena, EMemBench, 여러 종류의 에이전트 궤적을 다루는 AMA-Bench, 그리고 V2 네 개다.
 
-문항은 WorkArena-ServiceNow(46.8%), WebArena-CMS(20.2%), WebArena-OneStopShop(18.4%), WebArena-Reddit(14.6%)에서 나온다. 형식은 단답(50.1%), 자유형(34.6%), 객관식(15.3%)이다.
+문항은 WorkArena-ServiceNow(46.8%), WebArena-Reddit(20.2%), WebArena-CMS(18.4%), WebArena-OneStopShop(14.6%)에서 나온다. 형식은 단답(50.1%), 자유형(34.6%), 객관식(15.3%)이다.
 
 ![LME-V2 질문의 도메인·유형·형식 분포 (논문 Figure 2)](https://momozzing.github.io/assets/images/longmemeval-v2/fig2-question-distribution.png)
 
@@ -95,6 +95,11 @@ Query(q)    — 최종 메모리에 질의
 궤적 이력 전체(논문은 haystack이라고 부른다)를 순서대로 넣고, 질문으로 질의해서 나온 맥락을 받는다. 그걸 고정된 리더 모델(Qwen3.5-9B)이 읽고 답한다.
 
 haystack은 두 크기가 있다. Small은 도메인마다(ServiceNow, WebArena) 그 도메인 질문들이 같이 쓰는 궤적 100개짜리이고(전체 약 25M 토큰), Medium은 질문마다 따로 만든 궤적 약 500개(약 115M 토큰)다. 정답이 들어 있는 궤적은 그중 몇 개뿐이다.
+
+![haystack 크기와 질문별 정답 궤적 수 (논문 Figure 3)](https://momozzing.github.io/assets/images/longmemeval-v2/fig3-haystack-stats.png)
+
+왼쪽은 oracle, Small, Medium의 평균 궤적·상태·토큰 수이고, 오른쪽은 질문마다 haystack 안에 정답 궤적이 몇 개 있는지다.
+Medium은 대부분 정답 궤적이 1개이고, Small은 2개 이상인 질문이 더 많다.
 
 메모리가 쓸 만한 증거를 돌려주는지를 리더 성능과 떼어서 재려는 설계다. 논문도 한계 절에서 이건 일부러 한 설계라고 밝힌다. 엔드투엔드 태스크 성공률은 재지 않는다.
 

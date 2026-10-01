@@ -154,7 +154,7 @@ Qwen3-8B와 DC-RS 갱신기로 GPQA, HumanEval의 최종 테스트 정확도를 
 
 ![평가 집합 구성요소 ablation (논문 Figure 3)](https://momozzing.github.io/assets/images/janus/fig3-evalset-ablation.png)
 
-세 막대 중 w/o Fresh가 제일 짧다.
+하나씩 빼 본 세 막대 중 w/o Fresh가 제일 짧다.
 저장해 둔 support set으로만 평가하면 비교가 낡은 예시에 갇힌다고 한다.
 -> 본 것만으로 평가하면 최근 예시에 맞춘 메모리가 유리해질 테니까, 새 태스크를 섞어야 일반화가 보이는 것 같다.
 

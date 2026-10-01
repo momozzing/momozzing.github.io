@@ -197,7 +197,7 @@ Chain-of-Note(답하기 전에 필요한 내용을 먼저 뽑음)랑 구조화�
 
 ![oracle 검색에서 읽기 방식별 QA 성능 (논문 Figure 6)](https://momozzing.github.io/assets/images/longmemeval/fig6-reading.png)
 
-근거 세션만 넣어주는 oracle 설정에서 잰 결과다. JSON 형식에 CoN을 붙인 조합이 나머지 셋보다 크게 높다.
+근거 세션만 넣어주는 oracle 설정에서 잰 결과다. 세 모델 모두 JSON 형식에 CoN을 붙인 조합(맨 오른쪽 막대)이 가장 높다. Llama 3.1 8B에서는 JSON + Direct Prediction과 차이가 작다.
 -> oracle 설정이라 검색이 완벽할 때 얘기다. 검색까지 붙인 실제 설정에서도 10점이 그대로 나오는지는 이 그림만으로는 모르겠다.
 
 ## **6. Conclusion**

@@ -106,6 +106,12 @@ Anatomy에서 본 Context Saturation Gap(∆, 메모리 시스템 점수에서 �
 ### **A. Training and Evaluation Across Benchmarks**
 
 세 벤치마크에서 MLMF가 SR, F1, BLEU-1, 보존율, 컨텍스트 사용률 모두 각 참조 논문이 보고한 수치보다 낫다고 한다. 다섯 번 돌린 평균이고, F1과 보존율 차이는 paired t-test로 유의하다고 적는다.
+F1은 논문이 따로 그림으로 비교한다.
+
+![참조 논문들과의 F1 비교 (논문 Figure 3)](https://momozzing.github.io/assets/images/mlmf/fig3-f1-comparison.png)
+
+점선이 가장 센 베이스라인이다. 그런데 그 점선은 Phadke et al.(0.654)이고, MLMF(0.618)는 그 아래에 있다. 위 Table III의 [13] 행 F1도 0.654다.
+-> 논문 그림으로 봐도 F1은 모든 참조 논문보다 낫다고 하기 어렵다.
 
 ### **B. Long-Term Retention and Stability Analysis**
 

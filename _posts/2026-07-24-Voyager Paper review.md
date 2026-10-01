@@ -46,6 +46,9 @@ GPT-4를 블랙박스 API로만 부르고, 파인튜닝이나 gradient 업데이
 
 ![Voyager 구성 요소 (논문 Figure 2)](https://momozzing.github.io/assets/images/voyager/fig2-overview.png)
 
+왼쪽부터 자동 커리큘럼, 반복 프롬프팅, 스킬 라이브러리다.
+커리큘럼이 새 과제를 내면 스킬을 꺼내 코드를 짜고, 아래쪽 self-verification이 성공을 확인하면 그 코드가 새 스킬로 라이브러리에 들어간다.
+
 ### **2.1 Automatic Curriculum**
 
 뭘 배울지부터 모델이 정한다.
@@ -90,6 +93,13 @@ GPT-4를 블랙박스 API로만 부르고, 파인튜닝이나 gradient 업데이
 1. 환경 피드백 : "막대기를 못 만든다. 판자 2개가 더 필요하다" 같은 게임 안 중간 결과
 2. 실행 에러 : 인터프리터 에러. 없는 아이템(acacia axe)을 만들려던 코드가 에러를 보고 wooden axe로 고쳐짐
 3. Self-verification(자기 검증) : 별도의 GPT-4가 현재 상태와 과제를 보고 성공 여부를 판단, 실패면 비평을 남김
+
+3번 자기 검증은 이렇게 동작한다.
+
+![자기 검증 예시 (논문 Figure 6)](https://momozzing.github.io/assets/images/voyager/fig6-self-verification.png)
+
+GPT-4가 인벤토리와 과제를 보고 근거(Reasoning)와 성공 여부를 낸다.
+양 3마리를 잡는 과제에서는 양털과 양고기 수를 보고 2마리만 잡았다고 판단해 실패로 보고, "한 마리 더 잡아라"는 비평을 남긴다.
 
 생성 → 실행 → 피드백 반영을 반복하다가 자기 검증이 성공을 확인하면 스킬 라이브러리에 넣는다. 계속 실패하면 커리큘럼이 다른 과제를 낸다.
 논문은 자기 검증이 Reflexion의 self-reflection보다 포괄적이라고 본다. 실수를 되돌아보는 것에 더해 성공 판정까지 하기 때문이다.

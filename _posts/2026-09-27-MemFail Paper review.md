@@ -158,7 +158,8 @@ MEMFAIL은 최신 시스템에도 어렵고, k를 늘려도 성능이 잘 안 �
 
 메모리 시스템 내부 모델을 GPT-4.1-mini로 두고 k를 바꿔가며 잰 그림이다.
 칸이 과제별이고 선 색이 시스템이다. 오차 막대는 95% Wilson 구간이다.
-StructMem은 대부분 과제에서 잘하는데 Coexisting-Facts에서 크게 무너지고, Mem0은 반대 패턴이다.
+논문은 StructMem이 대부분 과제에서 잘하는데 Coexisting-Facts에서 크게 무너지고, Mem0은 반대 패턴이라고 쓴다.
+-> 그런데 이 그림에서 Coexisting-Facts 최하위는 SimpleMem(초록)이고 StructMem(보라)은 Mem0, A-MEM 다음이다. 본문 설명과 그림이 딱 맞지는 않는다.
 
 과제별로 실패가 갈린다.
 

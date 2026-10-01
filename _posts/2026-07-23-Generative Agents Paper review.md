@@ -40,6 +40,8 @@ Generative Agents는 Stanford + Google에서 만든, 가상 마을에서 사람�
 실험 무대는 심즈 같은 샌드박스 마을이다. 25명의 에이전트가 가진 건 직업이랑 관계 설정(자연어 한 문단)뿐이다.
 그 뒤의 행동은 전부 아키텍처가 만든다. 모델은 gpt-3.5-turbo를 썼다.
 
+마을 지도에 구역 이름을 붙이면 아래와 같다.
+
 ![구역이 표시된 스몰빌 (논문 Figure 2)](https://momozzing.github.io/assets/images/generative-agents/fig2-smallville-areas.png)
 
 마을에는 카페, 바, 상점, 학교, 기숙사가 있다.
@@ -101,6 +103,9 @@ recency는 생성 시점 대신 마지막 접근 시점 기준이라, 자주 꺼
 
 ![Memory Stream과 회상 (논문 Figure 6)](https://momozzing.github.io/assets/images/generative-agents/fig6-memory-stream.png)
 
+그림 오른쪽은 Isabella에게 "지금 가장 기대되는 게 뭐냐"고 물었을 때 기억마다 recency, importance, relevance를 더해 점수를 매기는 예다.
+점수가 높은 파티 관련 기억들이 뽑혀서 "Hobbs Cafe에서 여는 발렌타인 파티"라는 답이 나온다.
+
 ### **4.2 Reflection**
 
 관찰 기억만으로는 일반화가 안 된다.
@@ -142,9 +147,10 @@ Klaus에게 "아는 사람 중 한 명과 시간을 보낸다면 누구와?"라�
 
 계획도 memory stream에 저장되니까 회상 대상이다. "지금 뭐 할 거야?"라는 질문에 계획을 보고 답할 수 있다.
 
+이 계획이 실행되면 이런 하루가 된다.
+
 ![John Lin의 아침 (논문 Figure 3)](https://momozzing.github.io/assets/images/generative-agents/fig3-morning-routine.png)
 
-이 계획이 실행되면 이런 하루가 된다.
 약사 John Lin은 7시에 일어나서 양치하고 샤워하고 아침을 먹는다. 출근 전에 아내 Mei, 아들 Eddy와 짧게 얘기하고 9시쯤 가게 문을 연다.
 -> 본문은 7시 기상인데 Figure 3 캡션은 6시쯤이라고 되어 있다. 여기선 본문 기준으로 적었다.
 
@@ -197,7 +203,11 @@ Klaus에게 "아는 사람 중 한 명과 시간을 보낸다면 누구와?"라�
 
 정보 확산에서 출마 소식은 Sam, 파티 소식은 Isabella가 처음 가진 정보이고, 퍼지는 동안 사용자 개입은 없었다.
 
-![실제로 열린 발렌타인 파티 (논문 Figure 4)](https://momozzing.github.io/assets/images/generative-agents/fig4-valentine-party.png)
+Isabella의 파티 초대가 퍼진 경로를 그리면 아래와 같다.
+
+![파티 초대 확산 경로 (논문 Figure 9)](https://momozzing.github.io/assets/images/generative-agents/fig9-diffusion.png)
+
+Isabella 말고 12명이 시뮬레이션이 끝날 때까지 파티 소식을 들었다. Sam에서 Jennifer로, Ayesha에서 Maria로 넘어가는 것처럼 초대가 다른 에이전트를 거쳐 전해지기도 한다.
 
 사용자가 심어준 건 두 가지뿐이다.
 
@@ -209,7 +219,9 @@ Isabella가 소문을 내고, 단골 Maria에게 장식을 부탁하고, Maria�
 
 의도를 실행 안 하거나, 전달을 잊거나, 참석을 잊을 수 있는 곳이 많았는데도 파티는 실제로 열렸다.
 
-![파티 초대 확산 경로 (논문 Figure 9)](https://momozzing.github.io/assets/images/generative-agents/fig9-diffusion.png)
+![실제로 열린 발렌타인 파티 (논문 Figure 4)](https://momozzing.github.io/assets/images/generative-agents/fig4-valentine-party.png)
+
+그림은 파티가 열린 카페에 에이전트들이 모여 있는 장면이다.
 
 안 온 7명을 인터뷰해보니 3명은 일정이 겹쳤다고 했고, 나머지 4명은 관심은 있었는데 당일 올 계획을 안 세웠다.
 -> 이것까지 사람다운 결과로 봐야 하는지는 잘 모르겠다. 계획 단계에서 초대를 빠뜨린 걸로도 읽힌다.

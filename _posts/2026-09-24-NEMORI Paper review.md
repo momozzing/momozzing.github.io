@@ -163,9 +163,17 @@ native 관리 모듈(3.3의 new/merge/conflict 처리)은 켜고 꺼도 거의 �
 
 관측 창 길이 `w`도 5~40으로 바꿔 봤다. gpt-4.1-mini에서 80.4~81.2로 거의 같다(기본값 20에서 80.8). 경계를 LLM이 찾고 잘린 건 뒤에서 합치니 창 길이에 덜 민감하다는 설명이다.
 
+![관측 창 길이 w별 LoCoMo 점수 (논문 Figure 2)](https://momozzing.github.io/assets/images/nemori/fig2-observation-window.png)
+
+가로축이 창 길이(메시지 수), 세로축이 LLM 점수다. 점선이 기본값 20이고, 5부터 40까지 선이 거의 평평하다.
+
 ### **4.5 Retrieval Hyperparameter Analysis (RQ4)**
 
 검색 개수 k를 2에서 30까지 바꿔 보면 10까지는 크게 오르고, 그 뒤로는 Full Context보다 높은 수준에서 평평하다.
+
+![검색 개수 k에 따른 LLM 점수 (논문 Figure 3)](https://momozzing.github.io/assets/images/nemori/fig3-retrieval-count-k.png)
+
+왼쪽이 gpt-4o-mini, 오른쪽이 gpt-4.1-mini이고 빨간 점선이 Full Context다. 표시된 점(73.0, 80.8)이 본 실험에서 쓴 k=10이다.
 
 검색해 넣는 내용을 고정하고 인덱스만 바꾸면, 이야기 에피소드로 만든 임베딩이 원시 에피소드 임베딩보다 낫다고 한다. 아래 논문 Table 6(LoCoMo, gpt-4.1-mini)에서 Retrieve가 같은 두 행끼리 Index N(이야기 에피소드)과 P(원시 에피소드)의 LLM 열을 비교하면 된다. N을 꺼낼 때 76.9 vs 76.4, P를 꺼낼 때 77.0 vs 75.3이다.
 

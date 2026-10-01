@@ -148,6 +148,10 @@ Link Generation(LG)과 Memory Evolution(ME)을 하나씩 빼본다.
 
 GPT-4o-mini에서 검색 k를 10~50으로 바꿔 본다. k를 늘리면 대체로 오르다가 점점 평평해지고, 큰 값에서는 조금 떨어지기도 한다고 한다.
 
+![검색 k에 따른 범주별 성능 (논문 Figure 3)](https://momozzing.github.io/assets/images/a-mem/fig3-retrieval-k.png)
+
+범주마다 k를 10~50으로 바꾼 F1(파란색)과 BLEU-1(주황색) 막대다. Multi Hop은 30 이후 거의 그대로고, Single Hop은 50까지 계속 오르고, Adversarial은 50에서 조금 내려간다.
+
 ### **4.6 Scaling Analysis**
 
 1,000 → 10,000 → 100,000 → 1,000,000 항목으로 열 배씩 늘려가며 잰다.
@@ -165,6 +169,10 @@ GPT-4o-mini에서 검색 k를 10~50으로 바꿔 본다. k를 늘리면 대체�
 ### **4.7 Memory Analysis**
 
 LoCoMo 대화 두 개의 메모리 임베딩을 t-SNE로 그린다. 링크 생성과 진화를 뺀 기본 메모리보다 A-MEM 쪽이 더 뭉쳐서 군집을 이룬다고 한다.
+
+![메모리 임베딩 t-SNE (논문 Figure 4)](https://momozzing.github.io/assets/images/a-mem/fig4-tsne.png)
+
+파란 점이 A-MEM, 빨간 점이 링크·진화를 뺀 Base다. 논문은 Dialogue 2에서 가운데 군집이 특히 잘 보인다고 한다.
 
 ## **5. Conclusions**
 

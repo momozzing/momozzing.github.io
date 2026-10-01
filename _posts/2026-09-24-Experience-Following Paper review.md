@@ -144,6 +144,12 @@ History-based의 효용은 추가할 때 쓴 평가기를 그대로 쓸 수 있�
 3. Combined가 메모리를 제일 많이 줄인다. EHRAgent에서 1,012 → 248(75% 감소)인데 성능은 42.34로 제일 높다.
 
 C1 평가기로 추가한 경우에는 History-based가 AgentDriver(36.92 → 34.00)처럼 오히려 떨어지기도 한다. 평가기를 얼마나 믿을 수 있느냐에 따라 결과가 갈린다.
+평가기별로 추가만 했을 때와 History-based 삭제를 했을 때를 나란히 놓으면 이렇다.
+
+![평가기별 추가만 한 경우와 History-based 삭제 비교 (논문 Figure 5)](https://momozzing.github.io/assets/images/experience-following/fig5-history-deletion-evaluators.png)
+
+빗금 없는 막대가 추가만 한 경우(Add Only), 빗금 막대가 History-based 삭제(Hist Del)다.
+4o-mini(C1) 평가기는 EHRAgent에서는 삭제 뒤 올라가고 AgentDriver에서는 내려간다. 파인튜닝한 4.1-mini-FT는 두 에이전트 모두 삭제 전후가 비슷하다.
 
 ### **4.3 Misaligned Experience Replay**
 

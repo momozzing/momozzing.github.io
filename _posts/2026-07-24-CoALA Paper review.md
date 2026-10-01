@@ -49,9 +49,9 @@ CoALA가 하려는 건 부품끼리의 관계까지 정하는 이론이다. 이 
 이걸 새로 발명하지는 않는다.
 인지과학이랑 심볼릭 AI가 수십 년 동안 같은 문제(기억, 행동, 의사결정을 가진 시스템을 어떻게 조직할까)를 다뤄왔으니, 거기서 틀을 가져온다.
 
-![LLM 사용의 세 단계 (논문 Figure 1)](https://momozzing.github.io/assets/images/coala/fig1-llm-to-cognitive.png)
-
 다루는 대상부터 그림으로 나눈다.
+
+![LLM 사용의 세 단계 (논문 Figure 1)](https://momozzing.github.io/assets/images/coala/fig1-llm-to-cognitive.png)
 
 - A : 텍스트가 들어가고 나오는 LLM 그 자체
 - B : LLM을 환경과의 피드백 루프에 넣은 language agent
@@ -113,6 +113,9 @@ CoALA는 언어 에이전트를 기억, 행동 공간, 의사결정 세 가지�
 LLM은 이 아키텍처의 중심 부품이지 전부는 아니다.
 
 ![CoALA 프레임워크 (논문 Figure 4)](https://momozzing.github.io/assets/images/coala/fig4-coala.png)
+
+A는 장기 기억 3종(procedural, semantic, episodic)과 working memory, 그리고 이걸 움직이는 decision procedure다.
+B는 decision procedure가 도는 사이클로, proposal → evaluation → selection으로 계획을 세우고 execution으로 실행한 뒤 다시 observation을 받는다.
 
 행동 공간은 CoALA가 제일 많이 넓힌 곳이다.
 보통 도구 사용이라고 부르는 건 외부 행동뿐이다. CoALA는 그 옆에 내부 행동 3종을 같이 둔다.

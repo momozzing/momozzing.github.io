@@ -124,10 +124,19 @@ GPT-4에서 32.1% → 92.5%다.
 문서 QA에서는 컨텍스트 한계를 훨씬 넘는 문서를 처리한다.
 고정 컨텍스트 베이스라인은 검색기가 가져온 상위 K개 문서만 보니까, 성능이 검색기 성능에 묶인다. 문서를 더 넣으려고 잘라 넣으면 정확도가 떨어진다. MemGPT는 archival storage를 페이지 단위로 여러 번 검색하니까 문서 수가 늘어도 성능이 유지된다(논문 Figure 5).
 
+![문서 QA 성능 (논문 Figure 5)](https://momozzing.github.io/assets/images/memgpt/fig5-document-qa.png)
+
+가로축이 검색해 온 문서 수다. 고정 컨텍스트 베이스라인은 곡선이고, MemGPT는 문서 수와 상관없이 가로선 하나로 그려져 있다.
+
 다만 MemGPT도 검색 결과를 끝까지 넘기지 않고 중간에 멈출 때가 많았고, GPT-3.5에서는 함수 호출 능력이 부족해서 크게 떨어진다.
 
 그리고 중첩 key-value 검색 과제를 새로 만들었다. 값이 다시 키가 되는 구조라 여러 번 찾아 들어가야 하는 다중홉 검색이다.
 GPT-3.5는 중첩 1단계에서, GPT-4와 GPT-4 Turbo는 3단계에서 정확도 0%가 된다. GPT-4 기반 MemGPT는 중첩 단계가 늘어도 떨어지지 않는다(논문 Figure 7).
+
+![중첩 KV 검색 성능 (논문 Figure 7)](https://momozzing.github.io/assets/images/memgpt/fig7-nested-kv.png)
+
+가로축이 중첩 단계다. MemGPT (GPT-4) 선만 3단계까지 위에 붙어 있고, MemGPT (GPT-4 Turbo)는 단계가 늘면서 조금씩 내려간다.
+
 Wikipedia 2천만 문서 임베딩 데이터셋도 같이 공개했다.
 
 ## **4. Related Work**
