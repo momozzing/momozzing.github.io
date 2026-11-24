@@ -23,18 +23,20 @@ UniToolCall: Unifying Tool-Use Representation, Data, and Evaluation for LLM Agen
 UniToolCall 은 University of Science and Technology of China, Eastern Institute of Technology(Ningbo), The Hong Kong Polytechnic University 에서 만든 도구 호출 학습·평가 프레임워크다.
 저자는 8명이고 arXiv 에 올라온 논문이다.
 도구 모음 구축, 학습 데이터 생성, 평가를 QAOA(Query–Action–Observation–Answer) 라는 한 가지 표현으로 묶고, 그 데이터로 Qwen3-8B 를 파인튜닝해서 GPT·Gemini·Claude 계열과 비교한다.
-앞에서 본 [Toolformer](https://momozzing.github.io/paper%20review/Toolformer-Paper-review/)에서는 LM 이 도구 호출 학습 데이터를 스스로 만들었는데, 이 논문은 그 뒤로 쌓인 공개 데이터셋들을 한 형식으로 모으고 빠진 구조만 합성으로 채운다.
+앞에서 본 [Toolformer](https://momozzing.github.io/paper%20review/Toolformer-Paper-review/)\*에서는 LM 이 도구 호출 학습 데이터를 스스로 만들었는데, 이 논문은 그 뒤로 쌓인 공개 데이터셋들을 한 형식으로 모으고 빠진 구조만 합성으로 채운다.
 
 ![기존 도구 학습의 세 가지 문제(형식 불일치, serial/parallel 구조 누락, 평가 불일치)와 UniToolCall 의 구성 (논문 Figure 1)](https://momozzing.github.io/assets/images/unitoolcall/fig1-existing-datasets-severely.png)
+
+Toolformer: LM 이 문장 중간에 API 호출을 스스로 끼워 넣어 보고, 다음 토큰 예측이 쉬워지는 호출만 남겨 학습 데이터로 쓰는 자기지도 방식의 도구 사용 학습 방법
 
 ## **1. Introduction**
 
 도구 사용(tool use)은 자연어 지시를 실행 가능한 함수 호출로 바꾸는 능력이다.
 지금은 이 능력을 데이터로 가르치는데, 그 데이터는 에이전트가 외부 환경과 주고받은 궤적(trajectory)이다.
 
-초기에는 ToolLLM, API-Bank 처럼 실제 API 를 실행해서 궤적을 모았다.
+초기에는 ToolLLM\*, API-Bank 처럼 실제 API 를 실행해서 궤적을 모았다.
 현실적인 신호를 주지만 외부 시스템에 의존해서 규모를 키우기 어렵고 불안정하다.
-그래서 최근에는 도구 환경을 흉내 내고 궤적을 자동으로 합성하는 쪽(ToolForge, LoopTool, ASTRA)으로 넘어왔다.
+그래서 최근에는 도구 환경을 흉내 내고 궤적을 자동으로 합성하는 쪽(ToolForge\*, LoopTool\*, ASTRA\*)으로 넘어왔다.
 평가 쪽에서도 ComplexFuncBench, HammerBench, ACEBench 같은 벤치마크가 따로따로 나왔다.
 
 저자들은 이 작업들이 서로 떨어져서 만들어진 탓에 세 가지가 어긋난다고 본다.
@@ -53,12 +55,34 @@ contribution 은 셋이다.
 hop 은 한 턴 안에서 도구를 부르는 횟수이고, turn 은 사용자 발화의 횟수다.
 single-hop 은 도구 한 번, multi-hop 은 한 질의에 도구 여러 번, multi-turn 은 사용자가 여러 번 말하는 대화다.
 
+ToolLLM: 실제 API 1만 6천여 개를 직접 호출해 도구 사용 학습 데이터를 모으고, 그 데이터로 오픈 모델을 파인튜닝한 프레임워크
+
+ToolForge: 시뮬레이션한 도구 환경에서 상호작용 궤적을 자동으로 생성하는 합성 데이터 방법(원문 소개 기준, 자세한 구조는 원문에서 확인 못 함)
+
+LoopTool: 학습한 모델이 틀리는 지점을 보고 데이터 생성을 다시 고치는 식으로, 데이터 만들기와 학습을 순환시켜 도구 호출을 견고하게 하는 합성 데이터 방법
+
+ASTRA: 에이전트 궤적과 강화학습용 환경(arena)을 함께 자동 합성하는 방법
+
 ## **2. Related work**
 
-합성 데이터 쪽에서는 ToolACE, ToolMind, APIGen-MT, BUTTON 이 멀티 에이전트 시뮬레이션으로 대화를 만들고, MAGNET, ToolDial, ToolFlow 는 그래프 경로로 multi-hop 을 합성한다.
+합성 데이터 쪽에서는 ToolACE\*, ToolMind\*, APIGen-MT\*, BUTTON\* 이 멀티 에이전트 시뮬레이션으로 대화를 만들고, MAGNET\*, ToolDial\*, ToolFlow\* 는 그래프 경로로 multi-hop 을 합성한다.
 저자들은 이 파이프라인들이 serial 과 parallel 을 명시적으로 통제하지 않고, 멀티턴에서 상태를 이어 가는 일을 LLM 의 안정성에 맡긴다고 본다.
 
 벤치마크 쪽에서는 TRAJECT-Bench 가 parallel 과 sequential 궤적을 나눠 평가하지만, 벤치마크마다 스키마와 채점 규칙이 달라 서로 비교하기 어렵다는 점을 든다.
+
+ToolACE: API 모음 자체를 합성해 늘리고, 사용자·어시스턴트·도구 역할의 여러 에이전트가 주고받는 대화로 도구 호출 데이터를 만든 뒤 규칙과 모델 두 단계로 검증하는 파이프라인
+
+ToolMind: 여러 에이전트의 시뮬레이션으로 복잡한 도구 사용 대화를 생성하는 파이프라인(원문 소개 기준, 자세한 구조는 원문에서 확인 못 함)
+
+APIGen-MT: 먼저 정답 행동이 붙은 과제 설계안을 만들어 LLM 검토로 거르고, 그 설계안을 따라 사람 역할과 에이전트 역할을 시뮬레이션해 다중 턴 궤적을 만드는 2단계 파이프라인
+
+BUTTON: 단순한 과제를 아래에서부터 조합해 복합 지시를 만들고, 여러 에이전트 시뮬레이션으로 그 지시를 푸는 궤적을 생성하는 방법
+
+MAGNET: 함수 사이의 관계를 그래프로 두고 그 위의 경로를 따라 multi-hop 호출이 들어간 다중 턴 대화를 합성하는 방법
+
+ToolDial: API 사이의 입출력 관계를 그래프로 만들고, 그 그래프를 따라 다중 턴 도구 사용 대화를 생성한 데이터셋
+
+ToolFlow: 도구 그래프에서 관련 도구 묶음을 뽑고, 그 경로를 따라 multi-hop 도구 사용 대화를 합성하는 방법
 
 ## **3. UniToolCall**
 
@@ -72,7 +96,7 @@ Query(사용자 질의), Action(함수 호출), Observation(도구 반환값), A
 
 도구는 세 군데에서 모은다.
 - academic benchmarks: FC-RewardBench, ToolRet 학습셋의 도구
-- MCP servers: mcp.so 상위 40개 서버와 MCP-Universe 에서 쓴 11개 서버
+- MCP\* servers: mcp.so 상위 40개 서버와 MCP-Universe 에서 쓴 11개 서버
 - constructed datasets: 이 논문의 학습·평가 데이터에서 뽑은 도구 정의
 
 모은 도구는 JSON Schema 한 형식으로 맞추고 네 단계로 거른다.
@@ -84,6 +108,8 @@ ACEBench 는 절대 시각으로 바꾸고 HammerBench 는 상대 표현 그대�
 -> 예약, 일정, 알림처럼 날짜 인자를 받는 도구가 통째로 빠진다. 채점을 공정하게 하려는 선택이지만 실제 에이전트가 자주 틀리는 자리가 평가에서 사라진다.
 
 도구에는 기능 카테고리 6개(analysis, search 등)와 응용 도메인 13개(finance, technology 등) 라벨을 붙여, 데이터를 만들 때 고르게 뽑는 데 쓴다.
+
+MCP: Model Context Protocol. LLM 애플리케이션이 외부 도구와 데이터 소스를 같은 방식으로 붙일 수 있게 정한 공개 프로토콜. 도구를 제공하는 쪽 프로그램을 MCP 서버라고 부른다
 
 ### **3.2 Training dataset construction**
 
@@ -161,7 +187,7 @@ Strict 지표는 호출 하나라도 틀리면 그 인스턴스가 0점이고, F
 
 ### **4.1 Experimental setup**
 
-Qwen3-8B 를 LoRA(가중치 전체 대신 저랭크 행렬만 학습하는 파인튜닝 방식)로 rank 8, alpha 16, 1 epoch, learning rate 1e-5, 최대 길이 8192 토큰으로 학습한다.
+Qwen3-8B 를 LoRA\*로 rank 8, alpha 16, 1 epoch, learning rate 1e-5, 최대 길이 8192 토큰으로 학습한다.
 학습 데이터는 390,060건으로 공개 387,123건과 합성 2,937건(single-hop, multi-hop, multi-turn 각 979건)이다.
 -> 합성 데이터는 전체의 0.75% 다. 본 결과의 향상 폭을 합성 파이프라인의 효과로 읽으면 안 되고, 대부분은 표준화한 공개 데이터 38만 건으로 학습한 효과로 읽어야 한다.
 
@@ -183,10 +209,15 @@ Qwen3-8B 를 LoRA(가중치 전체 대신 저랭크 행렬만 학습하는 파�
 SP 와 FP 는 도구 이름만 보고, 인자까지 보는 건 SPA 와 FPA 다.
 abstract 의 93.0% 는 SP, 그러니까 이름을 맞힌 비율이다.
 
+LoRA: 원래 가중치는 얼려 두고, 각 층에 작은 저랭크 행렬 두 개를 붙여 그것만 학습하는 파인튜닝 방법. 학습할 파라미터와 메모리가 크게 줄어든다
+
 ### **4.2 Main results**
 
-주 결과는 Table 1 이고, 잘라 둔 이미지가 없어서 수치를 글로 옮긴다.
-아래는 모두 Hybrid-20 설정, 7개 벤치마크 micro 평균이다.
+주 결과는 Table 1 이다.
+7개 벤치마크를 micro 평균한 값이고, 맨 위 GT Setting 줄은 정답 도구만 후보로 준 vanilla Qwen3-8B, 나머지는 후보 20개를 주는 Hybrid-20 설정이다.
+열의 SH, MH, ST, MT 는 각각 single-hop, multi-hop, single-turn, multi-turn 이다.
+
+![GT 와 Hybrid-20 설정에서 모델별 SP, FP, SPA, FPA (논문 Table 1)](https://momozzing.github.io/assets/images/unitoolcall/table1-comprehensive-evaluation-results.png)
 
 **Strong gains in tool selection**
 UniToolCall 의 SP 는 single-hop 92.9%, single-turn 93.0% 로 비교 모델 중 가장 높다.
@@ -277,7 +308,7 @@ Limitations 는 번호 없는 절로 따로 있다.
 블로그에서 도구 사용을 학습 데이터 쪽에서 다룬 글은 [Toolformer](https://momozzing.github.io/paper%20review/Toolformer-Paper-review/) 하나였다.
 Toolformer 는 도구 호출이 다음 토큰 예측에 도움이 되는지로 데이터를 걸렀고, 도구는 계산기·검색 같은 몇 개였다.
 이 논문은 도구가 2만 개를 넘고 필터는 스키마 검사와 LLM 자기 평가다.
-[ReAct](https://momozzing.github.io/paper%20review/ReAct-Paper-review/) 식 루프에서 Action 한 줄을 얼마나 정확히 쓰는지만 떼어 내서 본다고 생각하면 위치가 잡힌다.
+[ReAct](https://momozzing.github.io/paper%20review/ReAct-Paper-review/)\* 식 루프에서 Action 한 줄을 얼마나 정확히 쓰는지만 떼어 내서 본다고 생각하면 위치가 잡힌다.
 Observation 을 받고 다음 행동을 고치는 부분은 범위 밖이다.
 
 가져다 쓸 수 있는 것은 모델보다 도구들이다.
@@ -297,3 +328,5 @@ multi-turn 은 아직 열려 있다.
 대화 단위로 전부 맞힌 비율이 거의 모든 모델에서 0.0% 라는 건 지표가 엄격해서이기도 하지만, 실제 에이전트는 호출 하나가 틀리면 그 뒤 상태가 달라진다는 점에서 의미 없는 숫자는 아니다.
 다만 이 평가는 정답 궤적과 맞춰 보는 정적 채점이라, 틀린 뒤에 Observation 을 보고 고치는 에이전트의 실제 성공률과는 다른 것을 잰다.
 시간 인자 도구, 거절해야 하는 질의, 되물어서 인자를 채우는 대화가 모두 빠져 있다는 것도 같이 기억해 둘 일이다.
+
+ReAct: 추론(Thought)과 행동(Action), 그 결과의 관찰(Observation)을 번갈아 쓰면서 과제를 풀게 하는 LLM 에이전트 프롬프팅 방식

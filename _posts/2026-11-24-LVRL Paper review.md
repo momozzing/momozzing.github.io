@@ -35,21 +35,45 @@ LVRL(LLM Value Function RL)은 Apple에서 만든 에이전트 강화학습 방�
 이 한 비트를 어느 행동의 공으로 돌릴지가 temporal credit assignment(시간에 걸친 공로 배분) 문제다.
 
 지금 많이 쓰는 두 방법은 각각 약점이 있다.
-GRPO(같은 과제를 여러 번 돌린 그룹의 평균 보상을 기준선으로 쓰는 방법)는 궤적 하나의 모든 행동에 같은 advantage를 준다.
+GRPO\*는 궤적 하나의 모든 행동에 같은 advantage를 준다.
 그래서 성공한 궤적 안의 실수는 양의 신호를 받고, 실패한 궤적 안의 쓸모 있는 행동은 음의 신호를 받는다.
-PPO(가치 함수를 학습해서 스텝별 advantage를 계산하는 방법)는 critic 학습에 계산이 더 들고, 긴 이력과 드문 보상에서는 critic이 잘 안 맞는다.
+PPO\*는 critic 학습에 계산이 더 들고, 긴 이력과 드문 보상에서는 critic이 잘 안 맞는다.
 
 LVRL은 끝난 궤적을 강한 LLM에게 통째로 보여 주고 각 중간 상태의 값을 한 번에 매기게 한다.
 끝까지 본 뒤에 매기므로, 무시된 도구 오류나 뒤늦은 복구 같은 것을 앞 스텝의 평가에 반영할 수 있다.
 가치는 정책에 따라 달라지는 값이라서, 같은 과제의 다른 롤아웃 요약과 그룹 성공률을 프롬프트에 넣어 현재 정책 수준에 맞춘다(파라미터 갱신은 없다).
 
+GRPO: 별도의 가치 모델(critic) 없이, 같은 과제를 여러 번 돌린 궤적 그룹 안에서 보상을 서로 비교해 advantage를 정하는 강화학습 알고리즘. 한 궤적의 모든 행동이 같은 advantage를 받는다
+
+PPO: 정책이 한 번에 너무 크게 바뀌지 않도록 갱신 폭을 잘라(clip) 안정적으로 학습하는 강화학습 알고리즘. 보통 가치 모델(critic)을 함께 학습해 스텝별 advantage를 계산한다
+
 ## **2. Related Work**
 
-스텝 단위 credit assignment 쪽에서는 학습된 critic(ArCHer, GenAC), 중간 상태에서 롤아웃을 더 뽑는 방식(VinePPO), 공유 상태의 보상을 모으는 방식(GiGPO, SALT), process reward model(중간 단계에 점수를 주도록 따로 학습한 모델)을 든다.
+스텝 단위 credit assignment 쪽에서는 학습된 critic(ArCHer\*, GenAC\*), 중간 상태에서 롤아웃을 더 뽑는 방식(VinePPO\*), 공유 상태의 보상을 모으는 방식(GiGPO\*, SALT\*), process reward model\*을 든다.
 저자들은 이들이 사람 주석, 추가 롤아웃 예산, 대리 지표 중 하나에 기댄다고 정리한다.
-가장 가까운 선행 연구로는 GVL을 꼽는다.
+가장 가까운 선행 연구로는 GVL\*을 꼽는다.
 GVL은 얼린 vision-language 모델로 로봇 영상의 진행도를 매기는데, 정책과 무관한 진행 점수를 낸다는 점이 다르다고 한다.
-on-policy distillation(학생이 직접 만든 prefix 위에서 교사의 토큰 분포를 따라가게 하는 증류) 쪽에서는 SAGE-OPD, FutureBridge-OPD 같은 선택적 증류 방법을 언급한다.
+on-policy distillation\*(OPD) 쪽에서는 SAGE-OPD\*, FutureBridge-OPD\* 같은 선택적 증류 방법을 언급한다.
+
+ArCHer: 가치 함수를 학습하는 actor-critic 방식을 다중 턴 언어 에이전트로 넓힌 방법. 턴 단위로 critic을 학습하고 그 값으로 토큰 단위 정책을 갱신하는 계층 구조다
+
+GenAC: ArCHer와 함께 원문이 "가치 함수를 학습하는 actor-critic을 다중 턴 언어 에이전트로 넓힌 방법"으로 묶어 소개하는 방법(자세한 구조는 원문에서 확인 못 함)
+
+VinePPO: 궤적의 중간 상태에서 이어지는 롤아웃을 추가로 돌려, 그 성공 비율로 상태 가치를 추정해 PPO의 critic을 대신하는 방법. 추가 롤아웃 예산이 든다
+
+GiGPO: 여러 궤적에서 같은 상태가 다시 나오면 그 상태들을 한 그룹으로 묶고, 거기서 이어진 보상을 비교해 스텝 단위 advantage를 얻는 방법. 롤아웃을 더 돌리지 않고 이미 뽑은 궤적들을 재활용한다
+
+SALT: GiGPO처럼 여러 궤적의 공유 상태에서 보상을 모아 스텝 단위 신호를 얻는 방법(원문 소개 기준, 자세한 구조는 원문에서 확인 못 함)
+
+process reward model(PRM): 최종 답만이 아니라 중간 단계마다 점수를 매기도록, 중간 단계에 대한 정답 표시로 따로 학습한 보상 모델
+
+GVL: 얼려 둔 vision-language 모델에게 로봇 영상을 보여 주고, in-context learning으로 과제가 얼마나 진행됐는지 점수를 매기게 하는 방법. 점수는 어떤 정책이 움직였는지와 무관하다
+
+on-policy distillation(OPD): 학생 모델이 직접 생성한 문맥(prefix) 위에서 교사 모델의 토큰 분포를 따라가도록 학습하는 증류. 학생이 실제로 마주칠 상황에서 배우게 해 학습·추론 때의 분포 차이를 줄인다. 교사의 토큰 확률을 볼 수 있어야 한다
+
+SAGE-OPD: 다중 턴 OPD에서 학생이 고른 행동이 유효한 대안이면 그 스텝은 교사 감독을 건너뛰게 하는 방법
+
+FutureBridge-OPD: 교사가 끼어들 후보 지점마다 학생의 이어 쓰기를 돌려 보고, 교사 기준 선호도로 점수를 매겨 감독할지를 정하는 방법
 
 ## **3. Method**
 
@@ -148,13 +172,12 @@ LVOPD는 AppWorld 위주로 본다.
 ### **4.2 Does LVRL Improve Long-Horizon Agent Learning?**
 
 주 결과는 논문 Table 1이다.
-잘라 둔 이미지가 없어서 수치만 옮긴다.
-- AppWorld, Qwen3-4B: Base 4.2, GRPO 10.7, PPO 14.8, LVRL 24.3
-- AppWorld, Qwen3-8B: Base 10.9, GRPO 19.8, PPO 17.5, LVRL 26.3
-- SWE-bench Verified, Qwen3-8B: Base 2.9, GRPO 12.0, PPO 9.0, LVRL 20.2
-- SWE-bench Verified, Qwen3-32B: Base 20.2, GRPO 22.3, PPO 24.9, LVRL 30.9
-- BabyAI ID / OOD, Qwen3-4B: LVRL 69.0 / 52.2, 나머지는 0.3 이하 / 0.0
-- BabyAI ID / OOD, Qwen3-8B: LVRL 75.0 / 65.5, GRPO 2.7 / 0.0, PPO 0.3 / 0.0
+세 환경에서 베이스 모델과 GRPO, PPO, LVRL로 학습한 모델의 평가 성공률(%)이고, BabyAI는 ID / OOD로 나눠 적혀 있다.
+
+![AppWorld, BabyAI, SWE-bench Verified에서 Base, GRPO, PPO, LVRL의 평가 성공률 (논문 Table 1)](https://momozzing.github.io/assets/images/llm-value-functions/table1-lvrl-evaluation-performance.png)
+
+AppWorld와 SWE-bench Verified의 네 설정 모두에서 LVRL이 가장 높다.
+BabyAI에서는 GRPO와 PPO가 3% 아래에 머무는 동안 LVRL은 ID 69.0~75.0, OOD 52.2~65.5다.
 
 abstract의 "GRPO 대비 최대 13.6점, 8.6점"은 각각 AppWorld Qwen3-4B와 SWE-bench Verified Qwen3-32B에서 나온 차이다.
 
@@ -206,7 +229,7 @@ critic만 Opus 4.6으로 바꾸면 나아질 것이라는 가설은 실험하지
 
 critic이 매긴 값의 변화가 실제 성공 확률의 변화와 맞는지를 AppWorld에서 확인한다.
 
-정답 역할은 Monte-Carlo 롤아웃이 한다.
+정답 역할은 Monte-Carlo\* 롤아웃이 한다.
 학습 25%, 50%, 75% 시점 체크포인트 세 개에서 과제 30개씩을 뽑고, 과제마다 성공 궤적 하나와 실패 궤적 하나를 골라 궤적 180개, 상태 3,899개를 만든다.
 각 상태에서 환경을 처음부터 다시 실행해 같은 지점까지 되돌린 뒤, 같은 체크포인트로 이어서 32번 돌린다.
 성공한 비율이 그 상태의 MC 가치다.
@@ -238,6 +261,8 @@ critic은 이를 진전으로 보고 값을 유지하거나 올렸는데 MC 가�
 
 -> neutral 스텝의 22%에서 값이 올라간다는 수치와 같은 방향이다. critic은 뭔가 이뤄진 것처럼 보이는 스텝에 값을 올려 주는 쪽으로 기울어 있다.
 -> 이 분석에 쓴 학습 실행이 어느 학생 모델, 어느 critic의 것인지는 원문에서 확인 못 함. 검증 환경도 AppWorld 하나다.
+
+Monte-Carlo 추정: 같은 지점에서 끝까지 여러 번 실행해 본 결과의 평균으로 값을 추정하는 방법. 표본이 많을수록 정확하지만 그만큼 실행 비용이 든다
 
 ### **4.5 Ablation Studies**
 
@@ -279,7 +304,7 @@ LVOPD는 그 advantage가 음수인 스텝에만 교사 증류를 건다.
 
 ## **6. 지금 관점: 학습 없이 스텝별 평가만 가져다 쓸 수 있을까**
 
-[Reflexion](https://momozzing.github.io/paper%20review/Reflexion-Paper-review/)은 실패한 시도를 LLM이 말로 되짚어 다음 시도의 프롬프트에 넣었다.
+[Reflexion](https://momozzing.github.io/paper%20review/Reflexion-Paper-review/)\*은 실패한 시도를 LLM이 말로 되짚어 다음 시도의 프롬프트에 넣었다.
 LVRL은 같은 종류의 사후 판단을 숫자로 받아서 가중치 갱신에 쓴다.
 [Multi-Harness RL](https://momozzing.github.io/paper%20review/Multi-Harness-RL-Paper-review/)이 보상을 어떤 묶음으로 정규화할지를 바꿔 봤다면, 이 논문은 정규화된 보상을 궤적 안에서 쪼개는 쪽을 바꿨다.
 SWE-bench Verified 수치를 읽을 때는 [What Does a Harness Buy](https://momozzing.github.io/paper%20review/What-Does-a-Harness-Buy-Paper-review/)에서 같은 설정을 한 번 더 돌려 잡음 크기를 쟀던 것을 같이 떠올리게 된다.
@@ -297,3 +322,5 @@ Opus 4.6이나 GLM-5.2를 쓰면 이득이 나고 Qwen3-235B를 쓰면 GRPO 수�
 어떤 모델이 critic으로 충분한지 미리 알 방법은 논문에 없고, 써 보기 전에는 판단할 기준이 없다.
 4B~32B 학생을 가르치는 데 그보다 훨씬 큰 API 모델을 궤적마다 부르는 구조라서, 학생이 critic 수준에 가까워질 때도 같은 이득이 나는지는 이 실험 범위 밖이다.
 비용은 질의당 0.06~0.14달러에 요약 호출이 더해지는데, 롤아웃 자체의 GPU 비용과 견줘 어느 정도인지는 논문에 비교가 없다.
+
+Reflexion: 에이전트가 실패한 시도를 스스로 말로 되짚어 기록하고, 그 반성문을 다음 시도의 프롬프트에 넣어 가중치 갱신 없이 성능을 올리는 방법
